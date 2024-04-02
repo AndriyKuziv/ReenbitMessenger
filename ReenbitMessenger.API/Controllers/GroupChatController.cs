@@ -2,7 +2,8 @@
 using ReenbitMessenger.API.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using ReenbitMessenger.API.Models.DTO;
+using ReenbitMessenger.Library.Models;
+using ReenbitMessenger.Library.Models.DTO;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -48,7 +49,7 @@ namespace ReenbitMessenger.API.Controllers
         [HttpPut]
         [Route("{id:guid}/addUsers")]
         public async Task<IActionResult> AddUsersToGroupChat([FromRoute] Guid id, 
-            [FromBody] AddUsersRequest addUsersRequest)
+            [FromBody] AddUsersToGroupRequest addUsersRequest)
         {
             throw new NotImplementedException();
         }

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="691c5ffa-02df-44eb-aafa-36d1effd6af7" ChangeDateTime="04/02/2024 06:22:32">
+    <Property Name="ElementName" Value="[dbo].[GroupChatRoles].[role_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[GroupChatRoles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="roleName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="85823a22-24ff-401e-a411-7e9d0ae37758" ChangeDateTime="04/02/2024 06:22:37">
+    <Property Name="ElementName" Value="[dbo].[GroupChatRoles].[roleName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[GroupChatRoles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RoleName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="37df0740-e059-4723-b319-e88426d71fa4" ChangeDateTime="04/02/2024 06:22:40">
+    <Property Name="ElementName" Value="[dbo].[GroupChat].[name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[GroupChat]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ba73adb1-98b0-4069-bb0f-15d64c75af5d" ChangeDateTime="04/02/2024 06:22:44">
+    <Property Name="ElementName" Value="[dbo].[User].[username]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[User]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Username" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="cc87931a-5933-49f4-9d98-9b982e479a0f" ChangeDateTime="04/02/2024 06:22:47">
+    <Property Name="ElementName" Value="[dbo].[User].[email]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[User]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Email" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="899aadb3-db53-4554-8065-a17d5c8810ce" ChangeDateTime="04/02/2024 06:22:49">
+    <Property Name="ElementName" Value="[dbo].[User].[password]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[User]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Password" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="628cfd81-f079-4722-93ee-5cbe082c0528" ChangeDateTime="04/02/2024 06:38:38">
+    <Property Name="ElementName" Value="[dbo].[GroupChatMembers].[RoleId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[GroupChatMembers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="GroupChatRoleId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="14388994-7328-4db8-8bbd-cb761193defb" ChangeDateTime="04/02/2024 06:46:30">
+    <Property Name="ElementName" Value="[dbo].[PrivateMessage].[Text]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PrivateMessage]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SenderUserId" />
+  </Operation>
+</Operations>

@@ -1,4 +1,4 @@
-﻿using ReenbitMessenger.API.AppServices;
+﻿using ReenbitMessenger.DataAccess.AppServices;
 
 namespace ReenbitMessenger.API.Utils
 {

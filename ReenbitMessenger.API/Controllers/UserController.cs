@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.API.AppServices;
-using ReenbitMessenger.API.Repositories;
+using ReenbitMessenger.DataAccess.AppServices;
+using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.API.Utils;
-using System.Diagnostics;
+using ReenbitMessenger.Library.Models.DTO;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -30,7 +30,7 @@ namespace ReenbitMessenger.API.Controllers
         {
             var users = await _userRepository.GetAllAsync();
 
-            var usersDTO = _mapper.Map<List<Models.DTO.User>>(users);
+            var usersDTO = _mapper.Map<List<User>>(users);
 
             return Ok(usersDTO);
         }
@@ -41,7 +41,7 @@ namespace ReenbitMessenger.API.Controllers
         {
             var query = new GetUserByIdQuery(id);
 
-            Models.DTO.User result = await _handlersDispatcher.Dispatch(query);
+            User result = await _handlersDispatcher.Dispatch(query);
 
             return Ok(result);
         }
@@ -53,14 +53,14 @@ namespace ReenbitMessenger.API.Controllers
         {
             var query = new GetUserByUsernameQuery(username);
 
-            Models.DTO.User result = await _handlersDispatcher.Dispatch(query);
+            User result = await _handlersDispatcher.Dispatch(query);
 
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateUser(
-            [FromBody] Models.DTO.CreateUserRequest createUserRequest)
+            [FromBody] CreateUserRequest createUserRequest)
         {
             var command = new CreateUserCommand(
                 createUserRequest.Username,
@@ -91,7 +91,7 @@ namespace ReenbitMessenger.API.Controllers
         [Route("{userId:guid}")]
         public async Task<IActionResult> EditUserInfoById(
             [FromRoute] Guid userId,
-            [FromBody] Models.DTO.EditUserInfoRequest editUserInfoRequest)
+            [FromBody] EditUserInfoRequest editUserInfoRequest)
         {
             var command = new EditUserInfoCommand(userId, 
                 editUserInfoRequest.Email, editUserInfoRequest.Username);

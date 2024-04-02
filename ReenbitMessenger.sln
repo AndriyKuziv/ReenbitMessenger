@@ -9,6 +9,10 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ReenbitMessenger.Database",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.API", "ReenbitMessenger.API\ReenbitMessenger.API.csproj", "{43DE9E30-0C66-44BD-A458-7B35D6DBFFE3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.Library", "ReenbitMessenger.Library\ReenbitMessenger.Library.csproj", "{7C1D7ABD-F54D-4ABC-BD1B-29E95CE5F4B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReenbitMessenger.DataAccess", "ReenbitMessenger.DataAccess\ReenbitMessenger.DataAccess.csproj", "{36A2D43E-095A-430A-A011-EC343A06826C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,14 @@ Global
 		{43DE9E30-0C66-44BD-A458-7B35D6DBFFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43DE9E30-0C66-44BD-A458-7B35D6DBFFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43DE9E30-0C66-44BD-A458-7B35D6DBFFE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C1D7ABD-F54D-4ABC-BD1B-29E95CE5F4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C1D7ABD-F54D-4ABC-BD1B-29E95CE5F4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C1D7ABD-F54D-4ABC-BD1B-29E95CE5F4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C1D7ABD-F54D-4ABC-BD1B-29E95CE5F4B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36A2D43E-095A-430A-A011-EC343A06826C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A2D43E-095A-430A-A011-EC343A06826C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36A2D43E-095A-430A-A011-EC343A06826C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36A2D43E-095A-430A-A011-EC343A06826C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

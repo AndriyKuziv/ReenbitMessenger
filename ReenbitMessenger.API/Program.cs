@@ -1,6 +1,8 @@
 using ReenbitMessenger.API.AppServices;
+using ReenbitMessenger.API.Data;
 using ReenbitMessenger.API.Repositories;
 using ReenbitMessenger.API.Utils;
+using ReenbitMessenger.Library.Models.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +16,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddTransient<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
-builder.Services.AddTransient<IQueryHandler<GetUserByIdQuery, ReenbitMessenger.API.Models.DTO.User>, GetUserByIdQueryHandler>();
+builder.Services.AddTransient<IQueryHandler<GetUserByIdQuery, User>, GetUserByIdQueryHandler>();
 
 builder.Services.AddSingleton<HandlersDispatcher>();
+
+builder.Services.AddDbContext<IdentityDataContext>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

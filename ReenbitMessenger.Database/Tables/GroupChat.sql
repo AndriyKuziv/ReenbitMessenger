@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[GroupChat]
+(
+	[Id] CHAR(36) NOT NULL PRIMARY KEY, 
+    [Name] NVARCHAR(50) NOT NULL
+)

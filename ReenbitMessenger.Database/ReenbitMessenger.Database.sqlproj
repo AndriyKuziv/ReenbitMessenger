@@ -56,5 +56,20 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\GroupChat.sql" />
+    <Build Include="Tables\GroupChatMembers.sql" />
+    <Build Include="Tables\GroupChatMessage.sql" />
+    <Build Include="Tables\GroupChatRoles.sql" />
+    <Build Include="Tables\PrivateMessage.sql" />
+    <Build Include="Tables\User.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Tables\ReenbitMessenger.Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LocalMessengerDB.publish.xml" />
   </ItemGroup>
 </Project>
