@@ -6,7 +6,7 @@ namespace ReenbitMessenger.API.Profiles
     {
         public UserProfile()
         {
-            CreateMap<DataAccess.Models.Domain.User, Library.Models.DTO.User>()
+            CreateMap<DataAccess.Models.Domain.User, Infrastructure.Models.DTO.User>()
                 .ReverseMap();
         }
     }

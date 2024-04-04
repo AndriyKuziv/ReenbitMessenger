@@ -1,5 +1,8 @@
 ﻿@page "/login"
 
+@inject IUserHttpClient httpClient
+@inject Blazored.LocalStorage.ILocalStorageService ls
+@inject ILogger<Login> logger
 
 <h3>Login</h3>
 
@@ -22,6 +25,7 @@
     <button type="submit" class="btn btn-primary" style="margin-top: 10px">Login</button>
 </EditForm>
 
+
 @code {
     private LoginModel loginModel = new LoginModel();
 
@@ -37,7 +41,10 @@
 
     private async Task Submit()
     {
+        var token = await httpClient.LogInAsync(loginModel.Email, loginModel.Password);
+        await ls.SetItemAsync("jwtToken", token);
 
+        logger.LogWarning(token);
+        Console.WriteLine("got em");
     }
-    // localhost:7051
 }

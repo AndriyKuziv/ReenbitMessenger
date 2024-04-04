@@ -5,7 +5,7 @@ using ReenbitMessenger.DataAccess.AppServices.Commands;
 using ReenbitMessenger.DataAccess.AppServices.Queries;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
-using ReenbitMessenger.Library.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -13,7 +13,6 @@ namespace ReenbitMessenger.API.Controllers
     [Route("[controller]")]
     public class UsersController : Controller
     {
-        //private readonly IUnitOfWork _unitOfWork;
         private readonly HandlersDispatcher _handlersDispatcher;
         private readonly IMapper _mapper;
 

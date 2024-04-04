@@ -78,5 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalMessengerDB.publish.xml" />
+    <None Include="ReenbitMessenger.Database.publish.xml" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@ using ReenbitMessenger.DataAccess.AppServices;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
-using ReenbitMessenger.Library.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.AppServices.Commands;
@@ -25,25 +25,20 @@ builder.Services.AddDbContext<IdentityDataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
 });
 
-var keyString = builder.Configuration["JwtKey"];
-var key = Encoding.ASCII.GetBytes(keyString);
-
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(x =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options =>
+.AddJwtBearer(x =>
 {
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+    x.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
         ValidateAudience = false,
+        ValidateIssuerSigningKey = false
     };
 });
 

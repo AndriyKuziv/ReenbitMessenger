@@ -1,4 +1,4 @@
-﻿namespace ReenbitMessenger.Library.Models.DTO
+﻿namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
     public class CreateUserRequest
     {

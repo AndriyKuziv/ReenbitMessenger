@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.DataAccess.Repositories;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using ReenbitMessenger.Library.Models;
-using ReenbitMessenger.Library.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ReenbitMessenger.API.Controllers

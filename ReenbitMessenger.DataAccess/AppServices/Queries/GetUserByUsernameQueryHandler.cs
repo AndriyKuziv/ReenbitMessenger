@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using ReenbitMessenger.Library.Models.DTO;
-using ReenbitMessenger.DataAccess.Repositories;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.DataAccess.Utils;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Queries

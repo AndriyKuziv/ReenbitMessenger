@@ -1,4 +1,4 @@
-﻿using ReenbitMessenger.Library.Models;
+﻿using ReenbitMessenger.Infrastructure.Models;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Utils;

@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject ILogger<NavMenu> logger
+@inject Blazored.LocalStorage.ILocalStorageService ls
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ReenbitMessenger.Maui</a>
     </div>
@@ -61,6 +64,7 @@
 
 @code{
     private async Task Logout(){
-        Console.WriteLine("Logged out");
+        await ls.RemoveItemAsync("jwtToken");
+        logger.LogWarning("Logged out");
     }
 }

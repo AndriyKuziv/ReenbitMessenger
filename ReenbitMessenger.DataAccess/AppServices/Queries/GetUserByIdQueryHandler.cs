@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ReenbitMessenger.Library.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
 

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using ReenbitMessenger.Maui.Auth;
+using ReenbitMessenger.Maui.Clients;
 
 namespace ReenbitMessenger.Maui
 {
@@ -20,10 +22,12 @@ namespace ReenbitMessenger.Maui
 
 #if DEBUG
     		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+            builder.Services.AddScoped<IUserHttpClient, UserHttpClient>();
+            builder.Services.AddBlazoredLocalStorage();
 
             return builder.Build();
         }
