@@ -70,4 +70,8 @@
       <ProjectReference Include="..\ReenbitMessenger.Library\ReenbitMessenger.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Http\" />
+    </ItemGroup>
+
 </Project>

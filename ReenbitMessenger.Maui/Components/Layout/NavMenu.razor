@@ -23,31 +23,39 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" @onclick="Logout">
-                <span class="bi bi-box-arrow-in-right" aria-hidden="true" style="display:flex; margin-top:auto"></span> Logout
-            </NavLink>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="Logout">
+                        <span class="bi bi-box-arrow-in-right" aria-hidden="true" style="display:flex; margin-top:auto"></span> Logout
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="chatsList">
-                <span class="bi bi-chat-left-dots-fill" aria-hidden="true" style="display:flex; margin-top:auto"></span> Chats
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="chatsList">
+                        <span class="bi bi-chat-left-dots-fill" aria-hidden="true" style="display:flex; margin-top:auto"></span> Chats
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="usersList">
-                <span class="bi bi-people-fill" aria-hidden="true" style="display:flex; margin-top:auto"></span> Users
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                <span class="bi bi-box-arrow-in-left" aria-hidden="true" style="display:flex; margin-top:auto"></span> Login
-            </NavLink>
-        </div>
-
-
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="usersList">
+                        <span class="bi bi-people-fill" aria-hidden="true" style="display:flex; margin-top:auto"></span> Users
+                    </NavLink>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        <span class="bi bi-box-arrow-in-left" aria-hidden="true" style="display:flex; margin-top:auto"></span> Login
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="register">
+                        <span class="bi bi-person-plus" aria-hidden="true" style="display:flex; margin-top:auto"></span> Sign up
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
     </nav>
 </div>
 

@@ -1,0 +1,41 @@
+﻿@page "/register"
+
+
+<h3>Sign up</h3>
+
+<EditForm Model="@registerModel" OnValidSubmit="Submit" style="padding: 10px; max-width: 300px">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+        <ValidationMessage For="@(() => registerModel.Email)" />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" class="form-control" type="password" @bind-Value="registerModel.Password" />
+        <ValidationMessage For="@(() => registerModel.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 10px">Sign up</button>
+</EditForm>
+
+@code{
+    private RegisterModel registerModel => new RegisterModel();
+
+    private class RegisterModel
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; }
+    }
+
+    private async Task Submit(){
+
+    }
+}

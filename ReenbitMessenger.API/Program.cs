@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.AppServices.Commands;
 using ReenbitMessenger.DataAccess.AppServices.Queries;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +25,31 @@ builder.Services.AddDbContext<IdentityDataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
 });
 
-builder.Services.AddAuthorization();
+var keyString = builder.Configuration["JwtKey"];
+var key = Encoding.ASCII.GetBytes(keyString);
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    };
+});
+
+
+builder.Services
+    .AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<IdentityDataContext>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -39,7 +64,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

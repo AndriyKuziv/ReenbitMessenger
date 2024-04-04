@@ -4,11 +4,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ReenbitMessenger.Library.Models;
 using ReenbitMessenger.Library.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReenbitMessenger.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class GroupChatController : Controller
     {
         public GroupChatController() { }
