@@ -1,6 +1,6 @@
 ﻿using ReenbitMessenger.Library.Models.DTO;
 
-namespace ReenbitMessenger.DataAccess.AppServices
+namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
     public class GetUserByIdQuery : IQuery<User>
     {

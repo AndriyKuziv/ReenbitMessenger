@@ -1,24 +1,27 @@
 ﻿using AutoMapper;
 using ReenbitMessenger.Library.Models.DTO;
 using ReenbitMessenger.DataAccess.Repositories;
+using ReenbitMessenger.DataAccess.Utils;
 
-namespace ReenbitMessenger.DataAccess.AppServices
+namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
     public class GetUserByUsernameQueryHandler :
         IQueryHandler<GetUserByUsernameQuery, User>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public GetUserByUsernameQueryHandler(IUserRepository userRepository, 
+        public GetUserByUsernameQueryHandler(IUnitOfWork unitOfWork,
             IMapper mapper)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<User> Handle(GetUserByUsernameQuery query)
         {
-            var user = await _userRepository.GetByUsernameAsync(query.Username);
+            var userRepository = _unitOfWork.GetRepository<User>();
+
+            var user = await userRepository.GetAsync(query.Username);
 
             if (user is null) return null;
 

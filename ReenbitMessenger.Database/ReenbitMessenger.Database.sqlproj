@@ -57,6 +57,7 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="AspNetIdentity" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\GroupChat.sql" />
@@ -64,7 +65,13 @@
     <Build Include="Tables\GroupChatMessage.sql" />
     <Build Include="Tables\GroupChatRoles.sql" />
     <Build Include="Tables\PrivateMessage.sql" />
-    <Build Include="Tables\User.sql" />
+    <Build Include="AspNetIdentity\AspNetRoleClaims.sql" />
+    <Build Include="AspNetIdentity\AspNetRoles.sql" />
+    <Build Include="AspNetIdentity\AspNetUserClaims.sql" />
+    <Build Include="AspNetIdentity\AspNetUserLogins.sql" />
+    <Build Include="AspNetIdentity\AspNetUserRoles.sql" />
+    <Build Include="AspNetIdentity\AspNetUsers.sql" />
+    <Build Include="AspNetIdentity\AspNetUserTokens.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Tables\ReenbitMessenger.Database.refactorlog" />

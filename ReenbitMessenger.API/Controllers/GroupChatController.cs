@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.API.Repositories;
+using ReenbitMessenger.DataAccess.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ReenbitMessenger.Library.Models;

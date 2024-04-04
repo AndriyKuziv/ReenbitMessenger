@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.DataAccess.AppServices;
+using ReenbitMessenger.DataAccess.AppServices.Commands;
+using ReenbitMessenger.DataAccess.AppServices.Queries;
 using ReenbitMessenger.DataAccess.Repositories;
-using ReenbitMessenger.API.Utils;
+using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Library.Models.DTO;
 
 namespace ReenbitMessenger.API.Controllers
@@ -12,46 +13,32 @@ namespace ReenbitMessenger.API.Controllers
     [Route("[controller]")]
     public class UsersController : Controller
     {
-        private readonly IUserRepository _userRepository;
+        //private readonly IUnitOfWork _unitOfWork;
         private readonly HandlersDispatcher _handlersDispatcher;
         private readonly IMapper _mapper;
 
-        public UsersController(IUserRepository userRepository,
-            HandlersDispatcher commandHandlersDispatcher,
+        public UsersController(HandlersDispatcher commandHandlersDispatcher,
             IMapper mapper)
         {
-            _userRepository = userRepository;
             _handlersDispatcher = commandHandlersDispatcher;
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = await _userRepository.GetAllAsync();
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllUsers()
+        //{
+        //    var users = await _unitOfWork.Users.GetAllAsync();
 
-            var usersDTO = _mapper.Map<List<User>>(users);
+        //    var usersDTO = _mapper.Map<List<User>>(users);
 
-            return Ok(usersDTO);
-        }
+        //    return Ok(usersDTO);
+        //}
 
         [HttpGet]
         [Route("{id:guid}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var query = new GetUserByIdQuery(id);
-
-            User result = await _handlersDispatcher.Dispatch(query);
-
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("{name:alpha}")]
-        public async Task<IActionResult> GetUserByUsername(
-            [FromRoute] string username)
-        {
-            var query = new GetUserByUsernameQuery(username);
 
             User result = await _handlersDispatcher.Dispatch(query);
 

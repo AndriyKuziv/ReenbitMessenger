@@ -1,6 +1,6 @@
 ﻿using ReenbitMessenger.DataAccess.AppServices;
 
-namespace ReenbitMessenger.API.Utils
+namespace ReenbitMessenger.DataAccess.Utils
 {
     public sealed class HandlersDispatcher
     {

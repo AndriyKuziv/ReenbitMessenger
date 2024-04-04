@@ -1,8 +1,12 @@
-using ReenbitMessenger.API.AppServices;
-using ReenbitMessenger.API.Data;
-using ReenbitMessenger.API.Repositories;
-using ReenbitMessenger.API.Utils;
+using ReenbitMessenger.DataAccess.AppServices;
+using ReenbitMessenger.DataAccess.Data;
+using ReenbitMessenger.DataAccess.Repositories;
+using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Library.Models.DTO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.DataAccess.AppServices.Commands;
+using ReenbitMessenger.DataAccess.AppServices.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,14 +17,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<IdentityDataContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
+});
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<IdentityDataContext>();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddTransient<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
 builder.Services.AddTransient<IQueryHandler<GetUserByIdQuery, User>, GetUserByIdQueryHandler>();
 
 builder.Services.AddSingleton<HandlersDispatcher>();
-
-builder.Services.AddDbContext<IdentityDataContext>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -32,6 +45,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 

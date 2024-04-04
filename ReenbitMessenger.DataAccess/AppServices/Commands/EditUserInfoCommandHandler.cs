@@ -1,30 +1,32 @@
 ﻿using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Models.Domain;
+using ReenbitMessenger.DataAccess.Utils;
 
-namespace ReenbitMessenger.DataAccess.AppServices
+namespace ReenbitMessenger.DataAccess.AppServices.Commands
 {
     public class EditUserInfoCommandHandler : ICommandHandler<EditUserInfoCommand>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EditUserInfoCommandHandler(IUserRepository userRepository)
+        public EditUserInfoCommandHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> Handle(EditUserInfoCommand command)
         {
+            var userRepository = _unitOfWork.GetRepository<User>();
             var user = new User()
             {
                 Username = command.Username,
                 Email = command.Email
             };
 
-            user = await _userRepository.UpdateAsync(command.Id, user);
+            user = await userRepository.UpdateAsync(command.Id, user);
 
             if (user is null) return false;
 
-            await _userRepository.SaveAsync();
+            await _unitOfWork.SaveAsync();
 
             return true;
         }

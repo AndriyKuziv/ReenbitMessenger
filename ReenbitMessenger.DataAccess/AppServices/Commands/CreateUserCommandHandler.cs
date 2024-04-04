@@ -1,20 +1,23 @@
 ﻿using ReenbitMessenger.Library.Models;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Models.Domain;
+using ReenbitMessenger.DataAccess.Utils;
 
-namespace ReenbitMessenger.DataAccess.AppServices
+namespace ReenbitMessenger.DataAccess.AppServices.Commands
 {
     public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateUserCommandHandler(IUserRepository userRepository)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> Handle(CreateUserCommand command)
         {
+            var userRepository = _unitOfWork.GetRepository<User>();
+
             var user = new User()
             {
                 Username = command.Username,
@@ -22,11 +25,11 @@ namespace ReenbitMessenger.DataAccess.AppServices
                 Password = command.Password
             };
 
-            user = await _userRepository.AddAsync(user);
+            user = await userRepository.AddAsync(user);
 
             if (user is null) return false;
 
-            await _userRepository.SaveAsync();
+            await _unitOfWork.SaveAsync();
 
             return true;
         }

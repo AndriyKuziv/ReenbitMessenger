@@ -1,4 +1,4 @@
-﻿namespace ReenbitMessenger.DataAccess.AppServices
+﻿namespace ReenbitMessenger.DataAccess.AppServices.Commands
 {
     public class EditUserInfoCommand : ICommand
     {
