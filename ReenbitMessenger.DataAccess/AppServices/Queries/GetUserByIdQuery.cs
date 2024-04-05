@@ -1,8 +1,9 @@
-﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+﻿using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
-    public class GetUserByIdQuery : IQuery<User>
+    public class GetUserByIdQuery : IQuery<IdentityUser>
     {
         public Guid Id { get; }
 

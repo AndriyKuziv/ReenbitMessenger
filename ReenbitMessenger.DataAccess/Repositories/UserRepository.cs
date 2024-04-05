@@ -1,4 +1,5 @@
-﻿using ReenbitMessenger.DataAccess.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using System.Linq.Expressions;
 
@@ -12,39 +13,46 @@ namespace ReenbitMessenger.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<IdentityUser>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> GetAsync<TParam>(TParam param)
+        public async Task<IdentityUser> GetAsync<TParam>(TParam param)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<User>> FindAsync(Expression<Func<User, bool>> predicate)
+        public async Task<IEnumerable<IdentityUser>> FindAsync(Expression<Func<IdentityUser, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> AddAsync(User entity)
+        public async Task<IdentityUser> AddAsync(IdentityUser entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> DeleteAsync<Guid>(Guid id)
+        public async Task<IdentityUser> DeleteAsync<Guid>(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> UpdateAsync<Guid>(Guid id, User entity)
+        public async Task<IdentityUser> UpdateAsync<Guid>(Guid id, IdentityUser entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task SaveAsync()
+        public async Task<IdentityUser> AuthenticateAsync(string email, string password)
         {
-            await _dbContext.SaveChangesAsync();
+            var user = await _dbContext.Users.FindAsync(email, password);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            return user;
         }
     }
 }

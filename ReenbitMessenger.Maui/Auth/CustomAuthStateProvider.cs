@@ -19,7 +19,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         string tokenString = await _localStorage.GetItemAsync<string>("jwtToken");
-        if (string.IsNullOrEmpty( tokenString))
+        if (string.IsNullOrEmpty(tokenString))
         {
             Logout();
         }

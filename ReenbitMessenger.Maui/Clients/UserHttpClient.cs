@@ -13,10 +13,10 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<string> LogInAsync(string email, string password)
         {
-            var requestBody = new
+            var requestBody = new LoginRequest
             {
-                email = email,
-                password = password
+                Email = email,
+                Password = password
             };
             string jsonRequestBody = JsonSerializer.Serialize(requestBody);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");

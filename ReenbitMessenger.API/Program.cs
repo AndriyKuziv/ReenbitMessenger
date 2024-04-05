@@ -2,7 +2,6 @@ using ReenbitMessenger.DataAccess.AppServices;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
-using ReenbitMessenger.Infrastructure.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.AppServices.Commands;
@@ -10,6 +9,8 @@ using ReenbitMessenger.DataAccess.AppServices.Queries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -19,7 +20,17 @@ var config = builder.Configuration;
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
 
 builder.Services.AddDbContext<IdentityDataContext>(options =>
 {
@@ -51,13 +62,19 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services
     .AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<IdentityDataContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<IdentityDataContext>()
+    .AddSignInManager()
+    .AddRoleManager<RoleManager<IdentityRole>>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenHandler, ReenbitMessenger.DataAccess.Repositories.TokenHandler>();
 
-builder.Services.AddTransient<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
-builder.Services.AddTransient<IQueryHandler<GetUserByIdQuery, User>, GetUserByIdQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
 
 builder.Services.AddSingleton<HandlersDispatcher>();
 

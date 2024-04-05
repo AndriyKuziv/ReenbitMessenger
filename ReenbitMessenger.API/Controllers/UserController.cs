@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ReenbitMessenger.DataAccess.AppServices.Commands;
 using ReenbitMessenger.DataAccess.AppServices.Queries;
@@ -39,9 +40,9 @@ namespace ReenbitMessenger.API.Controllers
         {
             var query = new GetUserByIdQuery(id);
 
-            User result = await _handlersDispatcher.Dispatch(query);
+            var user = await _handlersDispatcher.Dispatch(query);
 
-            return Ok(result);
+            return Ok(user);
         }
 
         [HttpPost]

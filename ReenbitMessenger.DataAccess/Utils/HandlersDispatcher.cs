@@ -18,6 +18,7 @@ namespace ReenbitMessenger.DataAccess.Utils
             Type handlerType = type.MakeGenericType(commandType);
 
             dynamic handler = _provider.GetService(handlerType);
+            //dynamic handler = _provider.GetService(handlerType);
             dynamic result = await handler.Handle((dynamic)command);
 
             return result;
@@ -30,6 +31,7 @@ namespace ReenbitMessenger.DataAccess.Utils
             Type handlerType = type.MakeGenericType(typeArgs);
 
             dynamic handler = _provider.GetService(handlerType);
+            //dynamic handler = _provider.GetService(handlerType);
             T result = await handler.Handle((dynamic)query);
 
             return result;
