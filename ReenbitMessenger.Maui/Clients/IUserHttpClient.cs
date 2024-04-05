@@ -8,7 +8,7 @@ namespace ReenbitMessenger.Maui.Clients
 
         Task<User> GetUserAsync(Guid id);
 
-        Task<string> CreateUserAsync(User user);
+        Task<bool> RegisterAsync(string email, string password);
 
         Task<User> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest);
 

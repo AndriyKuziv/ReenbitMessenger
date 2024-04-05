@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 
 // Add services to the container.
 
@@ -36,9 +37,14 @@ builder.Services.AddAuthentication(x =>
 {
     x.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
+        ValidIssuer = config["JwtSettings:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey
+            (Encoding.UTF8.GetBytes(config["JwtSettings:Key"])),
+
+        ValidateIssuer = true,
         ValidateAudience = false,
-        ValidateIssuerSigningKey = false
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
     };
 });
 
@@ -70,6 +76,7 @@ app.MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

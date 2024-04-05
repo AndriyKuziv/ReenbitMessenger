@@ -45,9 +45,19 @@ namespace ReenbitMessenger.Maui.Clients
             return await _httpClient.GetFromJsonAsync<User>($"{id}");
         }
 
-        public async Task<string> CreateUserAsync(User user)
+        public async Task<bool> RegisterAsync(string email, string password)
         {
-            throw new NotImplementedException();
+            var requestBody = new
+            {
+                email = email,
+                password = password
+            };
+            string jsonRequestBody = JsonSerializer.Serialize(requestBody);
+            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync("register", content);
+
+            return response.IsSuccessStatusCode;
         }
 
         public Task<string> DeleteUserAsync(Guid id)

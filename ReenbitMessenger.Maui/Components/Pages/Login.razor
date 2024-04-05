@@ -1,5 +1,6 @@
 ﻿@page "/login"
 
+@inject NavigationManager navManager
 @inject IUserHttpClient httpClient
 @inject Blazored.LocalStorage.ILocalStorageService ls
 @inject ILogger<Login> logger
@@ -42,9 +43,15 @@
     private async Task Submit()
     {
         var token = await httpClient.LogInAsync(loginModel.Email, loginModel.Password);
-        await ls.SetItemAsync("jwtToken", token);
+        if (token is null)
+        {
+            logger.LogWarning("token is null");
+        }
+
+        await ls.SetItemAsStringAsync("jwtToken", token);
 
         logger.LogWarning(token);
-        Console.WriteLine("got em");
+
+        navManager.NavigateTo("");
     }
 }

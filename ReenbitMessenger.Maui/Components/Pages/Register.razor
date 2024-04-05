@@ -1,5 +1,9 @@
 ﻿@page "/register"
 
+@inject NavigationManager navManager
+@inject IUserHttpClient httpClient
+@inject Blazored.LocalStorage.ILocalStorageService ls
+@inject ILogger<Login> logger
 
 <h3>Sign up</h3>
 
@@ -36,6 +40,8 @@
     }
 
     private async Task Submit(){
-
+        var success = await httpClient.RegisterAsync(registerModel.Email, registerModel.Password);
+        if (success) Console.WriteLine("registered");
+        navManager.NavigateTo("");
     }
 }
