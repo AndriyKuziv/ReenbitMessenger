@@ -9,8 +9,9 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
     public class LoginRequest
     {
-        [JsonPropertyName("email")]
-        public string Email { get; set; }
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+
         [JsonPropertyName("password")]
         public string Password { get; set; }
     }

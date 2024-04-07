@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Models.Domain;
+using System.Data.Entity;
 using System.Linq.Expressions;
 
 namespace ReenbitMessenger.DataAccess.Repositories
@@ -45,7 +46,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         public async Task<IdentityUser> AuthenticateAsync(string email, string password)
         {
-            var user = await _dbContext.Users.FindAsync(email, password);
+            IdentityUser user = null;
 
             if (user is null)
             {

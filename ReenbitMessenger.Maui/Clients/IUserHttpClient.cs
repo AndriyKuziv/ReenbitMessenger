@@ -4,11 +4,11 @@ namespace ReenbitMessenger.Maui.Clients
 {
     public interface IUserHttpClient
     {
-        Task<string> LogInAsync(string email, string password);
+        Task<string> LogInAsync(LoginRequest loginRequest);
 
         Task<User> GetUserAsync(Guid id);
 
-        Task<bool> RegisterAsync(string email, string password);
+        Task<bool> RegisterAsync(CreateUserRequest createUserRequest);
 
         Task<User> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest);
 

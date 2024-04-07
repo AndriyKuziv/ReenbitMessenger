@@ -15,7 +15,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands
 
         public async Task<bool> Handle(DeleteUserCommand command)
         {
-            var userRepository = _unitOfWork.GetRepository<User>();
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
 
             var user = await userRepository.DeleteAsync(command.Id);
 

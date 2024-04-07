@@ -1,6 +1,7 @@
 ﻿using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Utils;
+using Microsoft.AspNetCore.Identity;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands
 {
@@ -15,10 +16,10 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands
 
         public async Task<bool> Handle(EditUserInfoCommand command)
         {
-            var userRepository = _unitOfWork.GetRepository<User>();
-            var user = new User()
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+            var user = new IdentityUser()
             {
-                Username = command.Username,
+                UserName = command.Username,
                 Email = command.Email
             };
 

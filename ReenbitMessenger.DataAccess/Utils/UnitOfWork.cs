@@ -8,24 +8,37 @@ namespace ReenbitMessenger.DataAccess.Utils
     {
         private readonly IdentityDataContext _dbContext;
         private readonly Dictionary<Type, object> repos = new Dictionary<Type, object>();
+        private readonly IServiceProvider _serviceProvider;
 
         private bool _disposed;
 
-        public UnitOfWork(IdentityDataContext dbContext)
+        public UnitOfWork(IdentityDataContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _disposed = false;
+            _serviceProvider = serviceProvider;
         }
 
-        public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+        //public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+        //{
+        //    var type = typeof(TEntity);
+        //    if (!repos.Keys.Contains(type))
+        //    {
+        //        repos[type] = new GenericRepository<TEntity>(_dbContext);
+        //    }
+
+        //    return (IGenericRepository<TEntity>)repos[type];
+        //}
+
+        public TInterface GetRepository<TInterface>() where TInterface : class
         {
-            var type = typeof(TEntity);
+            var type = typeof(TInterface);
             if (!repos.Keys.Contains(type))
             {
-                repos[type] = new GenericRepository<TEntity>(_dbContext);
+                repos[type] = _serviceProvider.GetService(type);
             }
 
-            return (IGenericRepository<TEntity>)repos[type];
+            return (TInterface)repos[type];
         }
 
         public async Task<int> SaveAsync()

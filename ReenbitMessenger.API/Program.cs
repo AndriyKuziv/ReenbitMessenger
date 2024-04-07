@@ -10,12 +10,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
+builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = false);
 
-// Add services to the container.
+var config = builder.Configuration;
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -53,12 +54,11 @@ builder.Services.AddAuthentication(x =>
             (Encoding.UTF8.GetBytes(config["JwtSettings:Key"])),
 
         ValidateIssuer = true,
-        ValidateAudience = false,
+        ValidateAudience = true,
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
     };
 });
-
 
 builder.Services
     .AddIdentityApiEndpoints<IdentityUser>()
@@ -68,11 +68,13 @@ builder.Services
     .AddRoleManager<RoleManager<IdentityRole>>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenHandler, ReenbitMessenger.DataAccess.Repositories.TokenHandler>();
 
+builder.Services.AddScoped<ICommandHandler<CreateUserCommand>, CreateUserCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
 
@@ -89,7 +91,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<IdentityUser>();
+app.MapGroup("/identity").MapIdentityApi<IdentityUser>().AllowAnonymous();
 
 app.UseHttpsRedirection();
 

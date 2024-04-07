@@ -10,15 +10,14 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
         IQueryHandler<GetUserByIdQuery, IdentityUser>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public GetUserByIdQueryHandler(IUnitOfWork unitOfWork,
-            IMapper mapper)
+        public GetUserByIdQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
         public async Task<IdentityUser> Handle(GetUserByIdQuery query)
         {
-            var userRepository = _unitOfWork.GetRepository<IdentityUser>();
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
 
             var user = await userRepository.GetAsync(query.Id);
 

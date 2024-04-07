@@ -9,7 +9,12 @@
 
 <EditForm Model="@registerModel" OnValidSubmit="Submit" style="padding: 10px; max-width: 300px">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="username">User name</label>
+        <InputText id="username" class="form-control" @bind-Value="registerModel.Username" />
+        <ValidationMessage For="@(() => registerModel.Username)" />
+    </div>
 
     <div class="form-group">
         <label for="email">Email</label>
@@ -27,10 +32,13 @@
 </EditForm>
 
 @code{
-    private RegisterModel registerModel => new RegisterModel();
+    private RegisterModel registerModel = new RegisterModel();
 
     private class RegisterModel
     {
+        [Required(ErrorMessage = "User name is required")]
+        public string Username { get; set; }
+
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
         public string Email { get; set; }
@@ -40,8 +48,19 @@
     }
 
     private async Task Submit(){
-        var success = await httpClient.RegisterAsync(registerModel.Email, registerModel.Password);
-        if (success) Console.WriteLine("registered");
-        navManager.NavigateTo("");
+        var request = new CreateUserRequest
+        {
+            Username = registerModel.Username,
+            Email = registerModel.Email,
+            Password = registerModel.Password
+        };
+
+        var success = await httpClient.RegisterAsync(request);
+        if (success)
+        {
+            Console.WriteLine("registered");
+
+            navManager.NavigateTo("");
+        }
     }
 }

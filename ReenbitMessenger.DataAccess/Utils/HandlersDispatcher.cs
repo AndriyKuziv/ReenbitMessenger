@@ -1,14 +1,15 @@
-﻿using ReenbitMessenger.DataAccess.AppServices;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReenbitMessenger.DataAccess.AppServices;
 
 namespace ReenbitMessenger.DataAccess.Utils
 {
     public sealed class HandlersDispatcher
     {
-        private readonly IServiceProvider _provider;
+        private readonly IServiceProvider _serviceProvider;
 
         public HandlersDispatcher(IServiceProvider serviceProvider)
         {
-            _provider = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<bool> Dispatch(ICommand command)
@@ -17,7 +18,8 @@ namespace ReenbitMessenger.DataAccess.Utils
             Type commandType = command.GetType();
             Type handlerType = type.MakeGenericType(commandType);
 
-            dynamic handler = _provider.GetService(handlerType);
+            using var scope = _serviceProvider.CreateScope();
+            dynamic handler = scope.ServiceProvider.GetService(handlerType);
             //dynamic handler = _provider.GetService(handlerType);
             dynamic result = await handler.Handle((dynamic)command);
 
@@ -30,7 +32,8 @@ namespace ReenbitMessenger.DataAccess.Utils
             Type[] typeArgs = { query.GetType(), typeof(T) };
             Type handlerType = type.MakeGenericType(typeArgs);
 
-            dynamic handler = _provider.GetService(handlerType);
+            using var scope = _serviceProvider.CreateScope();
+            dynamic handler = scope.ServiceProvider.GetService(handlerType);
             //dynamic handler = _provider.GetService(handlerType);
             T result = await handler.Handle((dynamic)query);
 

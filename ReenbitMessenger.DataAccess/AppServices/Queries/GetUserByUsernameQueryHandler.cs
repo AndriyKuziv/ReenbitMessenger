@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.DataAccess.Utils;
+using ReenbitMessenger.DataAccess.Repositories;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
@@ -18,7 +19,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
 
         public async Task<User> Handle(GetUserByUsernameQuery query)
         {
-            var userRepository = _unitOfWork.GetRepository<User>();
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
 
             var user = await userRepository.GetAsync(query.Username);
 

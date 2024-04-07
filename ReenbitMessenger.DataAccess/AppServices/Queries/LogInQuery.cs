@@ -10,12 +10,12 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
     public class LogInQuery : IQuery<IdentityUser>
     {
-        public string Email { get; }
+        public string Username { get; }
         public string Password { get; }
 
-        public LogInQuery(string email, string password)
+        public LogInQuery(string username, string password)
         {
-            Email = email;
+            Username = username;
             Password = password;
         }
     }

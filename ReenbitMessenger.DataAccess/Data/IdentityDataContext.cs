@@ -9,7 +9,5 @@ namespace ReenbitMessenger.DataAccess.Data
     {
         public IdentityDataContext(DbContextOptions<IdentityDataContext> options)
             : base(options) { }
-
-        DbSet<User> Users { get; set; }
     }
 }

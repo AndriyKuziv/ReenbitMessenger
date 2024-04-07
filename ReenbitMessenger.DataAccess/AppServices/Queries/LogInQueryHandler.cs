@@ -13,19 +13,29 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
     public class LogInQueryHandler : IQueryHandler<LogInQuery, IdentityUser>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public LogInQueryHandler(IUnitOfWork unitOfWork)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        public LogInQueryHandler(UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager)
         {
-            _unitOfWork = unitOfWork;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public Task<IdentityUser> Handle(LogInQuery query)
+        public async Task<IdentityUser> Handle(LogInQuery query)
         {
-            var userRepository = (IUserRepository)_unitOfWork.GetRepository<IdentityUser>();
+            var result = await _signInManager.PasswordSignInAsync(
+                query.Username,
+                query.Password,
+                isPersistent: true,
+                lockoutOnFailure: false);
 
-            var user = userRepository.AuthenticateAsync(query.Email, query.Password);
+            if (!result.Succeeded)
+            {
+                return null;
+            }
 
-            return user;
+            return await _userManager.FindByNameAsync(query.Username);
         }
     }
 }

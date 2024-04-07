@@ -11,26 +11,19 @@ namespace ReenbitMessenger.Maui.Clients
             BaseAddress = new Uri("https://localhost:7051")
         };
 
-        public async Task<string> LogInAsync(string email, string password)
+        public async Task<string> LogInAsync(LoginRequest loginRequest)
         {
-            var requestBody = new LoginRequest
-            {
-                Email = email,
-                Password = password
-            };
-            string jsonRequestBody = JsonSerializer.Serialize(requestBody);
+            string jsonRequestBody = JsonSerializer.Serialize(loginRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _httpClient.PostAsync("login", content);
+            HttpResponseMessage response = await _httpClient.PostAsync("auth/login", content);
 
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                var tokenResponse = JsonSerializer.Deserialize<Token>(jsonResponse);
-
-                Console.WriteLine("JWT Token: " + tokenResponse.accessToken);
-                return tokenResponse.accessToken;
+                Console.WriteLine("JWT Token: " + jsonResponse);
+                return jsonResponse;
             }
             else
             {
@@ -45,17 +38,12 @@ namespace ReenbitMessenger.Maui.Clients
             return await _httpClient.GetFromJsonAsync<User>($"{id}");
         }
 
-        public async Task<bool> RegisterAsync(string email, string password)
+        public async Task<bool> RegisterAsync(CreateUserRequest createUserRequest)
         {
-            var requestBody = new
-            {
-                email = email,
-                password = password
-            };
-            string jsonRequestBody = JsonSerializer.Serialize(requestBody);
+            string jsonRequestBody = JsonSerializer.Serialize(createUserRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _httpClient.PostAsync("register", content);
+            HttpResponseMessage response = await _httpClient.PostAsync("auth/register", content);
 
             return response.IsSuccessStatusCode;
         }
