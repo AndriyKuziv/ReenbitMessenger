@@ -24,15 +24,21 @@ namespace ReenbitMessenger.API.Controllers
             _mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllUsers()
-        //{
-        //    var users = await _unitOfWork.Users.GetAllAsync();
+        [HttpPost]
+        [Route("usersList")]
+        public async Task<IActionResult> GetUsers([FromBody]GetUsersRequest getUsersRequest)
+        {
+            var query = new GetUsersQuery(
+                getUsersRequest.NumberOfUsers,
+                getUsersRequest.UsernameContains,
+                getUsersRequest.EmailContains);
 
-        //    var usersDTO = _mapper.Map<List<User>>(users);
+            var users = await _handlersDispatcher.Dispatch(query);
 
-        //    return Ok(usersDTO);
-        //}
+            var usersDTO = _mapper.Map<List<User>>(users);
+
+            return Ok(usersDTO);
+        }
 
         [HttpGet]
         [Route("{id:guid}")]
@@ -42,7 +48,9 @@ namespace ReenbitMessenger.API.Controllers
 
             var user = await _handlersDispatcher.Dispatch(query);
 
-            return Ok(user);
+            var userDTO = _mapper.Map<User>(user);
+
+            return Ok(userDTO);
         }
 
         [HttpPost]
@@ -80,7 +88,7 @@ namespace ReenbitMessenger.API.Controllers
             [FromRoute] Guid userId,
             [FromBody] EditUserInfoRequest editUserInfoRequest)
         {
-            var command = new EditUserInfoCommand(userId, 
+            var command = new EditUserInfoCommand(userId,
                 editUserInfoRequest.Email, editUserInfoRequest.Username);
 
             var result = await _handlersDispatcher.Dispatch(command);

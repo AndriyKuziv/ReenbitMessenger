@@ -11,24 +11,12 @@ namespace ReenbitMessenger.Maui.Clients
             BaseAddress = new Uri("https://localhost:7051")
         };
 
-        public async Task<string> LogInAsync(LoginRequest loginRequest)
+        public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
         {
-            string jsonRequestBody = JsonSerializer.Serialize(loginRequest);
+            string jsonRequestBody = JsonSerializer.Serialize(getUsersRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _httpClient.PostAsync("auth/login", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                Console.WriteLine("JWT Token: " + jsonResponse);
-                return jsonResponse;
-            }
-            else
-            {
-                Console.WriteLine("Error: " + response.StatusCode);
-            }
+            var result = _httpClient.GetAsync(_httpClient.BaseAddress + "User").Result;
 
             return null;
         }
@@ -36,16 +24,6 @@ namespace ReenbitMessenger.Maui.Clients
         public async Task<User> GetUserAsync(Guid id)
         {
             return await _httpClient.GetFromJsonAsync<User>($"{id}");
-        }
-
-        public async Task<bool> RegisterAsync(CreateUserRequest createUserRequest)
-        {
-            string jsonRequestBody = JsonSerializer.Serialize(createUserRequest);
-            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PostAsync("auth/register", content);
-
-            return response.IsSuccessStatusCode;
         }
 
         public Task<string> DeleteUserAsync(Guid id)

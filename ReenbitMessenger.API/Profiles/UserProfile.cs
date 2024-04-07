@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 namespace ReenbitMessenger.API.Profiles
 {
@@ -7,6 +8,8 @@ namespace ReenbitMessenger.API.Profiles
         public UserProfile()
         {
             CreateMap<DataAccess.Models.Domain.User, Infrastructure.Models.DTO.User>()
+                .ReverseMap();
+            CreateMap<IdentityUser, Infrastructure.Models.DTO.User>()
                 .ReverseMap();
         }
     }

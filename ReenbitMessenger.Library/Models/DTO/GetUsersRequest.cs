@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
-    public class Token
+    public class GetUsersRequest
     {
-        public string tokenType { get; set; }
-        public string accessToken { get; set; }
-        public string refreshToken { get; set; }
+        public int NumberOfUsers { get; set; }
+        public string UsernameContains { get; set; }
+        public string EmailContains { get; set; }
     }
 }

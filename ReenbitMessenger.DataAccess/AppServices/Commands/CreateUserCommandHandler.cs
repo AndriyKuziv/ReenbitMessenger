@@ -4,6 +4,7 @@ using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
+using System.Security.Claims;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands
 {
@@ -29,6 +30,8 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands
             var result = await _userManager.CreateAsync(user, command.Password);
 
             if (!result.Succeeded) return false;
+
+            //await _userManager.AddToRoleAsync(user, "user");
 
             await _unitOfWork.SaveAsync();
 

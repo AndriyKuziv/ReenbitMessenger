@@ -77,6 +77,7 @@ builder.Services.AddScoped<ICommandHandler<EditUserInfoCommand>, EditUserInfoCom
 
 builder.Services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>, GetUsersQueryHandler>();
 
 builder.Services.AddSingleton<HandlersDispatcher>();
 
@@ -90,8 +91,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.MapGroup("/identity").MapIdentityApi<IdentityUser>().AllowAnonymous();
 
 app.UseHttpsRedirection();
 

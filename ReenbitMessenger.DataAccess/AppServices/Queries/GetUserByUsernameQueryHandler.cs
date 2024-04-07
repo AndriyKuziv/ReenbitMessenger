@@ -2,32 +2,24 @@
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.DataAccess.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Queries
 {
     public class GetUserByUsernameQueryHandler :
-        IQueryHandler<GetUserByUsernameQuery, User>
+        IQueryHandler<GetUserByUsernameQuery, IdentityUser>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public GetUserByUsernameQueryHandler(IUnitOfWork unitOfWork,
-            IMapper mapper)
+        private readonly UserManager<IdentityUser> _userManager;
+        public GetUserByUsernameQueryHandler(UserManager<IdentityUser> userManager)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public async Task<User> Handle(GetUserByUsernameQuery query)
+        public async Task<IdentityUser> Handle(GetUserByUsernameQuery query)
         {
-            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+            var user = await _userManager.FindByNameAsync(query.Username);
 
-            var user = await userRepository.GetAsync(query.Username);
-
-            if (user is null) return null;
-
-            var userDTO = _mapper.Map<User>(user);
-
-            return userDTO;
+            return user;
         }
     }
 }
