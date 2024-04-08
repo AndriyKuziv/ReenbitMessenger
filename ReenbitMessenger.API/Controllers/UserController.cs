@@ -31,7 +31,8 @@ namespace ReenbitMessenger.API.Controllers
             var query = new GetUsersQuery(
                 getUsersRequest.NumberOfUsers,
                 getUsersRequest.UsernameContains,
-                getUsersRequest.EmailContains);
+                getUsersRequest.EmailContains,
+                getUsersRequest.StartAt);
 
             var users = await _handlersDispatcher.Dispatch(query);
 
@@ -54,6 +55,7 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateUser(
             [FromBody] CreateUserRequest createUserRequest)
         {

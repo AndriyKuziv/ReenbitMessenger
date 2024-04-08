@@ -1,6 +1,6 @@
-﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+﻿using Newtonsoft.Json;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace ReenbitMessenger.Maui.Clients
 {
@@ -13,12 +13,18 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
         {
-            string jsonRequestBody = JsonSerializer.Serialize(getUsersRequest);
+            string jsonRequestBody = JsonConvert.SerializeObject(getUsersRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-            var result = _httpClient.GetAsync(_httpClient.BaseAddress + "User").Result;
+            HttpResponseMessage response = await _httpClient.PostAsync(_httpClient.BaseAddress + "users/usersList", content);
 
-            return null;
+            if (!response.IsSuccessStatusCode) return null;
+
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+
+            List<User> users = JsonConvert.DeserializeObject<List<User>>(jsonResponse);
+
+            return users;
         }
 
         public async Task<User> GetUserAsync(Guid id)

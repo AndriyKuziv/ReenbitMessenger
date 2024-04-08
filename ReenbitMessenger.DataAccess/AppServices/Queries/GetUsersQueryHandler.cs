@@ -25,6 +25,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
                 .Where(usr =>
                     usr.UserName.Contains(query.UsernameContains) &&
                     usr.Email.Contains(query.EmailContains))
+                .Skip(query.StartAt)
                 .Take(query.NumberOfUsers)
                 .ToList();
             }
@@ -33,6 +34,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
                 .Where(usr =>
                     usr.UserName.Contains(query.UsernameContains) &&
                     usr.Email.Contains(query.EmailContains))
+                .Skip(query.StartAt)
                 .ToList();
         }
     }

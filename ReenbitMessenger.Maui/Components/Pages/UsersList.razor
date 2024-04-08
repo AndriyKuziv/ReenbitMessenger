@@ -1,7 +1,100 @@
 ﻿@page "/usersList"
 
+@inject IUserHttpClient httpClient
+
 <h3>UsersList</h3>
 
-@code {
+<button @onclick="UpdateUsers">Refresh</button>
 
+<div class="form-group" style="max-width: 200px">
+    <label for="username">Number of users</label>
+    <InputNumber id="username" class="form-control" @bind-Value="_usersFilterModel.NumberOfUsers" />
+</div>
+<div class="form-group" style="max-width: 200px">
+    <label for="username">User name</label>
+    <InputText id="username" class="form-control" @bind-Value="_usersFilterModel.UsernameContains" />
+</div>
+<div class="form-group" style="max-width: 200px">
+    <label for="email">Email</label>
+    <InputText id="email" class="form-control" @bind-Value="_usersFilterModel.EmailContains" />
+</div>
+
+@if (_users is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in _users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-primary" @onclick="MoveBackward">&#x25C0;</button>
+<button class="btn btn-primary" @onclick="MoveForward">&#x25B6;</button>
+
+@code {
+    private IEnumerable<User>? _users;
+
+    private UsersFilterModel _usersFilterModel = new UsersFilterModel { 
+        NumberOfUsers = 0,
+        EmailContains = "",
+        UsernameContains = "",
+        StartAt = 0
+    };
+
+    private class UsersFilterModel
+    {
+        public int NumberOfUsers { get; set; }
+        public string UsernameContains { get; set; }
+        public string EmailContains { get; set; }
+        public int StartAt { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateUsers();
+    }
+
+    private async Task UpdateUsers()
+    {
+        _users = null;
+        _users = await httpClient.GetUsersAsync(new GetUsersRequest
+            {
+                NumberOfUsers = _usersFilterModel.NumberOfUsers,
+                EmailContains = _usersFilterModel.EmailContains,
+                UsernameContains = _usersFilterModel.UsernameContains,
+                StartAt = _usersFilterModel.StartAt
+            });
+    }
+
+    private async Task MoveForward()
+    {
+        _usersFilterModel.StartAt += _usersFilterModel.NumberOfUsers;
+        await UpdateUsers();
+    }
+
+    private async Task MoveBackward()
+    {
+        _usersFilterModel.StartAt -= _usersFilterModel.NumberOfUsers;
+        if (_usersFilterModel.StartAt < 0)
+        {
+            _usersFilterModel.StartAt = 0;
+        }
+        await UpdateUsers();
+    }
 }

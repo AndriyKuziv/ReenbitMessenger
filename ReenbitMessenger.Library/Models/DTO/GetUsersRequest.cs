@@ -11,5 +11,6 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
         public int NumberOfUsers { get; set; }
         public string UsernameContains { get; set; }
         public string EmailContains { get; set; }
+        public int StartAt { get; set; }
     }
 }

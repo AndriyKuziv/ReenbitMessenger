@@ -12,18 +12,21 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
         public int NumberOfUsers { get; }
         public string UsernameContains { get; }
         public string EmailContains { get; }
+        public int StartAt { get; }
 
         public GetUsersQuery()
         {
-            NumberOfUsers = -1;
+            NumberOfUsers = 0;
             UsernameContains = "";
             EmailContains = "";
+            StartAt = 0;
         }
-        public GetUsersQuery(int numberOfUsers, string usernameContains, string emailContains)
+        public GetUsersQuery(int numberOfUsers, string usernameContains, string emailContains, int startAt)
         {
             NumberOfUsers = numberOfUsers;
             UsernameContains = usernameContains;
             EmailContains = emailContains;
+            StartAt = startAt;
         }
     }
 }
