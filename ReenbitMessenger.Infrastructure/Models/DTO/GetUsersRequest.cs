@@ -9,8 +9,8 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
     public class GetUsersRequest
     {
         public int NumberOfUsers { get; set; }
-        public string UsernameContains { get; set; }
-        public string EmailContains { get; set; }
-        public int StartAt { get; set; }
+        public string ValueContains { get; set; } = "";
+        public int Page { get; set; }
+        public string SortOrder { get; set; } = "";
     }
 }

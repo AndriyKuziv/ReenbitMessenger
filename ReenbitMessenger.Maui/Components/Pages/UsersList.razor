@@ -1,68 +1,50 @@
 ﻿@page "/usersList"
 
 @inject IUserHttpClient httpClient
+@using System.Linq.Expressions
 
 <h3>UsersList</h3>
 
-<button @onclick="UpdateUsers">Refresh</button>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateUsers">Refresh</MudButton>
 
-<div class="form-group" style="max-width: 200px">
-    <label for="username">Number of users</label>
-    <InputNumber id="username" class="form-control" @bind-Value="_usersFilterModel.NumberOfUsers" />
-</div>
-<div class="form-group" style="max-width: 200px">
-    <label for="username">User name</label>
-    <InputText id="username" class="form-control" @bind-Value="_usersFilterModel.UsernameContains" />
-</div>
-<div class="form-group" style="max-width: 200px">
-    <label for="email">Email</label>
-    <InputText id="email" class="form-control" @bind-Value="_usersFilterModel.EmailContains" />
-</div>
-
-@if (_users is null)
+@if (users is null || !users.Any())
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>User name</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in _users)
-            {
-                <tr>
-                    <td>@user.UserName</td>
-                    <td>@user.Email</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudSelect Label="Order type" @bind-Value="usersFilterModel.SortOrder">
+        <MudSelectItem Value="@("Ascending")">Ascending</MudSelectItem>
+        <MudSelectItem Value="@("Descending")">Descending</MudSelectItem>
+    </MudSelect>
+
+    <MudSelect Label="Order by" @bind-Value="usersFilterModel.OrderBy">
+        <MudSelectItem Value="@("Id")">Id</MudSelectItem>
+        <MudSelectItem Value="@("UserName")">Username</MudSelectItem>
+        <MudSelectItem Value="@("Email")">Email</MudSelectItem>
+    </MudSelect>
+
+    <MudDataGrid T="User" Items="@users" Hideable="true">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" Title="Id" />
+            <PropertyColumn Property="x => x.UserName" Title="Username" />
+            <PropertyColumn Property="x => x.Email" Title="Email" />
+        </Columns>
+    </MudDataGrid>
 }
 
-<button class="btn btn-primary" @onclick="MoveBackward">&#x25C0;</button>
-<button class="btn btn-primary" @onclick="MoveForward">&#x25B6;</button>
-
 @code {
-    private IEnumerable<User>? _users;
+    private IEnumerable<User> users { get; set; } = new List<User>();
 
-    private UsersFilterModel _usersFilterModel = new UsersFilterModel { 
-        NumberOfUsers = 0,
-        EmailContains = "",
-        UsernameContains = "",
-        StartAt = 0
-    };
+    private UsersFilterModel usersFilterModel = new UsersFilterModel();
 
     private class UsersFilterModel
     {
-        public int NumberOfUsers { get; set; }
-        public string UsernameContains { get; set; }
-        public string EmailContains { get; set; }
-        public int StartAt { get; set; }
+        public int NumberOfUsers { get; set; } = 20;
+        public int Page { get; set; } = 0;
+        public string ValueContains { get; set; } = "";
+        public string SortOrder { get; set; } = "Ascending";
+        public string OrderBy { get; set; }
     }
 
     protected override async Task OnInitializedAsync()
@@ -72,29 +54,19 @@ else
 
     private async Task UpdateUsers()
     {
-        _users = null;
-        _users = await httpClient.GetUsersAsync(new GetUsersRequest
-            {
-                NumberOfUsers = _usersFilterModel.NumberOfUsers,
-                EmailContains = _usersFilterModel.EmailContains,
-                UsernameContains = _usersFilterModel.UsernameContains,
-                StartAt = _usersFilterModel.StartAt
-            });
-    }
-
-    private async Task MoveForward()
-    {
-        _usersFilterModel.StartAt += _usersFilterModel.NumberOfUsers;
-        await UpdateUsers();
-    }
-
-    private async Task MoveBackward()
-    {
-        _usersFilterModel.StartAt -= _usersFilterModel.NumberOfUsers;
-        if (_usersFilterModel.StartAt < 0)
+        users = await httpClient.GetUsersAsync(new GetUsersRequest
         {
-            _usersFilterModel.StartAt = 0;
-        }
-        await UpdateUsers();
+            NumberOfUsers = usersFilterModel.NumberOfUsers,
+            Page = usersFilterModel.Page,
+            ValueContains = usersFilterModel.ValueContains,
+            SortOrder = usersFilterModel.SortOrder
+        });
+        // _users = new List<User>
+        // {
+        //     new User { Id = "1", Email = "user1@gmail.com", UserName = "user1" },
+        //     new User { Id = "2", Email = "ser@gmail.com", UserName = "user2" },
+        //     new User { Id = "3", Email = "user3@gmail.com", UserName = "user3" },
+        //     new User { Id = "4", Email = "test@gmail.com", UserName = "user4" },
+        // };
     }
 }

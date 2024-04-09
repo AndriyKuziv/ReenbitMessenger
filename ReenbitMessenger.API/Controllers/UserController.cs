@@ -30,9 +30,9 @@ namespace ReenbitMessenger.API.Controllers
         {
             var query = new GetUsersQuery(
                 getUsersRequest.NumberOfUsers,
-                getUsersRequest.UsernameContains,
-                getUsersRequest.EmailContains,
-                getUsersRequest.StartAt);
+                getUsersRequest.ValueContains,
+                getUsersRequest.Page,
+                getUsersRequest.SortOrder);
 
             var users = await _handlersDispatcher.Dispatch(query);
 

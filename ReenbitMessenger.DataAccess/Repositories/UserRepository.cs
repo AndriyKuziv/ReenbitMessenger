@@ -2,6 +2,7 @@
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 
 namespace ReenbitMessenger.DataAccess.Repositories
@@ -17,6 +18,16 @@ namespace ReenbitMessenger.DataAccess.Repositories
         public async Task<IEnumerable<IdentityUser>> GetAllAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<IdentityUser>> FilterAsync<TKey>(Func<IdentityUser, bool> predicate,
+            Func<IdentityUser, TKey> orderBy, SortOrder sortOrder = SortOrder.Ascending, int startAt = 0, int take = 20)
+        {
+            var users = _dbContext.Users.Where(predicate);
+
+            var sortedList = sortOrder == SortOrder.Ascending ? users.OrderBy(orderBy) :
+                users.OrderByDescending(orderBy);
+            return sortedList.Skip(startAt).Take(take).ToList();
         }
 
         public async Task<IdentityUser> GetAsync<TParam>(TParam param)

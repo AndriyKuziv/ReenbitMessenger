@@ -1,4 +1,6 @@
-﻿using ReenbitMessenger.DataAccess.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.DataAccess.Data;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 
 namespace ReenbitMessenger.DataAccess.Repositories
@@ -45,6 +47,11 @@ namespace ReenbitMessenger.DataAccess.Repositories
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public Task<IEnumerable<TEntity>> FilterAsync<TKey>(Func<IdentityUser, bool> predicate, Func<IdentityUser, TKey> orderBy, SortOrder sortOrder = SortOrder.Ascending, int startAt = 0, int take = 20)
+        {
+            throw new NotImplementedException();
         }
     }
 }

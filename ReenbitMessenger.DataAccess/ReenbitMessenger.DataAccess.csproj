@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReenbitMessenger.Library\ReenbitMessenger.Infrastructure.csproj" />
+    <ProjectReference Include="..\ReenbitMessenger.Infrastructure\ReenbitMessenger.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

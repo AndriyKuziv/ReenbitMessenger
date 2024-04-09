@@ -76,11 +76,14 @@
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Include="MudBlazor" Version="6.19.1" />
+        <PackageReference Include="MudBlazor.Markdown" Version="0.1.3" />
+        <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.9" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ReenbitMessenger.Library\ReenbitMessenger.Infrastructure.csproj" />
+      <ProjectReference Include="..\ReenbitMessenger.Infrastructure\ReenbitMessenger.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

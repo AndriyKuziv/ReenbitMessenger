@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReenbitMessenger.DataAccess\ReenbitMessenger.DataAccess.csproj" />
-    <ProjectReference Include="..\ReenbitMessenger.Library\ReenbitMessenger.Infrastructure.csproj" />
+    <ProjectReference Include="..\ReenbitMessenger.Infrastructure\ReenbitMessenger.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

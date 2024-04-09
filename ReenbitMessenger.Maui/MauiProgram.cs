@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 using ReenbitMessenger.Maui.Auth;
 using ReenbitMessenger.Maui.Clients;
 
@@ -29,6 +30,7 @@ namespace ReenbitMessenger.Maui
             builder.Services.AddScoped<IUserHttpClient, UserHttpClient>();
             builder.Services.AddScoped<IAuthHttpClient, AuthHttpClient>();
             builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddMudServices();
 
             return builder.Build();
         }
