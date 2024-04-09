@@ -26,13 +26,14 @@ namespace ReenbitMessenger.API.Controllers
 
         [HttpPost]
         [Route("usersList")]
-        public async Task<IActionResult> GetUsers([FromBody]GetUsersRequest getUsersRequest)
+        public async Task<IActionResult> GetSortedUsers([FromBody]GetUsersRequest getUsersRequest)
         {
             var query = new GetUsersQuery(
                 getUsersRequest.NumberOfUsers,
                 getUsersRequest.ValueContains,
                 getUsersRequest.Page,
-                getUsersRequest.SortOrder);
+                getUsersRequest.SortOrder,
+                getUsersRequest.OrderBy);
 
             var users = await _handlersDispatcher.Dispatch(query);
 
