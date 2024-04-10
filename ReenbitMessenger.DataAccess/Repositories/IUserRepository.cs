@@ -5,8 +5,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
 {
     public interface IUserRepository : IGenericRepository<IdentityUser>
     {
-        Task<IdentityUser> GetAsync<TParam>(TParam param);
-
+        Task<bool> IsEmailUniqueAsync(string email);
         Task<IdentityUser> AuthenticateAsync(string email, string password);
     }
 }

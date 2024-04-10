@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.Data;
-using ReenbitMessenger.DataAccess.Models.Domain;
-using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
@@ -33,6 +32,11 @@ namespace ReenbitMessenger.DataAccess.Repositories
         public async Task<IdentityUser> GetAsync<TParam>(TParam param)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsEmailUniqueAsync(string email)
+        {
+            return !await _dbContext.Users.AnyAsync(u => u.Email == email);
         }
 
         public async Task<IEnumerable<IdentityUser>> FindAsync(Expression<Func<IdentityUser, bool>> predicate)

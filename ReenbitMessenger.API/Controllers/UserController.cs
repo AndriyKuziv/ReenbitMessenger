@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +17,14 @@ namespace ReenbitMessenger.API.Controllers
     {
         private readonly HandlersDispatcher _handlersDispatcher;
         private readonly IMapper _mapper;
+        private readonly IValidator<CreateUserCommand> _validator;
 
         public UsersController(HandlersDispatcher commandHandlersDispatcher,
-            IMapper mapper)
+            IMapper mapper, IValidator<CreateUserCommand> validator)
         {
             _handlersDispatcher = commandHandlersDispatcher;
             _mapper = mapper;
+            _validator = validator;
         }
 
         [HttpPost]
@@ -65,9 +68,16 @@ namespace ReenbitMessenger.API.Controllers
                 createUserRequest.Email,
                 createUserRequest.Password);
 
-            var result = await _handlersDispatcher.Dispatch(command);
+            var result = await _validator.ValidateAsync(command);
 
-            if (!result) return BadRequest();
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var dispatchResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!dispatchResult) return BadRequest();
 
             return Ok();
         }

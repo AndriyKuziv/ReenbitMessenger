@@ -8,9 +8,9 @@
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateUsers">Refresh</MudButton>
 <MudDivider />
 
-@if (users is null || !users.Any())
+@if (users is null)
 {
-    <p><em>Loading...</em></p>
+    <p style="margin: 15px"><em>Loading...</em></p>
 }
 else
 {
@@ -26,7 +26,7 @@ else
     </MudSelect>
 
 
-    <MudSelect Label="Page size" @bind-Value="usersFilterModel.NumberOfUsers" Style="max-width: 200px">
+    <MudSelect T="int" Label="Page size" Value=@usersFilterModel.NumberOfUsers ValueChanged=@OnValueChanged Style="max-width: 200px">
         <MudSelectItem Value="@(2)">2</MudSelectItem>
         <MudSelectItem Value="@(5)">5</MudSelectItem>
         <MudSelectItem Value="@(10)">10</MudSelectItem>
@@ -58,7 +58,7 @@ else
 
     private class UsersFilterModel
     {
-        public int NumberOfUsers { get; set; } = 20;
+        public int NumberOfUsers { get; set; } = 5;
         public int Page { get; set; } = 0;
         public string ValueContains { get; set; } = "";
         public string SortOrder { get; set; } = "Ascending";
@@ -80,13 +80,20 @@ else
             SortOrder = usersFilterModel.SortOrder,
             OrderBy = usersFilterModel.OrderBy
         });
-        // _users = new List<User>
+        // users = new List<User>
         // {
         //     new User { Id = "1", Email = "user1@gmail.com", UserName = "user1" },
         //     new User { Id = "2", Email = "ser@gmail.com", UserName = "user2" },
         //     new User { Id = "3", Email = "user3@gmail.com", UserName = "user3" },
         //     new User { Id = "4", Email = "test@gmail.com", UserName = "user4" },
         // };
+    }
+
+    private async Task OnValueChanged(int newValue)
+    {
+        usersFilterModel.NumberOfUsers = newValue;
+
+        await UpdateUsers();
     }
 
     private async Task MoveForward()

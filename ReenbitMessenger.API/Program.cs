@@ -1,17 +1,11 @@
 using ReenbitMessenger.DataAccess.AppServices;
 using ReenbitMessenger.DataAccess.Data;
-using ReenbitMessenger.DataAccess.Repositories;
-using ReenbitMessenger.DataAccess.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using ReenbitMessenger.DataAccess.AppServices.Commands;
-using ReenbitMessenger.DataAccess.AppServices.Queries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore;
-using Swashbuckle.AspNetCore.Filters;
+using FluentValidation.AspNetCore;
+using ReenbitMessenger.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = false);
@@ -19,7 +13,7 @@ builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = fa
 var config = builder.Configuration;
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -50,27 +44,13 @@ builder.Services.AddDbContext<IdentityDataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
 });
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(x =>
-{
-    x.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = config["JwtSettings:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey
-            (Encoding.UTF8.GetBytes(config["JwtSettings:Key"])),
+builder.Services.AddAuthenticationServices(config);
 
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true,
-        ValidateLifetime = true,
-    };
-});
+builder.Services.AddRepositories();
+
+builder.Services.AddAppServices();
+
+builder.Services.AddValidators();
 
 builder.Services
     .AddIdentityApiEndpoints<IdentityUser>()
@@ -79,19 +59,6 @@ builder.Services
     .AddSignInManager()
     .AddRoleManager<RoleManager<IdentityRole>>()
     .AddDefaultTokenProviders();
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITokenHandler, ReenbitMessenger.DataAccess.Repositories.TokenHandler>();
-
-builder.Services.AddScoped<ICommandHandler<CreateUserCommand>, CreateUserCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
-
-builder.Services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
-builder.Services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
-builder.Services.AddScoped<IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>, GetUsersQueryHandler>();
-
-builder.Services.AddSingleton<HandlersDispatcher>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
