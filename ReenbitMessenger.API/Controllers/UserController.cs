@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ReenbitMessenger.DataAccess.AppServices.Commands;
 using ReenbitMessenger.DataAccess.AppServices.Queries;
-using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 

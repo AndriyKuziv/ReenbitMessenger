@@ -16,6 +16,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
 
         public async Task<IEnumerable<IdentityUser>> Handle(GetUsersQuery query)
         {
+            //move to repository
             var userProp = typeof(IdentityUser).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, query.OrderBy,
                 StringComparison.OrdinalIgnoreCase));
 
@@ -36,7 +37,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
                 sortOrder: sortOrder
                 );
             }
-
+            // remake predicate
             return await _userRepository.FilterAsync(
                 predicate: usr => usr.Email.Contains(query.ValueContains) ||
                     usr.UserName.Contains(query.ValueContains) ||

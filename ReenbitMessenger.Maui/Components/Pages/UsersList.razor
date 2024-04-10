@@ -5,7 +5,7 @@
 
 <h3>UsersList</h3>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateUsers">Refresh</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Refresh">Refresh</MudButton>
 <MudDivider />
 
 @if (users is null)
@@ -67,10 +67,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await UpdateUsers();
+        await UpdateUsersList();
     }
 
-    private async Task UpdateUsers()
+    private async Task UpdateUsersList()
     {
         users = await httpClient.GetUsersAsync(new GetUsersRequest
         {
@@ -93,18 +93,25 @@ else
     {
         usersFilterModel.NumberOfUsers = newValue;
 
-        await UpdateUsers();
+        await UpdateUsersList();
+    }
+
+    private async Task Refresh()
+    {
+        usersFilterModel.Page = 0;
+
+        await UpdateUsersList();
     }
 
     private async Task MoveForward()
     {
         usersFilterModel.Page++;
-        await UpdateUsers();
+        await UpdateUsersList();
     }
 
     private async Task MoveBackward()
     {
         usersFilterModel.Page--;
-        await UpdateUsers();
+        await UpdateUsersList();
     }
 }
