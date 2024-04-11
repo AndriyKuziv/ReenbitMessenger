@@ -49,7 +49,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<TEntity>> FilterAsync<TKey>(Func<IdentityUser, bool> predicate, Func<IdentityUser, TKey> orderBy, SortOrder sortOrder = SortOrder.Ascending, int startAt = 0, int take = 20)
+        public Task<IEnumerable<TEntity>> FilterAsync<TKey>(Func<IdentityUser, bool> predicate, string orderBy, bool ascending = true, int startAt = 0, int take = 20)
         {
             throw new NotImplementedException();
         }

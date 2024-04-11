@@ -14,17 +14,17 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
         public int NumberOfUsers { get; }
         public int Page { get; }
         public string ValueContains { get; }
-        public string SortOrder { get; }
+        public bool Ascending { get; }
         public string OrderBy { get; }
 
         public GetUsersQuery(int numberOfUsers = 20, string valueContains = "", int page = 0,
-            string sortOrder = "Ascending", string orderBy = "Username")
+            bool ascending = true, string orderBy = "Username")
         {
             OrderBy = orderBy;
             NumberOfUsers = numberOfUsers;
             ValueContains = valueContains;
             Page = page;
-            SortOrder = sortOrder;
+            Ascending = ascending;
         }
     }
 }

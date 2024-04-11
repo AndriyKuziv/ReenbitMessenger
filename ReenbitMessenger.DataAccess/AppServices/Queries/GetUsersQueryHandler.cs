@@ -16,34 +16,13 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries
 
         public async Task<IEnumerable<IdentityUser>> Handle(GetUsersQuery query)
         {
-            //move to repository
-            var userProp = typeof(IdentityUser).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, query.OrderBy,
-                StringComparison.OrdinalIgnoreCase));
-
-            if (userProp is null)
-            {
-                userProp = typeof(IdentityUser).GetProperty("UserName");
-            }
-
-            SortOrder sortOrder = query.SortOrder == "Descending" ? SortOrder.Descending : SortOrder.Ascending;
-
-            if (query.NumberOfUsers <= 0)
-            {
-                return await _userRepository.FilterAsync(
-                predicate: usr => usr.Email.Contains(query.ValueContains) ||
-                    usr.UserName.Contains(query.ValueContains) ||
-                    usr.Id.Contains(query.ValueContains),
-                orderBy: usr => userProp.GetValue(usr),
-                sortOrder: sortOrder
-                );
-            }
             // remake predicate
-            return await _userRepository.FilterAsync(
+            return await _userRepository.FilterAsync<string>(
                 predicate: usr => usr.Email.Contains(query.ValueContains) ||
                     usr.UserName.Contains(query.ValueContains) ||
                     usr.Id.Contains(query.ValueContains),
-                orderBy: usr => userProp.GetValue(usr),
-                sortOrder: sortOrder,
+                orderBy: query.OrderBy,
+                ascending: query.Ascending,
                 startAt: query.Page * query.NumberOfUsers,
                 take: query.NumberOfUsers
                 );

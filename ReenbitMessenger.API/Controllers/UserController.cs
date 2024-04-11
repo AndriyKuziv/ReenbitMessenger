@@ -33,7 +33,7 @@ namespace ReenbitMessenger.API.Controllers
                 getUsersRequest.NumberOfUsers,
                 getUsersRequest.ValueContains,
                 getUsersRequest.Page,
-                getUsersRequest.SortOrder,
+                getUsersRequest.Ascending,
                 getUsersRequest.OrderBy);
 
             var users = await _handlersDispatcher.Dispatch(query);

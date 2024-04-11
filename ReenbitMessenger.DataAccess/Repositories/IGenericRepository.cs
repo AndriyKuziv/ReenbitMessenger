@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Data.SqlClient;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
@@ -10,8 +11,8 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         Task<IEnumerable<TEntity>> GetAllAsync();
 
-        Task<IEnumerable<TEntity>> FilterAsync<TKey>(Func<IdentityUser, bool> predicate,
-            Func<IdentityUser, TKey> orderBy, SortOrder sortOrder = SortOrder.Ascending, int startAt = 0, int take = 20);
+        Task<IEnumerable<TEntity>> FilterAsync<TKey>(Func<TEntity, bool> predicate,
+            string orderBy, bool ascending = true, int startAt = 0, int take = 20);
 
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 

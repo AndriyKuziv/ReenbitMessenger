@@ -3,6 +3,12 @@
 @inject IUserHttpClient httpClient
 @using System.Linq.Expressions
 
+<style>
+    .limited{
+        max-width: 200px
+    }
+</style>
+
 <h3>UsersList</h3>
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Refresh">Refresh</MudButton>
@@ -14,24 +20,27 @@
 }
 else
 {
-    <MudSelect Label="Order type" @bind-Value="usersFilterModel.SortOrder" Style="max-width: 200px">
-        <MudSelectItem Value="@("Ascending")">Ascending</MudSelectItem>
-        <MudSelectItem Value="@("Descending")">Descending</MudSelectItem>
+    <MudSelect Label="Order type" @bind-Value="usersFilterModel.Ascending" Class="limited">
+        <MudSelectItem Value="@(true)">Ascending</MudSelectItem>
+        <MudSelectItem Value="@(false)">Descending</MudSelectItem>
     </MudSelect>
 
-    <MudSelect Label="Order by" @bind-Value="usersFilterModel.OrderBy" Style="max-width: 200px">
+    <MudSelect Label="Order by" @bind-Value="usersFilterModel.OrderBy" Class="limited">
         <MudSelectItem Value="@("Id")">Id</MudSelectItem>
         <MudSelectItem Value="@("Username")">Username</MudSelectItem>
         <MudSelectItem Value="@("Email")">Email</MudSelectItem>
     </MudSelect>
 
 
-    <MudSelect T="int" Label="Page size" Value=@usersFilterModel.NumberOfUsers ValueChanged=@OnValueChanged Style="max-width: 200px">
+    <MudSelect T="int" Label="Page size" Value=@usersFilterModel.NumberOfUsers ValueChanged=@OnValueChanged Class="limited">
         <MudSelectItem Value="@(2)">2</MudSelectItem>
         <MudSelectItem Value="@(5)">5</MudSelectItem>
         <MudSelectItem Value="@(10)">10</MudSelectItem>
         <MudSelectItem Value="@(15)">15</MudSelectItem>
     </MudSelect>
+
+    <MudTextField @bind-Value="usersFilterModel.ValueContains" Label="Row contains"
+                  Variant="Variant.Filled" Class="limited"></MudTextField>
 
     <MudDataGrid T="User" Items="@users" Hideable="true">
         <Columns>
@@ -61,7 +70,7 @@ else
         public int NumberOfUsers { get; set; } = 5;
         public int Page { get; set; } = 0;
         public string ValueContains { get; set; } = "";
-        public string SortOrder { get; set; } = "Ascending";
+        public bool Ascending { get; set; } = true;
         public string OrderBy { get; set; } = "Username";
     }
 
@@ -77,7 +86,7 @@ else
             NumberOfUsers = usersFilterModel.NumberOfUsers,
             Page = usersFilterModel.Page,
             ValueContains = usersFilterModel.ValueContains,
-            SortOrder = usersFilterModel.SortOrder,
+            Ascending = usersFilterModel.Ascending,
             OrderBy = usersFilterModel.OrderBy
         });
         // users = new List<User>

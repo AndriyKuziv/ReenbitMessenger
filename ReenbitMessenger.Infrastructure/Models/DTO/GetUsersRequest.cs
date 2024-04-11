@@ -7,7 +7,7 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
         public int NumberOfUsers { get; set; }
         public int Page { get; set; }
         public string ValueContains { get; set; } = "";
-        public string SortOrder { get; set; } = "Ascending";
+        public bool Ascending { get; set; } = true;
         public string OrderBy { get; set; }
     }
 }
