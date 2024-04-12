@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.DataAccess.AppServices.Commands;
-using ReenbitMessenger.DataAccess.AppServices.Queries;
+using ReenbitMessenger.DataAccess.AppServices.Commands.User;
+using ReenbitMessenger.DataAccess.AppServices.Queries.Auth;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;

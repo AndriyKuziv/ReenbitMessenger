@@ -30,7 +30,7 @@ namespace ReenbitMessenger.API.Controllers
         [Route("userGroupChats")]
         public async Task<IActionResult> GetUserGroupChats()
         {
-
+            throw new NotImplementedException();
         }
 
         [HttpGet]

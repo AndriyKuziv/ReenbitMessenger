@@ -38,7 +38,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
             if (chatProp is null)
             {
-                chatProp = typeof(IdentityUser).GetProperty("UserName");
+                chatProp = typeof(IdentityUser).GetProperty("Name");
             }
 
             var users = _chatsContext.GroupChats.AsQueryable();
@@ -68,18 +68,26 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         public async Task<GroupChat> DeleteAsync<Guid>(Guid id)
         {
-            var entity = await _chatsContext.GroupChats.FindAsync(id);
-            if (entity != null)
+            var groupChat = await _chatsContext.GroupChats.FindAsync(id);
+            if (groupChat != null)
             {
-                _chatsContext.GroupChats.Remove(entity);
+                _chatsContext.GroupChats.Remove(groupChat);
             }
 
-            return entity;
+            return groupChat;
         }
 
         public async Task<GroupChat> UpdateAsync<Guid>(Guid id, GroupChat entity)
         {
-            throw new NotImplementedException();
+            var groupChat = await _chatsContext.GroupChats.FindAsync(id);
+            if (groupChat is null)
+            {
+                return null;
+            }
+
+            groupChat.Name = entity.Name;
+
+            return groupChat;
         }
 
         public async Task<IEnumerable<GroupChatMember>> GetMembersAsync(Guid id)
