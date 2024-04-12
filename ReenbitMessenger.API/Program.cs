@@ -44,6 +44,11 @@ builder.Services.AddDbContext<IdentityDataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
 });
 
+builder.Services.AddDbContext<ChatsDataContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
+});
+
 builder.Services.AddAuthenticationServices(config);
 
 builder.Services.AddRepositories();
@@ -74,6 +79,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();

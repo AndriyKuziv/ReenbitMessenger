@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Queries
+namespace ReenbitMessenger.DataAccess.AppServices.Queries.Auth
 {
     public class LogInQuery : IQuery<IdentityUser>
     {

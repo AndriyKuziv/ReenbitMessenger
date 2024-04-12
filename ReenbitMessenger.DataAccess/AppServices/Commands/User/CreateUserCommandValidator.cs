@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using ReenbitMessenger.DataAccess.Repositories;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Commands
+namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
 {
     public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     {

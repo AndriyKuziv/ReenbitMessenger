@@ -4,7 +4,7 @@ using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using System.Data.SqlClient;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Queries
+namespace ReenbitMessenger.DataAccess.AppServices.Queries.User
 {
     public class GetUsersQueryHandler : IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>
     {

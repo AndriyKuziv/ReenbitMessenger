@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
+using ReenbitMessenger.DataAccess.Utils;
+using AutoMapper;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -9,12 +11,26 @@ namespace ReenbitMessenger.API.Controllers
     [Authorize]
     public class GroupChatController : Controller
     {
-        public GroupChatController() { }
+        private readonly HandlersDispatcher _handlersDispatcher;
+        private readonly IMapper _mapper;
+
+        public GroupChatController(HandlersDispatcher handlersDispatcher, IMapper mapper)
+        {
+            _handlersDispatcher = handlersDispatcher;
+            _mapper = mapper;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllGroupChats()
         {
             throw new NotImplementedException();
+        }
+
+        [HttpGet]
+        [Route("userGroupChats")]
+        public async Task<IActionResult> GetUserGroupChats()
+        {
+
         }
 
         [HttpGet]

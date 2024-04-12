@@ -23,4 +23,10 @@
     <ProjectReference Include="..\ReenbitMessenger.Infrastructure\ReenbitMessenger.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AppServices\Commands\GroupChat\" />
+    <Folder Include="AppServices\Commands\PrivateMessage\" />
+    <Folder Include="AppServices\Queries\PrivateMessage\" />
+  </ItemGroup>
+
 </Project>

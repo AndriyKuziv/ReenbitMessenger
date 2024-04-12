@@ -45,20 +45,20 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return sortedList.Skip(startAt).Take(take).ToList();
         }
 
-        public async Task<IEnumerable<IdentityUser>> FilterAsync(string containsValue,
-            string orderBy, bool ascending = true, int startAt = 0, int take = 20)
-        {
-            PropertyInfo[] properties = typeof(IdentityUser).GetProperties();
+        //public async Task<IEnumerable<IdentityUser>> FilterAsync(string containsValue,
+        //    string orderBy, bool ascending = true, int startAt = 0, int take = 20)
+        //{
+        //    PropertyInfo[] properties = typeof(IdentityUser).GetProperties();
 
-            return _dbContext.Users.Where(usr =>
-                properties.Any(prop =>
-                {
-                    var value = prop.GetValue(usr);
-                    if (value != null && value.ToString().ToLower().Contains(containsValue.ToLower()))
-                        return true;
-                    return false;
-                })).ToList();
-        }
+        //    return _dbContext.Users.Where(usr =>
+        //        properties.Any(prop =>
+        //        {
+        //            var value = prop.GetValue(usr);
+        //            if (value != null && value.ToString().ToLower().Contains(containsValue.ToLower()))
+        //                return true;
+        //            return false;
+        //        })).ToList();
+        //}
 
         public async Task<IdentityUser> GetAsync<TParam>(TParam param)
         {

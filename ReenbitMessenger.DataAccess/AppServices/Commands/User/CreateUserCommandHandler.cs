@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
 using System.Security.Claims;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Commands
+namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
 {
     public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
     {

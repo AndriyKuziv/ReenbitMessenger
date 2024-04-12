@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Blazored.LocalStorage;
+using Newtonsoft.Json;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using System.Net.Http.Json;
 
@@ -10,9 +11,17 @@ namespace ReenbitMessenger.Maui.Clients
         {
             BaseAddress = new Uri("https://localhost:7051")
         };
+        private readonly ILocalStorageService _localStorage;
+
+        public UserHttpClient(ILocalStorageService localStorage)
+        {
+            _localStorage = localStorage;
+        }
 
         public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
         {
+            if (!await HasToken()) return null;
+
             string jsonRequestBody = JsonConvert.SerializeObject(getUsersRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
@@ -22,9 +31,7 @@ namespace ReenbitMessenger.Maui.Clients
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
-            List<User> users = JsonConvert.DeserializeObject<List<User>>(jsonResponse);
-
-            return users;
+            return JsonConvert.DeserializeObject<List<User>>(jsonResponse);
         }
 
         public async Task<User> GetUserAsync(Guid id)
@@ -32,14 +39,30 @@ namespace ReenbitMessenger.Maui.Clients
             return await _httpClient.GetFromJsonAsync<User>($"{id}");
         }
 
-        public Task<string> DeleteUserAsync(Guid id)
+        public async Task<string> DeleteUserAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User?> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest)
+        public async Task<User?> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest)
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<bool> HasToken()
+        {
+            if (_httpClient.DefaultRequestHeaders.Authorization is null)
+            {
+                var jwt = await _localStorage.GetItemAsync<string>("jwt");
+                if (string.IsNullOrEmpty(jwt))
+                {
+                    return false;
+                }
+
+                _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwt);
+            }
+
+            return true;
         }
     }
 }

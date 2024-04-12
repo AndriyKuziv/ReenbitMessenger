@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Queries
+namespace ReenbitMessenger.DataAccess.AppServices.Queries.User
 {
     public class GetUsersQuery : IQuery<IEnumerable<IdentityUser>>
     {

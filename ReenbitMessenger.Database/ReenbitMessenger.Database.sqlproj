@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\GroupChat.sql" />
-    <Build Include="Tables\GroupChatMembers.sql" />
+    <Build Include="Tables\GroupChatMember.sql" />
     <Build Include="Tables\GroupChatMessage.sql" />
     <Build Include="Tables\GroupChatRoles.sql" />
     <Build Include="Tables\PrivateMessage.sql" />

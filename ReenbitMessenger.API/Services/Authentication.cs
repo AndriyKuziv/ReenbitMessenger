@@ -8,27 +8,24 @@ namespace ReenbitMessenger.API.Services
     {
         public static void AddAuthenticationServices(this IServiceCollection services, ConfigurationManager config)
         {
-            services.AddAuthorization();
-            services.AddAuthentication(x =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.TokenValidationParameters = new TokenValidationParameters
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = config["JwtSettings:Issuer"],
+                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey
                         (Encoding.UTF8.GetBytes(config["JwtSettings:Key"])),
-
                     ValidateIssuer = true,
+                    ValidIssuer = config["JwtSettings:Issuer"],
                     ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
+                    ValidAudience = config["JwtSettings:Audience"]
                 };
             });
+
+            services.AddAuthorization();
         }
     }
 }

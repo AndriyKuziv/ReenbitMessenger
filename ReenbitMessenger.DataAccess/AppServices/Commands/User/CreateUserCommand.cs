@@ -1,4 +1,4 @@
-﻿namespace ReenbitMessenger.DataAccess.AppServices.Commands
+﻿namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
 {
     public class CreateUserCommand : ICommand
     {

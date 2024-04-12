@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using ReenbitMessenger.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Queries
+namespace ReenbitMessenger.DataAccess.AppServices.Queries.Auth
 {
     public class LogInQueryHandler : IQueryHandler<LogInQuery, IdentityUser>
     {

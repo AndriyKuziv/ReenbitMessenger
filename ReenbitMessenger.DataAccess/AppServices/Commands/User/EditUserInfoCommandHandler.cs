@@ -3,7 +3,7 @@ using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Commands
+namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
 {
     public class EditUserInfoCommandHandler : ICommandHandler<EditUserInfoCommand>
     {

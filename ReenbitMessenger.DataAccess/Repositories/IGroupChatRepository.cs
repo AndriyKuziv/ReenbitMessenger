@@ -9,6 +9,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
 {
     public interface IGroupChatRepository : IGenericRepository<GroupChat>
     {
-
+        Task<IEnumerable<GroupChatMember>> GetMembersAsync(Guid id);
+        Task<IEnumerable<GroupChatMessage>> GetMessagesAsync(Guid id);
     }
 }

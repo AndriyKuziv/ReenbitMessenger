@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using ReenbitMessenger.DataAccess.AppServices.Commands;
+using ReenbitMessenger.DataAccess.AppServices.Commands.User;
 
 namespace ReenbitMessenger.API.Services
 {

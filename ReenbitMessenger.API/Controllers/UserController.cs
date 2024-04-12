@@ -3,7 +3,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReenbitMessenger.DataAccess.AppServices.Commands;
-using ReenbitMessenger.DataAccess.AppServices.Queries;
+using ReenbitMessenger.DataAccess.AppServices.Commands.User;
+using ReenbitMessenger.DataAccess.AppServices.Queries.User;
 using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 
@@ -27,6 +28,7 @@ namespace ReenbitMessenger.API.Controllers
 
         [HttpPost]
         [Route("usersList")]
+        [Authorize]
         public async Task<IActionResult> GetSortedUsers([FromBody]GetUsersRequest getUsersRequest)
         {
             var query = new GetUsersQuery(

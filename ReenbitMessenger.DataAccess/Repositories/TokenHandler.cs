@@ -19,7 +19,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         public Task<string> CreateTokenAsync(IdentityUser user)
         {
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
@@ -33,7 +32,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 _configuration["JwtSettings:Issuer"],
                 _configuration["JwtSettings:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddHours(2),
                 signingCredentials: credentials
             );
 

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.Models.Domain
 {
-    public class GroupChatMessages
+    public class GroupChatMessage
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string SenderUserId { get; set; }
-        public string GroupChatId { get; set; }
+        public Guid GroupChatId { get; set; }
         public string Text { get; set; }
-        public Guid MessageToReplyId { get; set; }
+        public long MessageToReplyId { get; set; }
     }
 }

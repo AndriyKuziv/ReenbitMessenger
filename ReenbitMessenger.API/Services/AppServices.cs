@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using ReenbitMessenger.DataAccess.AppServices.Commands;
-using ReenbitMessenger.DataAccess.AppServices.Queries;
 using ReenbitMessenger.DataAccess.AppServices;
 using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
+using ReenbitMessenger.DataAccess.AppServices.Commands.User;
+using ReenbitMessenger.DataAccess.AppServices.Queries.Auth;
+using ReenbitMessenger.DataAccess.AppServices.Queries.User;
 
 namespace ReenbitMessenger.API.Services
 {

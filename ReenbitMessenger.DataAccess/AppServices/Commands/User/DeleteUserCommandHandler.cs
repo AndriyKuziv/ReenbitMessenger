@@ -2,7 +2,7 @@
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Utils;
 
-namespace ReenbitMessenger.DataAccess.AppServices.Commands
+namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
 {
     public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand>
     {
