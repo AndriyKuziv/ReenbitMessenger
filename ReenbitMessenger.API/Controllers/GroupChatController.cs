@@ -8,7 +8,7 @@ namespace ReenbitMessenger.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class GroupChatController : Controller
     {
         private readonly HandlersDispatcher _handlersDispatcher;

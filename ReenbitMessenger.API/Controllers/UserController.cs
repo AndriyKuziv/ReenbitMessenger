@@ -12,6 +12,7 @@ namespace ReenbitMessenger.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class UsersController : Controller
     {
         private readonly HandlersDispatcher _handlersDispatcher;
@@ -28,7 +29,6 @@ namespace ReenbitMessenger.API.Controllers
 
         [HttpPost]
         [Route("usersList")]
-        [Authorize]
         public async Task<IActionResult> GetSortedUsers([FromBody]GetUsersRequest getUsersRequest)
         {
             var query = new GetUsersQuery(
