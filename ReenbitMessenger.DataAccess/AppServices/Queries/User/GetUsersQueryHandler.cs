@@ -17,7 +17,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries.User
         public async Task<IEnumerable<IdentityUser>> Handle(GetUsersQuery query)
         {
             // remake predicate
-            return await _userRepository.FilterAsync<string>(
+            return (await _userRepository.FilterAsync(
                 predicate: usr => usr.Email.Contains(query.ValueContains) ||
                     usr.UserName.Contains(query.ValueContains) ||
                     usr.Id.Contains(query.ValueContains),
@@ -25,7 +25,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries.User
                 ascending: query.Ascending,
                 startAt: query.Page * query.NumberOfUsers,
                 take: query.NumberOfUsers
-                );
+                )).ToList();
         }
     }
 }

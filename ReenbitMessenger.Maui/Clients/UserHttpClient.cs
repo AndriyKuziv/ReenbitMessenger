@@ -20,8 +20,8 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
         {
-            //if (!await HasToken()) return null;
-            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await _localStorage.GetItemAsync<string>("jwt"));
+            if (!await HasToken()) return null;
+            //_httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + await _localStorage.GetItemAsync<string>("jwt"));
 
             string jsonRequestBody = JsonConvert.SerializeObject(getUsersRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");

@@ -5,6 +5,6 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
     public class RemoveUsersFromGroupRequest
     {
-        IEnumerable<Guid> Users { get; set; }
+        public IEnumerable<string> Users { get; set; }
     }
 }

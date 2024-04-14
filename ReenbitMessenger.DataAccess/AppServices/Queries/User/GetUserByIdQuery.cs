@@ -5,9 +5,9 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries.User
 {
     public class GetUserByIdQuery : IQuery<IdentityUser>
     {
-        public Guid Id { get; }
+        public string Id { get; }
 
-        public GetUserByIdQuery(Guid id)
+        public GetUserByIdQuery(string id)
         {
             Id = id;
         }

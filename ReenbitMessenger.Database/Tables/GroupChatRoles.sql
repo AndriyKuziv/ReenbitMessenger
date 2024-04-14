@@ -1,5 +1,0 @@
-﻿CREATE TABLE [dbo].[GroupChatRoles]
-(
-	[Id] TINYINT NOT NULL PRIMARY KEY IDENTITY, 
-    [RoleName] NCHAR(10) NOT NULL
-)

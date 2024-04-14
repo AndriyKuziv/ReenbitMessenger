@@ -12,10 +12,11 @@ namespace ReenbitMessenger.DataAccess.Data
     {
         public ChatsDataContext(DbContextOptions<ChatsDataContext> options) : base(options) { }
 
-        public DbSet<GroupChat> GroupChats { get; set; }
-        public DbSet<GroupChatMember> GroupChatMembers { get; set; }
-        public DbSet<GroupChatMessage> GroupChatMessages { get; set; }
+        public DbSet<GroupChat> GroupChat { get; set; }
+        public DbSet<GroupChatMember> GroupChatMember { get; set; }
+        public DbSet<GroupChatMessage> GroupChatMessage { get; set; }
+        public DbSet<GroupChatRole> GroupChatRole { get; set; }
 
-        public DbSet<PrivateMessage> PrivateMessages { get; set; }
+        public DbSet<PrivateMessage> PrivateMessage { get; set; }
     }
 }

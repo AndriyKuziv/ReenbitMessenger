@@ -10,6 +10,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ITokenHandler, ReenbitMessenger.DataAccess.Repositories.TokenHandler>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGroupChatRepository, GroupChatRepository>();
         }
     }
 }

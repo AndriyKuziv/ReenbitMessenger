@@ -21,7 +21,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<IdentityUser>> FilterAsync<TKey>(Func<IdentityUser, bool> predicate,
+        public async Task<IEnumerable<IdentityUser>> FilterAsync(Func<IdentityUser, bool> predicate,
             string orderBy, bool ascending = true, int startAt = 0, int take = 20)
         {
             var userProp = typeof(IdentityUser).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
@@ -39,10 +39,10 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
             if (take <= 0)
             {
-                return sortedList.ToList();
+                return sortedList.AsEnumerable();
             }
 
-            return sortedList.Skip(startAt).Take(take).ToList();
+            return sortedList.Skip(startAt).Take(take);
         }
 
         //public async Task<IEnumerable<IdentityUser>> FilterAsync(string containsValue,
@@ -60,7 +60,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
         //        })).ToList();
         //}
 
-        public async Task<IdentityUser> GetAsync<TParam>(TParam param)
+        public async Task<IdentityUser> GetAsync(string id)
         {
             throw new NotImplementedException();
         }

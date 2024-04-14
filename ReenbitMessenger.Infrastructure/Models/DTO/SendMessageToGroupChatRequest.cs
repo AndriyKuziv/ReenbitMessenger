@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
-    public class GroupChatMessage
+    public class SendMessageToGroupChatRequest
     {
-        public long Id { get; set; }
-        public string SenderId { get; set; }
-        public string GroupChatId { get; set; }
-        public DateTime SentTime { get; set; }
         public string Text { get; set; }
     }
 }

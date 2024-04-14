@@ -63,7 +63,7 @@
     <Build Include="Tables\GroupChat.sql" />
     <Build Include="Tables\GroupChatMember.sql" />
     <Build Include="Tables\GroupChatMessage.sql" />
-    <Build Include="Tables\GroupChatRoles.sql" />
+    <Build Include="Tables\GroupChatRole.sql" />
     <Build Include="Tables\PrivateMessage.sql" />
     <Build Include="AspNetIdentity\AspNetRoleClaims.sql" />
     <Build Include="AspNetIdentity\AspNetRoles.sql" />

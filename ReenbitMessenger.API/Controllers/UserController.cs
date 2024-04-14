@@ -47,7 +47,7 @@ namespace ReenbitMessenger.API.Controllers
 
         [HttpGet]
         [Route("{id:guid}")]
-        public async Task<IActionResult> GetUserById(Guid id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             var query = new GetUserByIdQuery(id);
 
