@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace ReenbitMessenger.DataAccess.Models.Domain
 
         // Navigation properties
         public GroupChat? GroupChat { get; set; }
+        public IdentityUser? User { get; set; }
         public GroupChatRole? Role { get; set; }
     }
 }

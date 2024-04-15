@@ -1,7 +1,46 @@
 ﻿@page "/chatsList"
 
-<h3>ChatsList</h3>
+@inject IChatHttpClient httpClient
+@inject NavigationManager navManager
+
+<h3>Your chats</h3>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChatsList">Refresh</MudButton>
+<MudDivider />
+
+@if (groupChats is null)
+{
+    <p style="margin: 15px"><em>We got a problem here</em></p>
+}
+else
+{
+    <MudTable Items="@groupChats" Hover="true" Striped="true" Class="mb-4">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+        </HeaderContent>
+        <RowTemplate Context="groupChat">
+            <MudTd>
+                <a @onclick="@(async () => await GroupClicked(groupChat.Id))">@groupChat.Name</a>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
 
 @code {
+    IEnumerable<GroupChat> groupChats { get; set; } = new List<GroupChat>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateChatsList();
+    }
+
+    private async Task UpdateChatsList()
+    {
+        groupChats = await httpClient.GetUserGroupChatsAsync();
+    }
+
+    private async Task GroupClicked(string chatId)
+    {
+        navManager.NavigateTo($"/groupChat/{chatId}");
+    }
 }

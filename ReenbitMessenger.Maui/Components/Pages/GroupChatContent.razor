@@ -1,0 +1,81 @@
+﻿@page "/groupChat/{chatId}"
+
+@inject IChatHttpClient httpClient
+
+<style>
+    .limited {
+        max-width: 200px
+    }
+</style>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChat">Refresh</MudButton>
+<MudDivider />
+
+@if(groupChat is null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <h3>@groupChat.Name</h3>
+
+    <MudContainer>
+    <MudGrid>
+        <MudItem xs="12" md="3">
+            <MudPaper>
+                <h4 style="margin:30px">Members</h4>
+                <ul>
+                    @foreach (var member in groupChat.GroupChatMembers)
+                    {
+                        <li style="margin: 20px">MemberId: @member.Id</li>
+                    }
+                </ul>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="9">
+            <MudPaper>
+                    <h4 style="margin:30px">Messages</h4>
+                <MudList Clickable="true">
+                    @foreach (var message in groupChat.GroupChatMessages)
+                    {
+                        <MudListItem>
+                            <p>@message.SenderId: @message.Text</p>
+                            <p>@message.SentTime.ToString("HH:mm:ss")</p>
+                        </MudListItem>
+                        <MudDivider />
+                    }
+                </MudList>
+                    <MudTextField @bind-Value="@messageText" Label="Write your message"
+                                  Variant="Variant.Filled" Class="limited"></MudTextField>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SendMessage">Send</MudButton>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+    </MudContainer>
+}
+
+
+
+@code {
+    private string messageText { get; set; }
+    private GroupChat groupChat { get; set; }
+
+    [Parameter]
+    public string ChatId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateChat();
+    }
+
+    private async Task UpdateChat()
+    {
+        groupChat = await httpClient.GetFullGroupChatAsync(ChatId);
+    }
+
+    private async Task SendMessage()
+    {
+        await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
+        await UpdateChat();
+    }
+}

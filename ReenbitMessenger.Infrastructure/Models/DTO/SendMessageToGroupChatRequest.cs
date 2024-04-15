@@ -9,5 +9,6 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
     public class SendMessageToGroupChatRequest
     {
         public string Text { get; set; }
+        public long? MessageToReplyId { get; set; } = null;
     }
 }

@@ -9,14 +9,14 @@ namespace ReenbitMessenger.Maui.Clients
 {
     public interface IChatHttpClient
     {
-        Task<IEnumerable<GroupChat>> GetUsersGroupChats(string userId);
+        Task<IEnumerable<GroupChat>> GetUserGroupChatsAsync();
+        Task<GroupChat> GetFullGroupChatAsync(string chatId);
+        Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync();
 
-        Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistory(string userId);
+        Task<IEnumerable<PrivateMessage>> GetUserPrivateMessagesHistoryAsync();
 
-        Task<IEnumerable<PrivateMessage>> GetUserPrivateMessagesHistory(string userId);
+        Task<bool> SendMessageToGroupChatAsync(string chatId, SendMessageToGroupChatRequest sendGroupChatMessageRequest);
 
-        Task<GroupChatMessage> SendMessageToGroupChat(SendGroupChatMessageRequest sendGroupChatMessageRequest);
-
-        Task<PrivateMessage> SendPrivateMessage(SendPrivateMessageRequest sendPrivateMessageRequest);
+        Task<bool> SendPrivateMessageAsync(SendPrivateMessageRequest sendPrivateMessageRequest);
     }
 }

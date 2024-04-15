@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ReenbitMessenger.Infrastructure.Models.DTO
+﻿namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
     public class GroupChatMember
     {
@@ -15,5 +9,6 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
 
         // Navigation properties
         public GroupChatRole? GroupChatRole { get; set; }
+        public User? User { get; set; }
     }
 }

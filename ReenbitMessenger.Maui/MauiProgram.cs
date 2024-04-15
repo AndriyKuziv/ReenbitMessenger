@@ -28,6 +28,7 @@ namespace ReenbitMessenger.Maui
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             builder.Services.AddScoped<IUserHttpClient, UserHttpClient>();
+            builder.Services.AddScoped<IChatHttpClient, ChatHttpClient>();
             builder.Services.AddScoped<IAuthHttpClient, AuthHttpClient>();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddMudServices();
