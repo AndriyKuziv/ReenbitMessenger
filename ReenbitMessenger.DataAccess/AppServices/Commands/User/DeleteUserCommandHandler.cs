@@ -17,7 +17,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
 
-            var user = await userRepository.DeleteAsync(command.Id);
+            var user = await userRepository.DeleteAsync(command.UserId);
 
             if (user is null) return false;
 

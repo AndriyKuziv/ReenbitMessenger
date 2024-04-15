@@ -6,17 +6,15 @@ namespace ReenbitMessenger.DataAccess.Utils
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IdentityDataContext _dbContext;
-        private readonly ChatsDataContext _chatsDataContext;
+        private readonly MessengerDataContext _dbContext;
         private readonly Dictionary<Type, object> repos = new Dictionary<Type, object>();
         private readonly IServiceProvider _serviceProvider;
 
         private bool _disposed;
 
-        public UnitOfWork(IdentityDataContext dbContext, ChatsDataContext chatsDataContext, IServiceProvider serviceProvider)
+        public UnitOfWork(MessengerDataContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
-            _chatsDataContext = chatsDataContext;
             _disposed = false;
             _serviceProvider = serviceProvider;
         }
@@ -45,7 +43,6 @@ namespace ReenbitMessenger.DataAccess.Utils
 
         public async Task<int> SaveAsync()
         {
-            await _chatsDataContext.SaveChangesAsync();
             return await _dbContext.SaveChangesAsync();
         }
 

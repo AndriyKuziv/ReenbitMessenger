@@ -3,7 +3,7 @@
     public class GroupChatMember
     {
         public long Id { get; set; }
-        public string GroupChatId { get; set; }
+        public Guid GroupChatId { get; set; }
         public string UserId { get; set; }
         public short GroupChatRoleId { get; set; }
 

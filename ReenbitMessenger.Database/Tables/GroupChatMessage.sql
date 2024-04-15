@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[GroupChatMessage] (
     [Id]               BIGINT         PRIMARY KEY IDENTITY NOT NULL,
     [SenderUserId]     NVARCHAR (450) NOT NULL,
-    [GroupChatId]      CHAR (36)      NOT NULL,
+    [GroupChatId]      UNIQUEIDENTIFIER      NOT NULL,
     [Text]             NVARCHAR (MAX) NOT NULL,
     [SentTime] SMALLDATETIME NOT NULL, 
     [MessageToReplyId] BIGINT         NULL,

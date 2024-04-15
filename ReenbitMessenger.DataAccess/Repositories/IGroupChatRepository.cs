@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
-    public interface IGroupChatRepository : IGenericRepository<GroupChat>
+    public interface IGroupChatRepository : IGenericRepository<GroupChat, Guid>
     {
         Task<GroupChat> GetFullAsync(Guid chatId);
         Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId);
+        Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId);
 
         Task<IEnumerable<GroupChatMember>> GetMembersAsync(Guid id);
         Task<bool> IsInGroupChat(Guid chatId, string userId);

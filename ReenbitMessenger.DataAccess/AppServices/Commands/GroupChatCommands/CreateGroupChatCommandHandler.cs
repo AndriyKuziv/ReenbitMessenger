@@ -24,7 +24,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
             var resultGroupChat = await gcRepo.AddAsync(new Models.Domain.GroupChat
             {
-                Id = Convert.ToString(Guid.NewGuid()),
+                Id = Guid.NewGuid(),
                 Name = command.Name,
             });
 

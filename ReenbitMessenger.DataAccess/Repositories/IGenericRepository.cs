@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
-    public interface IGenericRepository<TEntity> where TEntity : class
+    public interface IGenericRepository<TEntity, TId> where TEntity : class
     {
-        Task<TEntity> GetAsync(string id);
+        Task<TEntity> GetAsync(TId id);
 
         Task<IEnumerable<TEntity>> GetAllAsync();
 
@@ -18,8 +18,8 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         Task<TEntity> AddAsync(TEntity entity);
 
-        Task<TEntity> DeleteAsync<TId>(TId id);
+        Task<TEntity> DeleteAsync(TId id);
 
-        Task<TEntity> UpdateAsync<TId>(TId id, TEntity entity);
+        Task<TEntity> UpdateAsync(TId id, TEntity entity);
     }
 }

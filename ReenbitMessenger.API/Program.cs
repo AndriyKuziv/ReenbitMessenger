@@ -39,12 +39,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddDbContext<IdentityDataContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
-});
-
-builder.Services.AddDbContext<ChatsDataContext>(options =>
+builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
 });
@@ -60,7 +55,7 @@ builder.Services.AddValidators();
 builder.Services
     .AddIdentityApiEndpoints<IdentityUser>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<IdentityDataContext>()
+    .AddEntityFrameworkStores<MessengerDataContext>()
     .AddSignInManager()
     .AddRoleManager<RoleManager<IdentityRole>>()
     .AddDefaultTokenProviders();

@@ -2,11 +2,11 @@
 {
     public class DeleteUserCommand : ICommand
     {
-        public Guid Id { get; }
+        public string UserId { get; }
 
-        public DeleteUserCommand(Guid id)
+        public DeleteUserCommand(string userId)
         {
-            Id = id;
+            UserId = userId;
         }
     }
 }

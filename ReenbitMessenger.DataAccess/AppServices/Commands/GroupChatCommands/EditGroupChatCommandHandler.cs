@@ -20,7 +20,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
         public async Task<bool> Handle(EditGroupChatCommand command)
         {
-            var groupChat = await _unitOfWork.GetRepository<IGroupChatRepository>().UpdateAsync(command.GroupChatId, new Models.Domain.GroupChat()
+            var groupChat = await _unitOfWork.GetRepository<IGroupChatRepository>().UpdateAsync(new Guid(command.GroupChatId), new Models.Domain.GroupChat()
             {
                 Name = command.Name
             });

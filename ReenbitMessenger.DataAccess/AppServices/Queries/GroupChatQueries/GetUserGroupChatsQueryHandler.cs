@@ -20,7 +20,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Queries.GroupChatQueries
 
         public async Task<IEnumerable<GroupChat>> Handle(GetUserGroupChatsQuery query)
         {
-            return (await _unitOfWork.GetRepository<IGroupChatRepository>().GetUserChatsAsync(query.UserId)).ToList().AsEnumerable();
+            return (await _unitOfWork.GetRepository<IGroupChatRepository>().GetUserChatsAsync(query.UserId)).ToList();
         }
     }
 }

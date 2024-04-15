@@ -1,24 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.Data;
-using System.Data.SqlClient;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Reflection;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IdentityDataContext _dbContext;
-        public UserRepository(IdentityDataContext dbContext)
+        private readonly MessengerDataContext _dbContext;
+        public UserRepository(MessengerDataContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         public async Task<IEnumerable<IdentityUser>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return _dbContext.Users.AsEnumerable();
         }
 
         public async Task<IEnumerable<IdentityUser>> FilterAsync(Func<IdentityUser, bool> predicate,
@@ -62,7 +59,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         public async Task<IdentityUser> GetAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Users.FindAsync(id);
         }
 
         public async Task<bool> IsEmailUniqueAsync(string email)
@@ -75,29 +72,35 @@ namespace ReenbitMessenger.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IdentityUser> AddAsync(IdentityUser entity)
+        public async Task<IdentityUser> AddAsync(IdentityUser user)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.Users.AddAsync(user);
+
+            return result.Entity;
         }
 
-        public async Task<IdentityUser> DeleteAsync<Guid>(Guid id)
+        public async Task<IdentityUser> DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var user = await _dbContext.Users.FindAsync(id);
+            if (user != null)
+            {
+                _dbContext.Users.Remove(user);
+            }
+
+            return user;
         }
 
-        public async Task<IdentityUser> UpdateAsync<Guid>(Guid id, IdentityUser entity)
+        public async Task<IdentityUser> UpdateAsync(string id, IdentityUser entity)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _dbContext.Users.FindAsync(id);
 
-        public async Task<IdentityUser> AuthenticateAsync(string email, string password)
-        {
-            IdentityUser user = null;
-
-            if (user is null)
+            if(user is null)
             {
                 return null;
             }
+
+            user.UserName = entity.UserName;
+            user.Email = entity.Email;
 
             return user;
         }

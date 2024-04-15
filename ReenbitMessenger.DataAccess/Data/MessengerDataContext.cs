@@ -1,16 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ReenbitMessenger.DataAccess.Models.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.Data
 {
-    public class ChatsDataContext : DbContext
+    public class MessengerDataContext : IdentityDbContext
     {
-        public ChatsDataContext(DbContextOptions<ChatsDataContext> options) : base(options) { }
+        public MessengerDataContext(DbContextOptions<MessengerDataContext> dbContextOptions) : base(dbContextOptions) { }
 
         public DbSet<GroupChat> GroupChat { get; set; }
         public DbSet<GroupChatMember> GroupChatMember { get; set; }

@@ -2,13 +2,13 @@
 {
     public class EditUserInfoCommand : ICommand
     {
-        public Guid Id { get; }
+        public string UserId { get; }
         public string Username { get; }
         public string Email { get; }
 
-        public EditUserInfoCommand(Guid id, string username, string email)
+        public EditUserInfoCommand(string userId, string username, string email)
         {
-            Id = id;
+            UserId = userId;
             Username = username;
             Email = email;
         }

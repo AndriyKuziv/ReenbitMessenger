@@ -7,37 +7,59 @@ namespace ReenbitMessenger.DataAccess.Repositories
 {
     public class GroupChatRepository : IGroupChatRepository
     {
-        private readonly ChatsDataContext _chatsContext;
+#pragma warning disable CS8603
+        private readonly MessengerDataContext _dbContext;
 
-        public GroupChatRepository(ChatsDataContext chatsContext)
+        public GroupChatRepository(MessengerDataContext dbContext)
         {
-            _chatsContext = chatsContext;
+            _dbContext = dbContext;
         }
 
         public async Task<IEnumerable<GroupChat>> GetAllAsync()
         {
-            return _chatsContext.GroupChat.AsQueryable();
+            return _dbContext.GroupChat.AsQueryable();
         }
 
-        public async Task<GroupChat> GetAsync(string chatId)
+        public async Task<GroupChat> GetAsync(Guid chatId)
         {
-            return await _chatsContext.GroupChat
-                .FirstOrDefaultAsync(chat =>
-                    Convert.ToString(chat.Id).ToLower() == Convert.ToString(chatId).ToLower());
+            return await _dbContext.GroupChat
+                .FirstOrDefaultAsync(chat => chat.Id == chatId);
         }
 
         public async Task<GroupChat> GetFullAsync(Guid chatId)
         {
-            return await _chatsContext.GroupChat
+            return await _dbContext.GroupChat
+                .Include(chat => chat.GroupChatMembers)
+                    .ThenInclude(cmem => cmem.Role)
+                .Include(chat => chat.GroupChatMembers)
+                    .ThenInclude(cmem => cmem.User)
+                .Include(chat => chat.GroupChatMessages)
+                //    .ThenInclude(msg => msg.User)
+                .FirstOrDefaultAsync(chat => chat.Id == chatId);
+        }
+
+        public async Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            var res = _dbContext.GroupChat
                 .Include(chat => chat.GroupChatMembers)
                 .Include(chat => chat.GroupChatMessages)
-                .FirstOrDefaultAsync(chat => 
-                    Convert.ToString(chat.Id).ToLower() == Convert.ToString(chatId).ToLower());
+                .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId))
+                .SelectMany(chat => chat.GroupChatMessages)
+                .OrderBy(mssg => mssg.SentTime);
+
+            return res;
         }
 
         public async Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId)
         {
-            return _chatsContext.GroupChat
+            return _dbContext.GroupChat
                 .Include(chat => chat.GroupChatMembers.Where(cmem => cmem.UserId == userId))
                 .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId));
         }
@@ -52,7 +74,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 chatProp = typeof(GroupChat).GetProperty("Name");
             }
 
-            var groupChats = _chatsContext.GroupChat.AsQueryable();
+            var groupChats = _dbContext.GroupChat.AsQueryable();
 
             var sorted = ascending ? groupChats.Where(predicate).OrderBy(gc => Convert.ToString(chatProp.GetValue(gc))) :
                 groupChats.Where(predicate).OrderByDescending(gc => Convert.ToString(chatProp.GetValue(gc)));
@@ -67,32 +89,30 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         public async Task<IEnumerable<GroupChat>> FindAsync(Expression<Func<GroupChat, bool>> predicate)
         {
-            return _chatsContext.GroupChat.Where(predicate);
+            return _dbContext.GroupChat.Where(predicate);
         }
 
         public async Task<GroupChat> AddAsync(GroupChat groupChat)
         {
-            var result = await _chatsContext.GroupChat.AddAsync(groupChat);
+            var result = await _dbContext.GroupChat.AddAsync(groupChat);
 
-            if (result.Entity is null) return null;
-
-            return groupChat;
+            return result.Entity;
         }
 
-        public async Task<GroupChat> DeleteAsync<Guid>(Guid chatId)
+        public async Task<GroupChat> DeleteAsync(Guid chatId)
         {
-            var groupChat = await _chatsContext.GroupChat.FindAsync(Convert.ToString(chatId));
+            var groupChat = await _dbContext.GroupChat.FindAsync(chatId);
             if (groupChat != null)
             {
-                _chatsContext.GroupChat.Remove(groupChat);
-          }
+                _dbContext.GroupChat.Remove(groupChat);
+            }
 
             return groupChat;
         }
 
-        public async Task<GroupChat> UpdateAsync<Guid>(Guid chatId, GroupChat entity)
+        public async Task<GroupChat> UpdateAsync(Guid chatId, GroupChat entity)
         {
-            var groupChat = await _chatsContext.GroupChat.FindAsync(Convert.ToString(chatId));
+            var groupChat = await _dbContext.GroupChat.FindAsync(chatId);
             if (groupChat is null)
             {
                 return null;
@@ -106,24 +126,24 @@ namespace ReenbitMessenger.DataAccess.Repositories
         // Members methods
         public async Task<IEnumerable<GroupChatMember>> GetMembersAsync(Guid chatId)
         {
-            return await _chatsContext.GroupChatMember.Where(gcm => gcm.GroupChatId == Convert.ToString(chatId)).ToListAsync();
+            return _dbContext.GroupChatMember.Where(gcm => gcm.GroupChatId == chatId);
         }
 
         public async Task<bool> IsInGroupChat(Guid chatId, string userId)
         {
-            return _chatsContext.GroupChatMember.Any(cmem => cmem.GroupChatId == Convert.ToString(chatId) && cmem.UserId == userId);
+            return _dbContext.GroupChatMember.Any(cmem => cmem.GroupChatId == chatId && cmem.UserId == userId);
         }
 
         public async Task<GroupChatMember> AddUserToGroupChatAsync(GroupChatMember member)
         {
-            var existingMember = await _chatsContext.GroupChatMember
+            var existingMember = await _dbContext.GroupChatMember
                 .FirstOrDefaultAsync(cmem => cmem.UserId == member.UserId && cmem.GroupChatId == member.GroupChatId);
             if (existingMember != null)
             {
                 return existingMember;
             }
 
-            var role = await _chatsContext.GroupChatRole.FirstOrDefaultAsync(role => role.Name == "user");
+            var role = await _dbContext.GroupChatRole.FirstOrDefaultAsync(role => role.Name == "user");
             if (role is null)
             {
                 return null;
@@ -131,21 +151,21 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
             member.GroupChatRoleId = role.Id;
 
-            await _chatsContext.GroupChatMember.AddAsync(member);
+            await _dbContext.GroupChatMember.AddAsync(member);
 
             return member;
         }
 
         public async Task<GroupChatMember> RemoveUserFromGroupChatAsync(Guid chatId, string userId)
         {
-            var groupChatMember = await _chatsContext.GroupChatMember
-                .FirstOrDefaultAsync(cmem => cmem.GroupChatId == Convert.ToString(chatId) && cmem.UserId == userId);
+            var groupChatMember = await _dbContext.GroupChatMember
+                .FirstOrDefaultAsync(cmem => cmem.GroupChatId == chatId && cmem.UserId == userId);
             if (groupChatMember is null)
             {
                 return null;
             }
 
-            _chatsContext.GroupChatMember.Remove(groupChatMember);
+            _dbContext.GroupChatMember.Remove(groupChatMember);
 
             return groupChatMember;
         }
@@ -153,28 +173,28 @@ namespace ReenbitMessenger.DataAccess.Repositories
         // Messages methods
         public async Task<IEnumerable<GroupChatMessage>> GetMessagesAsync(Guid chatId)
         {
-            return _chatsContext.GroupChatMessage.Where(gcm => gcm.GroupChatId == Convert.ToString(chatId));
+            return _dbContext.GroupChatMessage.Where(gcm => gcm.GroupChatId == chatId);
         }
 
         public async Task<GroupChatMessage> CreateGroupChatMessageAsync(GroupChatMessage groupChatMessage)
         {
             groupChatMessage.SentTime = DateTime.Now;
-            await _chatsContext.GroupChatMessage.AddAsync(groupChatMessage);
+            await _dbContext.GroupChatMessage.AddAsync(groupChatMessage);
 
             return groupChatMessage;
         }
 
         public async Task<GroupChatMessage> DeleteGroupChatMessageAsync(Guid chatId, long messageId)
         {
-            var message = await _chatsContext.GroupChatMessage
-                .FirstOrDefaultAsync(msg => msg.GroupChatId == Convert.ToString(chatId) && msg.Id == messageId);
+            var message = await _dbContext.GroupChatMessage
+                .FirstOrDefaultAsync(msg => msg.GroupChatId == chatId && msg.Id == messageId);
 
             if (message is null)
             {
                 return null;
             }
 
-            _chatsContext.GroupChatMessage.Remove(message);
+            _dbContext.GroupChatMessage.Remove(message);
 
             return message;
         }

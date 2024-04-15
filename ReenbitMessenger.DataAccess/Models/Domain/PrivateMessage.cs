@@ -13,6 +13,6 @@ namespace ReenbitMessenger.DataAccess.Models.Domain
         public string ReceiverUserId { get; set; }
         public string Text { get; set; }
         public string SentTime { get; set; }
-        public string? MessageToReplyId { get; set; }
+        public long? MessageToReplyId { get; set; }
     }
 }

@@ -46,10 +46,10 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpGet]
-        [Route("{id:guid}")]
-        public async Task<IActionResult> GetUserById(string id)
+        [Route("{userId:alpha}")]
+        public async Task<IActionResult> GetUserById(string userId)
         {
-            var query = new GetUserByIdQuery(id);
+            var query = new GetUserByIdQuery(userId);
 
             var user = await _handlersDispatcher.Dispatch(query);
 
@@ -83,10 +83,10 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:guid}")]
-        public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
+        [Route("{userId:alpha}")]
+        public async Task<IActionResult> DeleteUser([FromRoute] string userId)
         {
-            var command = new DeleteUserCommand(id);
+            var command = new DeleteUserCommand(userId);
 
             var result = await _handlersDispatcher.Dispatch(command);
 
@@ -96,9 +96,9 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPut]
-        [Route("{userId:guid}")]
+        [Route("{userId:alpha}")]
         public async Task<IActionResult> EditUserInfoById(
-            [FromRoute] Guid userId,
+            [FromRoute] string userId,
             [FromBody] EditUserInfoRequest editUserInfoRequest)
         {
             var command = new EditUserInfoCommand(userId,

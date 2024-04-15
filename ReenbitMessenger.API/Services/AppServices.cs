@@ -38,6 +38,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<IQueryHandler<GetGroupChatsQuery, IEnumerable<GroupChat>>, GetGroupChatsQueryHandler>();
             services.AddScoped<IQueryHandler<GetFullGroupChatQuery, GroupChat>, GetFullGroupChatQueryHandler>();
             services.AddScoped<IQueryHandler<GetUserGroupChatsQuery, IEnumerable<GroupChat>>, GetUserGroupChatsQueryHandler>();
+            services.AddScoped<IQueryHandler<GetUserMessagesHistoryQuery, IEnumerable<GroupChatMessage>>, GetUserMessagesHistoryQueryHandler>();
 
             services.AddSingleton<HandlersDispatcher>();
         }

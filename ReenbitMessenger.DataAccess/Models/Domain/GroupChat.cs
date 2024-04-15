@@ -8,7 +8,7 @@ namespace ReenbitMessenger.DataAccess.Models.Domain
 {
     public class GroupChat
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         // Navigation properties

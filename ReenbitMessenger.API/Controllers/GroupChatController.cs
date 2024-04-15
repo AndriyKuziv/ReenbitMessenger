@@ -59,6 +59,29 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpGet]
+        [Route("messagesHistory")]
+        public async Task<IActionResult> GetUserMessagesHistory()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity == null)
+            {
+                return NotFound("Identity is null");
+            }
+
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return NotFound("User id is null");
+            }
+
+            var messages = await _handlersDispatcher.Dispatch(new GetUserMessagesHistoryQuery(userId));
+
+            var messagesDTO = _mapper.Map<IEnumerable<GroupChat>>(messages);
+
+            return Ok(messagesDTO);
+        }
+
+        [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetGroupChatById([FromRoute]Guid chatId)
         {

@@ -23,7 +23,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.User
                 Email = command.Email
             };
 
-            user = await userRepository.UpdateAsync(command.Id, user);
+            user = await userRepository.UpdateAsync(command.UserId, user);
 
             if (user is null) return false;
 
