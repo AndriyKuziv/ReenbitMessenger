@@ -8,9 +8,9 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
     public class DeleteGroupChatCommand : ICommand
     {
-        public string GroupChatId { get; }
+        public Guid GroupChatId { get; }
 
-        public DeleteGroupChatCommand(string groupChatId)
+        public DeleteGroupChatCommand(Guid groupChatId)
         {
             GroupChatId = groupChatId;
         }

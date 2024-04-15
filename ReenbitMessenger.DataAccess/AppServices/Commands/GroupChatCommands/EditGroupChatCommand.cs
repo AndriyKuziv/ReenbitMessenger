@@ -8,10 +8,10 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
     public class EditGroupChatCommand : ICommand
     {
-        public string GroupChatId { get; }
+        public Guid GroupChatId { get; }
         public string Name { get; }
 
-        public EditGroupChatCommand(string groupChatId, string name)
+        public EditGroupChatCommand(Guid groupChatId, string name)
         {
             GroupChatId = groupChatId;
             Name = name;

@@ -76,7 +76,7 @@ namespace ReenbitMessenger.API.Controllers
 
             var messages = await _handlersDispatcher.Dispatch(new GetUserMessagesHistoryQuery(userId));
 
-            var messagesDTO = _mapper.Map<IEnumerable<GroupChat>>(messages);
+            var messagesDTO = _mapper.Map<IEnumerable<GroupChatMessage>>(messages);
 
             return Ok(messagesDTO);
         }
@@ -120,7 +120,7 @@ namespace ReenbitMessenger.API.Controllers
         [Route("{chatId:guid}")]
         public async Task<IActionResult> DeleteGroupChatById([FromRoute] Guid chatId)
         {
-            var result = await _handlersDispatcher.Dispatch(new DeleteGroupChatCommand(Convert.ToString(chatId)));
+            var result = await _handlersDispatcher.Dispatch(new DeleteGroupChatCommand(chatId));
 
             if (!result) return BadRequest();
 
@@ -133,7 +133,7 @@ namespace ReenbitMessenger.API.Controllers
             [FromBody] EditGroupChatRequest editGroupChatRequest)
         {
             var result = await _handlersDispatcher.Dispatch(
-                new EditGroupChatCommand(Convert.ToString(chatId), editGroupChatRequest.Name));
+                new EditGroupChatCommand(chatId, editGroupChatRequest.Name));
 
             if (!result) return BadRequest();
 
@@ -146,7 +146,7 @@ namespace ReenbitMessenger.API.Controllers
             [FromBody] AddUsersToGroupRequest addUsersRequest)
         {
             var result = await _handlersDispatcher.Dispatch(
-                new AddUsersToGroupChatCommand(Convert.ToString(chatId), addUsersRequest.Users));
+                new AddUsersToGroupChatCommand(chatId, addUsersRequest.Users));
 
             if (!result) return BadRequest();
 
@@ -158,7 +158,7 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> RemoveUsersFromGroupChat([FromRoute] Guid chatId,
             [FromBody] RemoveUsersFromGroupRequest removeUsersRequest)
         {
-            var result = await _handlersDispatcher.Dispatch(new RemoveUsersFromGroupChatCommand(Convert.ToString(chatId), removeUsersRequest.Users));
+            var result = await _handlersDispatcher.Dispatch(new RemoveUsersFromGroupChatCommand(chatId, removeUsersRequest.Users));
 
             if (!result) return BadRequest();
 
@@ -183,7 +183,7 @@ namespace ReenbitMessenger.API.Controllers
             }
 
             var result = await _handlersDispatcher.Dispatch(
-                new SendMessageToGroupChatCommand(Convert.ToString(chatId), userId, sendMessageRequest.Text));
+                new SendMessageToGroupChatCommand(chatId, userId, sendMessageRequest.Text));
 
             if (!result) return BadRequest();
 
@@ -195,7 +195,7 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> DeleteMessageFromGroupChat([FromRoute] Guid chatId, [FromBody] DeleteMessageFromGroupChatRequest deleteMessageRequest)
         {
             var result = await _handlersDispatcher.Dispatch(
-                new DeleteMessageFromGroupChatCommand(Convert.ToString(chatId), deleteMessageRequest.MessageId));
+                new DeleteMessageFromGroupChatCommand(chatId, deleteMessageRequest.MessageId));
 
             if (!result) return BadRequest();
 

@@ -17,6 +17,6 @@ namespace ReenbitMessenger.DataAccess.Models.Domain
         public long? MessageToReplyId { get; set; }
 
         // Navigation properties
-        //public IdentityUser? User { get; set; }
+        public IdentityUser? SenderUser { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
         {
             var result = await _unitOfWork.GetRepository<IGroupChatRepository>().CreateGroupChatMessageAsync(new Models.Domain.GroupChatMessage
             {
-                GroupChatId = new Guid(command.GroupChatId),
+                GroupChatId = command.GroupChatId,
                 SenderUserId = command.UserId,
                 Text = command.Text
             });

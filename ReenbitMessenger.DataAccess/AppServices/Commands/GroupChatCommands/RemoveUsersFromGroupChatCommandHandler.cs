@@ -24,7 +24,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
             foreach (var userId in command.UsersIds)
             {
-                var chatMember = await repo.RemoveUserFromGroupChatAsync(new Guid(command.GroupChatId), userId);
+                var chatMember = await repo.RemoveUserFromGroupChatAsync(command.GroupChatId, userId);
 
                 if (chatMember is null)
                 {

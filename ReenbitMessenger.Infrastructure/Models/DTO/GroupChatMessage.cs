@@ -9,9 +9,13 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
     public class GroupChatMessage
     {
         public long Id { get; set; }
-        public string SenderId { get; set; }
+        public string SenderUserId { get; set; }
         public Guid GroupChatId { get; set; }
-        public DateTime SentTime { get; set; }
         public string Text { get; set; }
+        public DateTime SentTime { get; set; }
+        public long? MessageToReplyId { get; set; }
+
+        // Navigation property
+        public User SenderUser { get; set; }
     }
 }

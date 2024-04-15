@@ -23,7 +23,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
             foreach(var userId in command.UsersIds)
             {
-                var chatMember = await repo.AddUserToGroupChatAsync(new Models.Domain.GroupChatMember { GroupChatId = new Guid(command.GroupChatId), UserId = userId });
+                var chatMember = await repo.AddUserToGroupChatAsync(new Models.Domain.GroupChatMember { GroupChatId = command.GroupChatId, UserId = userId });
 
                 if (chatMember is null)
                 {

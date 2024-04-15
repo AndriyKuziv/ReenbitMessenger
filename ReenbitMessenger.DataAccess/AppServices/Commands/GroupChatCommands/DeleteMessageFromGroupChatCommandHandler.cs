@@ -20,7 +20,8 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
         public async Task<bool> Handle(DeleteMessageFromGroupChatCommand command)
         {
-            var message = await _unitOfWork.GetRepository<IGroupChatRepository>().DeleteGroupChatMessageAsync(new Guid(command.GroupChatId), command.MessageId);
+            var message = await _unitOfWork.GetRepository<IGroupChatRepository>()
+                .DeleteGroupChatMessageAsync(command.GroupChatId, command.MessageId);
 
             if (message is null)
             {

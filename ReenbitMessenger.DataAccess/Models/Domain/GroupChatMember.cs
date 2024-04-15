@@ -10,7 +10,6 @@ namespace ReenbitMessenger.DataAccess.Models.Domain
         public byte GroupChatRoleId { get; set; }
 
         // Navigation properties
-        public GroupChat? GroupChat { get; set; }
         public IdentityUser? User { get; set; }
         public GroupChatRole? Role { get; set; }
     }
