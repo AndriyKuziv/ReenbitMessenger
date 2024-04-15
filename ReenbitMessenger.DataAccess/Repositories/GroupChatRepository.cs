@@ -34,7 +34,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 .Include(chat => chat.GroupChatMembers)
                     .ThenInclude(cmem => cmem.User)
                 .Include(chat => chat.GroupChatMessages)
-                //    .ThenInclude(msg => msg.User)
+                    .ThenInclude(msg => msg.SenderUser)
                 .FirstOrDefaultAsync(chat => chat.Id == chatId);
         }
 
@@ -81,7 +81,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
             if (take <= 0)
             {
-                return sorted.ToList();
+                return sorted;
             }
 
             return sorted.Skip(startAt).Take(take);

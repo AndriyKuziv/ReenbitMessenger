@@ -11,6 +11,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGroupChatRepository, GroupChatRepository>();
+            services.AddScoped<IPrivateMessageRepository, PrivateMessageRepository>();
         }
     }
 }

@@ -9,6 +9,8 @@ using ReenbitMessenger.DataAccess.AppServices.Queries.User;
 using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.DataAccess.AppServices.Queries.GroupChatQueries;
 using ReenbitMessenger.DataAccess.Models.Domain;
+using ReenbitMessenger.DataAccess.AppServices.Queries.PrivateMessageQueries;
+using ReenbitMessenger.DataAccess.AppServices.Commands.PrivateMessageCommands;
 
 namespace ReenbitMessenger.API.Services
 {
@@ -16,11 +18,26 @@ namespace ReenbitMessenger.API.Services
     {
         public static void AddAppServices(this IServiceCollection services)
         {
+            // Users queries
+            services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
+            services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
+            services.AddScoped<IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>, GetUsersQueryHandler>();
+
+            // Group chats queries
+            services.AddScoped<IQueryHandler<GetGroupChatsQuery, IEnumerable<GroupChat>>, GetGroupChatsQueryHandler>();
+            services.AddScoped<IQueryHandler<GetFullGroupChatQuery, GroupChat>, GetFullGroupChatQueryHandler>();
+            services.AddScoped<IQueryHandler<GetUserGroupChatsQuery, IEnumerable<GroupChat>>, GetUserGroupChatsQueryHandler>();
+            services.AddScoped<IQueryHandler<GetUserMessagesHistoryQuery, IEnumerable<GroupChatMessage>>, GetUserMessagesHistoryQueryHandler>();
+
+            // Private messages queries
+            services.AddScoped<IQueryHandler<GetPrivateChatQuery, IEnumerable<PrivateMessage>>,  GetPrivateChatQueryHandler>();
+            services.AddScoped<IQueryHandler<GetPrivateMessageQuery, PrivateMessage>, GetPrivateMessageQueryHandler>();
+
             // Users commands
             services.AddScoped<ICommandHandler<CreateUserCommand>, CreateUserCommandHandler>();
             services.AddScoped<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
 
-            // Chats commands
+            // Group chats commands
             services.AddScoped<ICommandHandler<CreateGroupChatCommand>, CreateGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteGroupChatCommand>, DeleteGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<EditGroupChatCommand>, EditGroupChatCommandHandler>();
@@ -29,16 +46,10 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand>, SendMessageToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteMessageFromGroupChatCommand>, DeleteMessageFromGroupChatCommandHandler>();
 
-            // Users queries
-            services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
-            services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
-            services.AddScoped<IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>, GetUsersQueryHandler>();
-
-            // Chats queries
-            services.AddScoped<IQueryHandler<GetGroupChatsQuery, IEnumerable<GroupChat>>, GetGroupChatsQueryHandler>();
-            services.AddScoped<IQueryHandler<GetFullGroupChatQuery, GroupChat>, GetFullGroupChatQueryHandler>();
-            services.AddScoped<IQueryHandler<GetUserGroupChatsQuery, IEnumerable<GroupChat>>, GetUserGroupChatsQueryHandler>();
-            services.AddScoped<IQueryHandler<GetUserMessagesHistoryQuery, IEnumerable<GroupChatMessage>>, GetUserMessagesHistoryQueryHandler>();
+            // Private messages commands
+            services.AddScoped<ICommandHandler<SendPrivateMessageCommand>, SendPrivateMessageCommandHandler>();
+            services.AddScoped<ICommandHandler<DeletePrivateMessageCommand>,  DeletePrivateMessageCommandHandler>();
+            services.AddScoped<ICommandHandler<EditPrivateMessageCommand>, EditPrivateMessageCommandHandler>();
 
             services.AddSingleton<HandlersDispatcher>();
         }
