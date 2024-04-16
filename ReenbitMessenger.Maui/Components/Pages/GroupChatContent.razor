@@ -8,7 +8,7 @@
     }
 </style>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChat">Refresh</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChat" Style="margin: 30px">Refresh</MudButton>
 <MudDivider />
 
 @if(groupChat is null)
@@ -21,30 +21,32 @@ else
 
     <MudContainer>
     <MudGrid>
-        <MudItem xs="12" md="3">
-            <MudPaper>
-                <h4 style="margin:30px">Members</h4>
-                <ul>
+            <MudItem xs="12" md="3">
+            <MudPaper Style="padding: 10px">
+                <h4>Members</h4>
+                <MudList Clickable="true">
                     @foreach (var member in groupChat.GroupChatMembers)
                     {
-                        <li style="margin: 20px">MemberId: @member.Id</li>
+                        <MudListItem Style="margin: 20px">- @member.User.UserName</MudListItem>
                     }
-                </ul>
+                </MudList>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" md="9">
-            <MudPaper>
-                    <h4 style="margin:30px">Messages</h4>
-                <MudList Clickable="true">
-                    @foreach (var message in groupChat.GroupChatMessages)
-                    {
-                        <MudListItem>
-                            <p>@message.SenderId: @message.Text</p>
-                            <p>@message.SentTime.ToString("HH:mm:ss")</p>
-                        </MudListItem>
-                        <MudDivider />
-                    }
-                </MudList>
+            <MudPaper Style="padding: 10px">
+                <h4>Messages</h4>
+                    <div style="height: 300px; overflow-y:scroll">
+                        <MudList Clickable="true" id="messages-list">
+                            @foreach (var message in groupChat.GroupChatMessages)
+                            {
+                                <MudListItem>
+                                    <MudText>@message.SenderUser.UserName: @message.Text</MudText>
+                                    <MudText>@message.SentTime.ToString("HH:mm:ss")</MudText>
+                                </MudListItem>
+                                <MudDivider />
+                            }
+                        </MudList>
+                    </div>
                     <MudTextField @bind-Value="@messageText" Label="Write your message"
                                   Variant="Variant.Filled" Class="limited"></MudTextField>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SendMessage">Send</MudButton>

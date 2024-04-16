@@ -39,19 +39,13 @@ namespace ReenbitMessenger.API.Controllers
         [Route("userGroupChats")]
         public async Task<IActionResult> GetUserGroupChats()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
+            var currUserId = await GetUserId();
+            if (string.IsNullOrEmpty(currUserId))
             {
-                return NotFound("Identity is null");
+                return BadRequest("Cannot obtain user id from token");
             }
 
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return NotFound("User id is null");
-            }
-
-            var groupChats = await _handlersDispatcher.Dispatch(new GetUserGroupChatsQuery(userId));
+            var groupChats = await _handlersDispatcher.Dispatch(new GetUserGroupChatsQuery(currUserId));
 
             var groupChatsDTO = _mapper.Map<IEnumerable<GroupChat>>(groupChats);
 
@@ -62,19 +56,13 @@ namespace ReenbitMessenger.API.Controllers
         [Route("messagesHistory")]
         public async Task<IActionResult> GetUserMessagesHistory()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
+            var currUserId = await GetUserId();
+            if (string.IsNullOrEmpty(currUserId))
             {
-                return NotFound("Identity is null");
+                return BadRequest("Cannot obtain user id from token");
             }
 
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return NotFound("User id is null");
-            }
-
-            var messages = await _handlersDispatcher.Dispatch(new GetUserMessagesHistoryQuery(userId));
+            var messages = await _handlersDispatcher.Dispatch(new GetUserMessagesHistoryQuery(currUserId));
 
             var messagesDTO = _mapper.Map<IEnumerable<GroupChatMessage>>(messages);
 
@@ -97,19 +85,13 @@ namespace ReenbitMessenger.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGroupChat([FromBody] CreateGroupChatRequest createGroupChatRequest)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
+            var currUserId = await GetUserId();
+            if (string.IsNullOrEmpty(currUserId))
             {
-                return NotFound("Identity is null");
+                return BadRequest("Cannot obtain user id from token");
             }
 
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return NotFound("User id is null");
-            }
-
-            var result = await _handlersDispatcher.Dispatch(new CreateGroupChatCommand(createGroupChatRequest.Name, userId));
+            var result = await _handlersDispatcher.Dispatch(new CreateGroupChatCommand(createGroupChatRequest.Name, currUserId));
 
             if (!result) return BadRequest("Something went wrong");
 
@@ -170,20 +152,14 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> SendMessageToGroupChat([FromRoute] Guid chatId,
             [FromBody] SendMessageToGroupChatRequest sendMessageRequest)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
+            var currUserId = await GetUserId();
+            if (string.IsNullOrEmpty(currUserId))
             {
-                return NotFound("Identity is null");
-            }
-
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return NotFound("User id is null");
+                return BadRequest("Cannot obtain user id from token");
             }
 
             var result = await _handlersDispatcher.Dispatch(
-                new SendMessageToGroupChatCommand(chatId, userId, sendMessageRequest.Text));
+                new SendMessageToGroupChatCommand(chatId, currUserId, sendMessageRequest.Text));
 
             if (!result) return BadRequest();
 
@@ -200,6 +176,19 @@ namespace ReenbitMessenger.API.Controllers
             if (!result) return BadRequest();
 
             return Ok();
+        }
+
+        private async Task<string> GetUserId()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity == null)
+            {
+                return null;
+            }
+
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            return userId;
         }
     }
 }

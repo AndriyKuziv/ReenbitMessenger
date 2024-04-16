@@ -14,7 +14,7 @@
 }
 else
 {
-    <MudTable Items="@groupChats" Hover="true" Striped="true" Class="mb-4">
+@*     <MudTable Items="@groupChats" Hover="true" Striped="true" Class="mb-4">
         <HeaderContent>
             <MudTh>Name</MudTh>
         </HeaderContent>
@@ -23,7 +23,16 @@ else
                 <a @onclick="@(async () => await GroupClicked(groupChat.Id))">@groupChat.Name</a>
             </MudTd>
         </RowTemplate>
-    </MudTable>
+    </MudTable> *@
+
+    <MudList Clickable="true">
+        @foreach(var chat in groupChats)
+        {
+            <MudListItem @onclick="@(async () => await GroupClicked(chat.Id))">
+                @chat.Name
+            </MudListItem>
+        }
+    </MudList>
 }
 
 @code {
@@ -39,8 +48,8 @@ else
         groupChats = await httpClient.GetUserGroupChatsAsync();
     }
 
-    private async Task GroupClicked(string chatId)
+    private async Task GroupClicked(Guid chatId)
     {
-        navManager.NavigateTo($"/groupChat/{chatId}");
+        navManager.NavigateTo($"/groupChat/{Convert.ToString(chatId)}");
     }
 }
