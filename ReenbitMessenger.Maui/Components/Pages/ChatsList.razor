@@ -7,6 +7,9 @@
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChatsList">Refresh</MudButton>
 <MudDivider />
+<MudTextField @bind-Value="chatName" Label="Name of a new chat" Variant="Variant.Filled" />
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateNewChat" Style="width: 200px">Create new chat</MudButton>
+<MudDivider />
 
 @if (groupChats is null)
 {
@@ -14,29 +17,21 @@
 }
 else
 {
-@*     <MudTable Items="@groupChats" Hover="true" Striped="true" Class="mb-4">
-        <HeaderContent>
-            <MudTh>Name</MudTh>
-        </HeaderContent>
-        <RowTemplate Context="groupChat">
-            <MudTd>
-                <a @onclick="@(async () => await GroupClicked(groupChat.Id))">@groupChat.Name</a>
-            </MudTd>
-        </RowTemplate>
-    </MudTable> *@
-
-    <MudList Clickable="true">
-        @foreach(var chat in groupChats)
-        {
-            <MudListItem @onclick="@(async () => await GroupClicked(chat.Id))">
-                @chat.Name
-            </MudListItem>
-        }
-    </MudList>
+    <div style="max-height: 400px; overflow-y:scroll">
+        <MudList Clickable="true">
+            @foreach (var chat in groupChats)
+            {
+                <MudListItem @onclick="@(async () => await GroupClicked(chat.Id))">
+                    @chat.Name
+                </MudListItem>
+            }
+        </MudList>
+    </div>
 }
 
 @code {
     IEnumerable<GroupChat> groupChats { get; set; } = new List<GroupChat>();
+    private string chatName { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,5 +46,11 @@ else
     private async Task GroupClicked(Guid chatId)
     {
         navManager.NavigateTo($"/groupChat/{Convert.ToString(chatId)}");
+    }
+
+    private async Task CreateNewChat()
+    {
+        await httpClient.CreateNewGroupChatAsync(new CreateGroupChatRequest { Name = chatName });
+        await UpdateChatsList();
     }
 }

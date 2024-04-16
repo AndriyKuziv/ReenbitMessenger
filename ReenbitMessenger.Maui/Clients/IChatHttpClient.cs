@@ -13,10 +13,11 @@ namespace ReenbitMessenger.Maui.Clients
         Task<GroupChat> GetFullGroupChatAsync(string chatId);
         Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync();
 
-        Task<IEnumerable<PrivateMessage>> GetUserPrivateMessagesHistoryAsync();
-
+        Task<bool> CreateNewGroupChatAsync(CreateGroupChatRequest createChatRequest);
         Task<bool> SendMessageToGroupChatAsync(string chatId, SendMessageToGroupChatRequest sendGroupChatMessageRequest);
 
+
+        Task<IEnumerable<PrivateMessage>> GetUserPrivateChat(string userId);
         Task<bool> SendPrivateMessageAsync(SendPrivateMessageRequest sendPrivateMessageRequest);
     }
 }

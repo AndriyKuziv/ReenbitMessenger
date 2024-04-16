@@ -23,7 +23,7 @@ namespace ReenbitMessenger.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetPrivateChat([FromBody]GetPrivateChatRequest getChatRequest)
         {
             var currUserId = await GetUserId();
@@ -61,6 +61,7 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPost]
+        [Route("send")]
         public async Task<IActionResult> SendPrivateMessage([FromBody] SendPrivateMessageRequest sendMessageRequest)
         {
             var currUserId = await GetUserId();

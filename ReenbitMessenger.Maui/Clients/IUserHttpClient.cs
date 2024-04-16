@@ -6,10 +6,10 @@ namespace ReenbitMessenger.Maui.Clients
     {
         Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest request);
 
-        Task<User> GetUserAsync(Guid id);
+        Task<User> GetUserAsync(string userId);
 
-        Task<User> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest);
+        Task<User> EditUserInfoAsync(string userId, EditUserInfoRequest editUserInfoRequest);
 
-        Task<string> DeleteUserAsync(Guid id);
+        Task<string> DeleteUserAsync(string userId);
     }
 }
