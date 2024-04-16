@@ -21,13 +21,13 @@ else
 
     <MudContainer>
     <MudGrid>
-        <MudItem xs="12" md="3">
+            <MudItem xs="12" md="3">
             <MudPaper Style="padding: 10px">
                 <h4>Members</h4>
                 <MudList Clickable="true">
                     @foreach (var member in groupChat.GroupChatMembers)
                     {
-                        <MudListItem>- @member.User.UserName</MudListItem>
+                        <MudListItem Style="margin: 20px">- @member.User.UserName</MudListItem>
                     }
                 </MudList>
             </MudPaper>
@@ -78,7 +78,6 @@ else
     private async Task SendMessage()
     {
         await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
-        messageText = "";
         await UpdateChat();
     }
 }
