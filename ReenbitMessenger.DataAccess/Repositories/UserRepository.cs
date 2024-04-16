@@ -54,7 +54,19 @@ namespace ReenbitMessenger.DataAccess.Repositories
         //            if (value != null && value.ToString().ToLower().Contains(containsValue.ToLower()))
         //                return true;
         //            return false;
-        //        })).ToList();
+        //        }));
+        //}
+
+        //public async Task<IEnumerable<IdentityUser>> FindItems<TValue>(TValue propertyValue)
+        //{
+        //    var props = typeof(IdentityUser).GetProperties();
+
+        //    var res = _dbContext.Users.Where(user =>
+        //    {
+                
+        //    });
+
+        //    return null;
         //}
 
         public async Task<IdentityUser> GetAsync(string id)
