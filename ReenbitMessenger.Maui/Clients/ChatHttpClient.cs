@@ -23,7 +23,6 @@ namespace ReenbitMessenger.Maui.Clients
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
-#pragma warning disable CS8603 // Possible null reference return.
             return JsonConvert.DeserializeObject<List<GroupChat>>(jsonResponse);
         }
 

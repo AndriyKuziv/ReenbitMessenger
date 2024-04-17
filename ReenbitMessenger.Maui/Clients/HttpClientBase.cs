@@ -24,7 +24,7 @@ namespace ReenbitMessenger.Maui.Clients
         {
             if (_httpClient.DefaultRequestHeaders.Authorization is null)
             {
-                var jwt = await _localStorage.GetItemAsync<string>("jwt");
+                var jwt = await GetToken();
                 if (string.IsNullOrEmpty(jwt))
                 {
                     return false;
@@ -36,7 +36,12 @@ namespace ReenbitMessenger.Maui.Clients
             return true;
         }
 
-        public async Task DeleteToken()
+        protected async Task<string> GetToken()
+        {
+            return await _localStorage.GetItemAsync<string>("jwt");
+        }
+
+        public static async Task DeleteToken()
         {
             if (_httpClient.DefaultRequestHeaders.Authorization is null)
             {

@@ -100,22 +100,22 @@ else
         groupChat = await httpClient.GetFullGroupChatAsync(ChatId);
     }
 
-    // private async Task SendMessage()
-    // {
-    //     await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
-    //     await UpdateChat();
-    // }
-
     private async Task SendMessage()
     {
-        if (hubConnection is null)
-        {
-            return;
-        }
-
-        await hubConnection.SendAsync("SendMessage", ChatId, "" new SendMessageToGroupChatRequest() { Text = messageText });
-        messageText = string.Empty;
+        await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
+        await UpdateChat();
     }
+
+    // private async Task SendMessage()
+    // {
+    //     if (hubConnection is null)
+    //     {
+    //         return;
+    //     }
+
+    //     await hubConnection.SendAsync("SendMessage", ChatId, "", new SendMessageToGroupChatRequest() { Text = messageText });
+    //     messageText = string.Empty;
+    // }
 
     private async Task OpenAddUserDialog()
     {

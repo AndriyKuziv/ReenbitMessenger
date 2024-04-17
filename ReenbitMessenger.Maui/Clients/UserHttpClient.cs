@@ -27,6 +27,8 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<User> GetUserAsync(Guid id)
         {
+            if (!await HasToken()) return null;
+
             return await _httpClient.GetFromJsonAsync<User>($"{id}");
         }
 
@@ -36,6 +38,21 @@ namespace ReenbitMessenger.Maui.Clients
         }
 
         public async Task<User?> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> GetUserAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> EditUserInfoAsync(string userId, EditUserInfoRequest editUserInfoRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> DeleteUserAsync(string userId)
         {
             throw new NotImplementedException();
         }
