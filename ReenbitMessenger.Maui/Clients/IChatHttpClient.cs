@@ -18,5 +18,9 @@ namespace ReenbitMessenger.Maui.Clients
         Task<bool> SendMessageToGroupChatAsync(string chatId, SendMessageToGroupChatRequest sendGroupChatMessageRequest);
 
         Task<bool> SendPrivateMessageAsync(SendPrivateMessageRequest sendPrivateMessageRequest);
+
+        Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupRequest addUserToGroupChatRequest);
+
+        Task DeleteToken();
     }
 }

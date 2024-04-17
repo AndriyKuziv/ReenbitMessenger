@@ -42,21 +42,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return sortedList.Skip(startAt).Take(take);
         }
 
-        //public async Task<IEnumerable<IdentityUser>> FilterAsync(string containsValue,
-        //    string orderBy, bool ascending = true, int startAt = 0, int take = 20)
-        //{
-        //    PropertyInfo[] properties = typeof(IdentityUser).GetProperties();
-
-        //    return _dbContext.Users.Where(usr =>
-        //        properties.Any(prop =>
-        //        {
-        //            var value = prop.GetValue(usr);
-        //            if (value != null && value.ToString().ToLower().Contains(containsValue.ToLower()))
-        //                return true;
-        //            return false;
-        //        }));
-        //}
-
         //public async Task<IEnumerable<IdentityUser>> FindItems<TValue>(TValue propertyValue)
         //{
         //    var props = typeof(IdentityUser).GetProperties();

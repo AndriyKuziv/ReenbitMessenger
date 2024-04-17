@@ -1,6 +1,9 @@
 ﻿@page "/groupChat/{chatId}"
 
 @inject IChatHttpClient httpClient
+@inject IDialogService DialogService
+@using Components.Pages
+
 
 <style>
     .limited {
@@ -24,6 +27,9 @@ else
             <MudItem xs="12" md="3">
             <MudPaper Style="padding: 10px">
                 <h4>Members</h4>
+                    <MudButton @onclick="OpenAddUserDialog" Variant="Variant.Filled" Color="Color.Primary">
+                        Add user
+                    </MudButton>
                 <MudList Clickable="true">
                     @foreach (var member in groupChat.GroupChatMembers)
                     {
@@ -65,6 +71,8 @@ else
     [Parameter]
     public string ChatId { get; set; }
 
+    public string AddUserId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateChat();
@@ -78,6 +86,33 @@ else
     private async Task SendMessage()
     {
         await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
+        await UpdateChat();
+    }
+
+    private async Task OpenAddUserDialog()
+    {
+        var parameters = new DialogParameters { ["UserId"] = AddUserId };
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        var dialog = DialogService.Show<AddUserDialog>("Enter user id", options: closeOnEscapeKey, parameters: parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            string userToAddId = Convert.ToString(result.Data);
+
+            await AddUserToChat(userToAddId);
+        }
+    }
+
+    private async Task AddUserToChat(string userId)
+    {
+        await httpClient.AddUsersToGroupChatAsync(ChatId, new AddUsersToGroupRequest
+            {
+                Users = new List<string> { userId }
+            });
+
         await UpdateChat();
     }
 }

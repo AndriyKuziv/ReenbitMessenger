@@ -23,6 +23,7 @@ namespace ReenbitMessenger.Maui.Clients
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
+#pragma warning disable CS8603 // Possible null reference return.
             return JsonConvert.DeserializeObject<List<GroupChat>>(jsonResponse);
         }
 
@@ -64,6 +65,18 @@ namespace ReenbitMessenger.Maui.Clients
         public async Task<bool> SendPrivateMessageAsync(SendPrivateMessageRequest sendPrivateMessageRequest)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupRequest addUsersToChatRequest)
+        {
+            if (!await HasToken()) return false;
+
+            string jsonRequestBody = JsonConvert.SerializeObject(addUsersToChatRequest);
+            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PutAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}/addUsers", content);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

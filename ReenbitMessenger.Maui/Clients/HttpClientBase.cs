@@ -35,5 +35,14 @@ namespace ReenbitMessenger.Maui.Clients
 
             return true;
         }
+
+        public async Task DeleteToken()
+        {
+            if (_httpClient.DefaultRequestHeaders.Authorization is null)
+            {
+                return;
+            }
+            _httpClient.DefaultRequestHeaders.Remove("Authorization");
+        }
     }
 }

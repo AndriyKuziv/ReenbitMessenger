@@ -1,6 +1,7 @@
 ﻿@inject ILogger<NavMenu> logger
 @inject Blazored.LocalStorage.ILocalStorageService ls
 @inject NavigationManager navManager
+@inject IChatHttpClient chatHttpClient
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -66,6 +67,7 @@
 @code{
     private async Task Logout(){
         await ls.RemoveItemAsync("jwt");
+        await chatHttpClient.DeleteToken();
         logger.LogWarning("Logged out");
 
         navManager.NavigateTo("", true);
