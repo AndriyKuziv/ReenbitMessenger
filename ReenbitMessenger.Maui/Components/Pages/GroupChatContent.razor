@@ -2,7 +2,7 @@
 
 @inject IChatHttpClient httpClient
 @inject IDialogService DialogService
-@using Components.Pages
+@inject NavigationManager navManager
 
 
 <style>
@@ -65,6 +65,9 @@ else
 
 
 @code {
+    private HubConnection? hubConnection;
+    public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
+
     private string messageText { get; set; }
     private GroupChat groupChat { get; set; }
 
@@ -76,6 +79,20 @@ else
     protected override async Task OnInitializedAsync()
     {
         await UpdateChat();
+        await Connect();
+    }
+
+    private async Task Connect()
+    {
+        hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7051" + "/chathub").Build();
+
+        hubConnection.On<GroupChatMessage>("ReceiveMessage", (chatMessage) =>
+        {
+            groupChat.GroupChatMessages.Add(chatMessage);
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
     }
 
     private async Task UpdateChat()
@@ -83,10 +100,21 @@ else
         groupChat = await httpClient.GetFullGroupChatAsync(ChatId);
     }
 
+    // private async Task SendMessage()
+    // {
+    //     await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
+    //     await UpdateChat();
+    // }
+
     private async Task SendMessage()
     {
-        await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
-        await UpdateChat();
+        if (hubConnection is null)
+        {
+            return;
+        }
+
+        await hubConnection.SendAsync("SendMessage", ChatId, "" new SendMessageToGroupChatRequest() { Text = messageText });
+        messageText = string.Empty;
     }
 
     private async Task OpenAddUserDialog()
@@ -114,5 +142,13 @@ else
             });
 
         await UpdateChat();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
+        }
     }
 }

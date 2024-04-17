@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using FluentValidation.AspNetCore;
 using ReenbitMessenger.API.Services;
+using Microsoft.AspNetCore.ResponseCompression;
+using ReenbitMessenger.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = false);
@@ -13,6 +15,12 @@ builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = fa
 var config = builder.Configuration;
 
 builder.Services.AddControllers();
+
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(options =>
+{
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -64,6 +72,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 
+app.UseResponseCompression();
 
 if (app.Environment.IsDevelopment())
 {
@@ -76,6 +85,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
+
+app.MapHub<ChatHub>("/chathub");
 
 app.MapControllers();
 

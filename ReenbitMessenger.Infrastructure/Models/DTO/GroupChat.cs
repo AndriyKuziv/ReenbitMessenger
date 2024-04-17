@@ -12,7 +12,7 @@ namespace ReenbitMessenger.Infrastructure.Models.DTO
         public string Name { get; set; }
 
         // Navigation properties
-        public IEnumerable<GroupChatMember>? GroupChatMembers { get; set; }
-        public IEnumerable<GroupChatMessage>? GroupChatMessages { get; set; }
+        public List<GroupChatMember>? GroupChatMembers { get; set; }
+        public List<GroupChatMessage>? GroupChatMessages { get; set; }
     }
 }
