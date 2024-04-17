@@ -14,17 +14,6 @@
 }
 else
 {
-@*     <MudTable Items="@groupChats" Hover="true" Striped="true" Class="mb-4">
-        <HeaderContent>
-            <MudTh>Name</MudTh>
-        </HeaderContent>
-        <RowTemplate Context="groupChat">
-            <MudTd>
-                <a @onclick="@(async () => await GroupClicked(groupChat.Id))">@groupChat.Name</a>
-            </MudTd>
-        </RowTemplate>
-    </MudTable> *@
-
     <MudList Clickable="true">
         @foreach(var chat in groupChats)
         {

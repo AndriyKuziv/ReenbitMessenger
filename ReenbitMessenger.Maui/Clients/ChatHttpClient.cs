@@ -15,15 +15,15 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<IEnumerable<GroupChat>> GetUserGroupChatsAsync()
         {
-            if (!await HasToken()) return null;
-
             HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + "GroupChat/userGroupChats");
 
             if (!response.IsSuccessStatusCode) return null;
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<List<GroupChat>>(jsonResponse);
+            var result = JsonConvert.DeserializeObject<List<GroupChat>>(jsonResponse);
+
+            return result is null ? new List<GroupChat>() : result;
         }
 
         public async Task<GroupChat> GetFullGroupChatAsync(string chatId)

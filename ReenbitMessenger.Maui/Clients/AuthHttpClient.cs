@@ -20,19 +20,11 @@ namespace ReenbitMessenger.Maui.Clients
 
             if (response.IsSuccessStatusCode)
             {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                Console.WriteLine("JWT Token: " + jsonResponse);
-                return jsonResponse;
-            }
-            else
-            {
-                Console.WriteLine("Error: " + response.StatusCode);
+                return await response.Content.ReadAsStringAsync();
             }
 
             return null;
         }
-
 
         public async Task<bool> RegisterAsync(CreateUserRequest createUserRequest)
         {

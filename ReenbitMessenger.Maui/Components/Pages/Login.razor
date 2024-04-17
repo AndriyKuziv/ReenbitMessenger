@@ -2,7 +2,7 @@
 
 @inject NavigationManager navManager
 @inject IAuthHttpClient httpClient
-@inject Blazored.LocalStorage.ILocalStorageService ls
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject ILogger<Login> logger
 
 <h3>Login</h3>
@@ -53,7 +53,9 @@
         }
         else
         {
-            await ls.SetItemAsStringAsync("jwt", token);
+            await localStorage.SetItemAsStringAsync("jwt", token);
+            var tempClient = new HttpClientBase(localStorage);
+            await tempClient.SetToken();
 
             logger.LogWarning(token);
 

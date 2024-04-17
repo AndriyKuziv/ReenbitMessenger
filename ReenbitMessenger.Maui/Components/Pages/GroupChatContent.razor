@@ -16,7 +16,7 @@
 
 @if(groupChat is null)
 {
-    <h3>Loading...</h3>
+    <h3>We got a problem here</h3>
 }
 else
 {
@@ -69,7 +69,7 @@ else
     public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
     private string messageText { get; set; }
-    private GroupChat groupChat { get; set; }
+    private GroupChat groupChat { get; set; } = new GroupChat();
 
     [Parameter]
     public string ChatId { get; set; }

@@ -11,8 +11,6 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
         {
-            if (!await HasToken()) return null;
-
             string jsonRequestBody = JsonConvert.SerializeObject(getUsersRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
@@ -22,29 +20,14 @@ namespace ReenbitMessenger.Maui.Clients
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<List<User>>(jsonResponse);
+            var result = JsonConvert.DeserializeObject<List<User>>(jsonResponse);
+
+            return result is null ? new List<User>() : result;
         }
 
-        public async Task<User> GetUserAsync(Guid id)
+        public async Task<User> GetUserAsync(string userId)
         {
-            if (!await HasToken()) return null;
-
-            return await _httpClient.GetFromJsonAsync<User>($"{id}");
-        }
-
-        public async Task<string> DeleteUserAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<User?> EditUserInfoAsync(Guid id, EditUserInfoRequest editUserInfoRequest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetUserAsync(string userId)
-        {
-            throw new NotImplementedException();
+            return await _httpClient.GetFromJsonAsync<User>($"{userId}");
         }
 
         public Task<User> EditUserInfoAsync(string userId, EditUserInfoRequest editUserInfoRequest)
