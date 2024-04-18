@@ -30,7 +30,8 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
             if (resultGroupChat is null) return false;
 
-            var resultMember = await gcRepo.AddUserToGroupChatAsync(new GroupChatMember {
+            var resultMember = await gcRepo.AddUserToGroupChatAsync(new GroupChatMember
+            {
                 GroupChatId = resultGroupChat.Id,
                 UserId = command.UserId
             });

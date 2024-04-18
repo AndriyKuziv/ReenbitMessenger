@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,13 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands.Val
     {
         public CreateGroupChatCommandValidator(IUserRepository userRepository)
         {
-            RuleFor(chat => chat.UserId).NotEmpty();
-            RuleFor(chat => chat.UserId).MustAsync(async (userId, _) =>
+            RuleFor(cmd => cmd.UserId).NotEmpty();
+            RuleFor(cmd => cmd.UserId).MustAsync(async (userId, _) =>
             {
                 return await userRepository.GetAsync(userId) != null;
             }).WithMessage("User must exist.");
 
-            RuleFor(chat => chat.Name).NotEmpty();
+            RuleFor(cmd => cmd.Name).NotEmpty();
         }
     }
 }

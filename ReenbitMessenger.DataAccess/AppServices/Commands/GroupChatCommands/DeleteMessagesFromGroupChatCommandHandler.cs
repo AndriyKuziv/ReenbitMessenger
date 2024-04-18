@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class AddUsersToGroupChatCommandHandler : ICommandHandler<AddUsersToGroupChatCommand>
+    public class DeleteMessagesFromGroupChatCommandHandler : ICommandHandler<DeleteMessagesFromGroupChatCommand>
     {
+
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddUsersToGroupChatCommandHandler(IUnitOfWork unitOfWork)
+        public DeleteMessagesFromGroupChatCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(AddUsersToGroupChatCommand command)
+        public async Task<bool> Handle(DeleteMessagesFromGroupChatCommand command)
         {
-            var repo = _unitOfWork.GetRepository<IGroupChatRepository>();
-
-            foreach (var userId in command.UsersIds)
+            foreach (var msgId in command.MessagesIds)
             {
-                var chatMember = await repo.AddUserToGroupChatAsync(new Models.Domain.GroupChatMember { GroupChatId = command.GroupChatId, UserId = userId });
+                var message = await _unitOfWork.GetRepository<IGroupChatRepository>()
+                .DeleteGroupChatMessageAsync(command.GroupChatId, msgId);
 
-                if (chatMember is null)
+                if (message is null)
                 {
                     return false;
                 }

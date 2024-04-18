@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
-    public class DeleteMessageFromGroupChatRequest
+    public class DeleteMessagesFromGroupChatRequest
     {
-        public long MessageId { get; set; }
+        public IEnumerable<long> MessagesIds { get; set; }
     }
 }

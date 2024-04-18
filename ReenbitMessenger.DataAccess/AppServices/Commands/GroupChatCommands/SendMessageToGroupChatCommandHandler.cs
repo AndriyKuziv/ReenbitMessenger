@@ -18,7 +18,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
         {
             var groupChatRepo = _unitOfWork.GetRepository<IGroupChatRepository>();
 
-            var resultMessage = await groupChatRepo.CreateGroupChatMessageAsync(new Models.Domain.GroupChatMessage
+            var resultMessage = await groupChatRepo.CreateGroupChatMessageAsync(new GroupChatMessage
             {
                 GroupChatId = command.GroupChatId,
                 SenderUserId = command.UserId,

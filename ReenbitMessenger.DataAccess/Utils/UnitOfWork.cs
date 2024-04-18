@@ -19,17 +19,6 @@ namespace ReenbitMessenger.DataAccess.Utils
             _serviceProvider = serviceProvider;
         }
 
-        //public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
-        //{
-        //    var type = typeof(TEntity);
-        //    if (!repos.Keys.Contains(type))
-        //    {
-        //        repos[type] = new GenericRepository<TEntity>(_dbContext);
-        //    }
-
-        //    return (IGenericRepository<TEntity>)repos[type];
-        //}
-
         public TInterface GetRepository<TInterface>() where TInterface : class
         {
             var type = typeof(TInterface);

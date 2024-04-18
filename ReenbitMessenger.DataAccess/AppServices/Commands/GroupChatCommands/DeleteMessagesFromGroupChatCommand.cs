@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class DeleteMessageFromGroupChatCommand : ICommand
+    public class DeleteMessagesFromGroupChatCommand : ICommand
     {
         public Guid GroupChatId { get; }
-        public long MessageId { get; }
+        public IEnumerable<long> MessagesIds { get; }
 
-        public DeleteMessageFromGroupChatCommand(Guid groupChatId, long messageId)
+        public DeleteMessagesFromGroupChatCommand(Guid groupChatId, IEnumerable<long> messagesIds)
         {
             GroupChatId = groupChatId;
-            MessageId = messageId;
+            MessagesIds = messagesIds;
         }
     }
 }

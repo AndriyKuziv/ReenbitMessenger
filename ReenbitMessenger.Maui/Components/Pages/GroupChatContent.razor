@@ -122,6 +122,7 @@ else
 
         await hubConnection.SendAsync("SendGroupChatMessage", ChatId, userId, new SendMessageToGroupChatRequest() { Text = messageText });
         messageText = string.Empty;
+        await Task.Delay(500);
     }
 
     private async Task OpenAddUserDialog()

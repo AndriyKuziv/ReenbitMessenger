@@ -16,11 +16,14 @@ namespace ReenbitMessenger.API.Controllers
     {
         private readonly HandlersDispatcher _handlersDispatcher;
         private readonly IMapper _mapper;
+        private readonly IValidatorsHandler _validatorsHandler;
 
-        public GroupChatController(HandlersDispatcher handlersDispatcher, IMapper mapper)
+        public GroupChatController(HandlersDispatcher handlersDispatcher, 
+            IMapper mapper, IValidatorsHandler validatorsHandler)
         {
             _handlersDispatcher = handlersDispatcher;
             _mapper = mapper;
+            _validatorsHandler = validatorsHandler;
         }
 
         [HttpGet]
@@ -91,9 +94,19 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token");
             }
 
-            var result = await _handlersDispatcher.Dispatch(new CreateGroupChatCommand(createGroupChatRequest.Name, currUserId));
+            var command = new CreateGroupChatCommand(createGroupChatRequest.Name, currUserId);
 
-            if (!result) return BadRequest("Something went wrong");
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            // TODO: remake command to return created chat
+            var createResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!createResult) return BadRequest("Something went wrong");
 
             return Ok();
         }
@@ -102,9 +115,18 @@ namespace ReenbitMessenger.API.Controllers
         [Route("{chatId:guid}")]
         public async Task<IActionResult> DeleteGroupChatById([FromRoute] Guid chatId)
         {
-            var result = await _handlersDispatcher.Dispatch(new DeleteGroupChatCommand(chatId));
+            var command = new DeleteGroupChatCommand(chatId);
 
-            if (!result) return BadRequest();
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var deleteResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!deleteResult) return BadRequest();
 
             return Ok();
         }
@@ -114,10 +136,18 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> EditGroupChatInfoById([FromRoute] Guid chatId,
             [FromBody] EditGroupChatRequest editGroupChatRequest)
         {
-            var result = await _handlersDispatcher.Dispatch(
-                new EditGroupChatCommand(chatId, editGroupChatRequest.Name));
+            var command = new EditGroupChatCommand(chatId, editGroupChatRequest.Name);
 
-            if (!result) return BadRequest();
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var editResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!editResult) return BadRequest();
 
             return Ok();
         }
@@ -127,10 +157,18 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> AddUsersToGroupChat([FromRoute] Guid chatId,
             [FromBody] AddUsersToGroupRequest addUsersRequest)
         {
-            var result = await _handlersDispatcher.Dispatch(
-                new AddUsersToGroupChatCommand(chatId, addUsersRequest.Users));
+            var command = new AddUsersToGroupChatCommand(chatId, addUsersRequest.Users);
 
-            if (!result) return BadRequest();
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var addResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!addResult) return BadRequest();
 
             return Ok();
         }
@@ -140,9 +178,18 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> RemoveUsersFromGroupChat([FromRoute] Guid chatId,
             [FromBody] RemoveUsersFromGroupRequest removeUsersRequest)
         {
-            var result = await _handlersDispatcher.Dispatch(new RemoveUsersFromGroupChatCommand(chatId, removeUsersRequest.Users));
+            var command = new RemoveUsersFromGroupChatCommand(chatId, removeUsersRequest.Users);
 
-            if (!result) return BadRequest();
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var removeResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!removeResult) return BadRequest();
 
             return Ok();
         }
@@ -158,8 +205,16 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token");
             }
 
-            var groupChatMessage = await _handlersDispatcher.Dispatch(
-                new SendMessageToGroupChatCommand(chatId, currUserId, sendMessageRequest.Text));
+            var command = new SendMessageToGroupChatCommand(chatId, currUserId, sendMessageRequest.Text);
+
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var groupChatMessage = await _handlersDispatcher.Dispatch(command);
 
             if (groupChatMessage is null) return BadRequest();
 
@@ -170,16 +225,25 @@ namespace ReenbitMessenger.API.Controllers
 
         [HttpDelete]
         [Route("{chatId:guid}/deleteMessage")]
-        public async Task<IActionResult> DeleteMessageFromGroupChat([FromRoute] Guid chatId, [FromBody] DeleteMessageFromGroupChatRequest deleteMessageRequest)
+        public async Task<IActionResult> DeleteMessagesFromGroupChat([FromRoute] Guid chatId, [FromBody] DeleteMessagesFromGroupChatRequest deleteMessageRequest)
         {
-            var result = await _handlersDispatcher.Dispatch(
-                new DeleteMessageFromGroupChatCommand(chatId, deleteMessageRequest.MessageId));
+            var command = new DeleteMessagesFromGroupChatCommand(chatId, deleteMessageRequest.MessagesIds);
 
-            if (!result) return BadRequest();
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var deleteResult = await _handlersDispatcher.Dispatch(command);
+
+            if (!deleteResult) return BadRequest();
 
             return Ok();
         }
 
+        // Private methods
         private async Task<string> GetUserId()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;

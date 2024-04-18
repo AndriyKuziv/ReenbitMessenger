@@ -6,11 +6,11 @@ using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.DataAccess.AppServices.Commands.User;
 using ReenbitMessenger.DataAccess.AppServices.Queries.Auth;
 using ReenbitMessenger.DataAccess.AppServices.Queries.User;
-using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.DataAccess.AppServices.Queries.GroupChatQueries;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.AppServices.Queries.PrivateMessageQueries;
 using ReenbitMessenger.DataAccess.AppServices.Commands.PrivateMessageCommands;
+using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 
 namespace ReenbitMessenger.API.Services
 {
@@ -44,13 +44,16 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<AddUsersToGroupChatCommand>, AddUsersToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<RemoveUsersFromGroupChatCommand>, RemoveUsersFromGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>, SendMessageToGroupChatCommandHandler>();
-            services.AddScoped<ICommandHandler<DeleteMessageFromGroupChatCommand>, DeleteMessageFromGroupChatCommandHandler>();
+            services.AddScoped<ICommandHandler<DeleteMessagesFromGroupChatCommand>, DeleteMessagesFromGroupChatCommandHandler>();
 
             // Private messages commands
             services.AddScoped<ICommandHandler<SendPrivateMessageCommand>, SendPrivateMessageCommandHandler>();
             services.AddScoped<ICommandHandler<DeletePrivateMessageCommand>,  DeletePrivateMessageCommandHandler>();
             services.AddScoped<ICommandHandler<EditPrivateMessageCommand>, EditPrivateMessageCommandHandler>();
 
+            services.AddScoped<IValidatorsHandler, ValidatorsHandler>();
+
+            // Singletons
             services.AddSingleton<HandlersDispatcher>();
         }
     }

@@ -11,8 +11,8 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.User.Validators
                 .NotEmpty().WithMessage("User name cannot be empty.");
 
             RuleFor(usr => usr.Email)
-                .EmailAddress().WithMessage("Email address has been entered in wrong format.")
-                .NotEmpty().WithMessage("Email cannot be empty.");
+                .NotEmpty().WithMessage("Email cannot be empty.")
+                .EmailAddress().WithMessage("Email address has been entered in wrong format.");
             RuleFor(usr => usr.Email).MustAsync(async (email, _) =>
             {
                 return await userRepository.IsEmailUniqueAsync(email);

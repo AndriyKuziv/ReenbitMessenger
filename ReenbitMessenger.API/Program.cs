@@ -1,20 +1,19 @@
-using ReenbitMessenger.DataAccess.AppServices;
 using ReenbitMessenger.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using FluentValidation.AspNetCore;
 using ReenbitMessenger.API.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using ReenbitMessenger.API.Hubs;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = false);
 
 var config = builder.Configuration;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
 
 builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(options =>
