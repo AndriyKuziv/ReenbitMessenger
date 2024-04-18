@@ -87,4 +87,8 @@
       <ProjectReference Include="..\ReenbitMessenger.Infrastructure\ReenbitMessenger.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>
