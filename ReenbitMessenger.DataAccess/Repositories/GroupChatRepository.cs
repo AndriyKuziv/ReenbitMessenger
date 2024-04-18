@@ -15,6 +15,8 @@ namespace ReenbitMessenger.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
+        // Group chats methods
+
         public async Task<IEnumerable<GroupChat>> GetAllAsync()
         {
             return _dbContext.GroupChat.AsQueryable();
@@ -36,25 +38,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 .Include(chat => chat.GroupChatMessages)
                     .ThenInclude(msg => msg.SenderUser)
                 .FirstOrDefaultAsync(chat => chat.Id == chatId);
-        }
-
-        public async Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId)
-        {
-            var user = await _dbContext.Users.FindAsync(userId);
-
-            if (user is null)
-            {
-                return null;
-            }
-
-            var res = _dbContext.GroupChat
-                .Include(chat => chat.GroupChatMembers)
-                .Include(chat => chat.GroupChatMessages)
-                .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId))
-                .SelectMany(chat => chat.GroupChatMessages)
-                .OrderBy(mssg => mssg.SentTime);
-
-            return res;
         }
 
         public async Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId)
@@ -171,9 +154,35 @@ namespace ReenbitMessenger.DataAccess.Repositories
         }
 
         // Messages methods
+        public async Task<GroupChatMessage> GetMessageAsync(long messageId)
+        {
+            return await _dbContext.GroupChatMessage
+                .Include(msg => msg.SenderUser)
+                .FirstOrDefaultAsync(msg => msg.Id == messageId);
+        }
+
         public async Task<IEnumerable<GroupChatMessage>> GetMessagesAsync(Guid chatId)
         {
             return _dbContext.GroupChatMessage.Where(gcm => gcm.GroupChatId == chatId);
+        }
+
+        public async Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            var res = _dbContext.GroupChat
+                .Include(chat => chat.GroupChatMembers)
+                .Include(chat => chat.GroupChatMessages)
+                .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId))
+                .SelectMany(chat => chat.GroupChatMessages)
+                .OrderBy(mssg => mssg.SentTime);
+
+            return res;
         }
 
         public async Task<GroupChatMessage> CreateGroupChatMessageAsync(GroupChatMessage groupChatMessage)

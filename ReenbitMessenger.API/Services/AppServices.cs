@@ -43,7 +43,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<EditGroupChatCommand>, EditGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<AddUsersToGroupChatCommand>, AddUsersToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<RemoveUsersFromGroupChatCommand>, RemoveUsersFromGroupChatCommandHandler>();
-            services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand>, SendMessageToGroupChatCommandHandler>();
+            services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>, SendMessageToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteMessageFromGroupChatCommand>, DeleteMessageFromGroupChatCommandHandler>();
 
             // Private messages commands

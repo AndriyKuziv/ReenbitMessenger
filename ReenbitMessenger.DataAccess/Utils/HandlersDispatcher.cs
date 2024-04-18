@@ -20,8 +20,20 @@ namespace ReenbitMessenger.DataAccess.Utils
 
             using var scope = _serviceProvider.CreateScope();
             dynamic handler = scope.ServiceProvider.GetService(handlerType);
-            //dynamic handler = _provider.GetService(handlerType);
             dynamic result = await handler.Handle((dynamic)command);
+
+            return result;
+        }
+
+        public async Task<T> Dispatch<T>(ICommand<T> command)
+        {
+            Type type = typeof(ICommandHandler<,>);
+            Type[] typeArgs = { command.GetType(), typeof(T) };
+            Type handlerType = type.MakeGenericType(typeArgs);
+
+            using var scope = _serviceProvider.CreateScope();
+            dynamic handler = scope.ServiceProvider.GetService(handlerType);
+            T result = await handler.Handle((dynamic)command);
 
             return result;
         }
@@ -34,7 +46,6 @@ namespace ReenbitMessenger.DataAccess.Utils
 
             using var scope = _serviceProvider.CreateScope();
             dynamic handler = scope.ServiceProvider.GetService(handlerType);
-            //dynamic handler = _provider.GetService(handlerType);
             T result = await handler.Handle((dynamic)query);
 
             return result;

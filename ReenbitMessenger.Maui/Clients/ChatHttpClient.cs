@@ -28,9 +28,9 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<GroupChat> GetFullGroupChatAsync(string chatId)
         {
-            if (!await HasToken()) return null;
-
             HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}");
+
+            Console.WriteLine(response);
 
             if (!response.IsSuccessStatusCode) return null;
 
@@ -46,8 +46,6 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<bool> SendMessageToGroupChatAsync(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
         {
-            if (!await HasToken()) return false;
-
             string jsonRequestBody = JsonConvert.SerializeObject(sendMessageRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
@@ -68,8 +66,6 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupRequest addUsersToChatRequest)
         {
-            if (!await HasToken()) return false;
-
             string jsonRequestBody = JsonConvert.SerializeObject(addUsersToChatRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 

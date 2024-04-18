@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class SendMessageToGroupChatCommand : ICommand
+    public class SendMessageToGroupChatCommand : ICommand<GroupChatMessage>
     {
         public Guid GroupChatId { get; }
         public string UserId { get; }

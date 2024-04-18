@@ -18,11 +18,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        string tokenString = await _localStorage.GetItemAsync<string>("jwt");
-        if (string.IsNullOrEmpty(tokenString))
-        {
-            Logout();
-        }
+        string? tokenString = await _localStorage.GetItemAsync<string>("jwt");
 
         ClaimsIdentity identity;
         if (string.IsNullOrEmpty(tokenString))
@@ -35,6 +31,12 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             var token = tokenHandler.ReadJwtToken(tokenString);
             var claims = token.Claims;
             identity = new ClaimsIdentity(claims, "jwt");
+
+            var userId = claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (userId != null)
+            {
+                await _localStorage.SetItemAsStringAsync("userId", userId);
+            }
         }
 
         currentUser = new ClaimsPrincipal(identity);
@@ -44,12 +46,5 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(state));
 
         return state;
-    }
-
-    public void Logout()
-    {
-        currentUser = new ClaimsPrincipal(new ClaimsIdentity());
-        NotifyAuthenticationStateChanged(
-            Task.FromResult(new AuthenticationState(currentUser)));
     }
 }

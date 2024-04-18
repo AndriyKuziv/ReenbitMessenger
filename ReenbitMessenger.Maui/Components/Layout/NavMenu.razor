@@ -1,5 +1,5 @@
 ﻿@inject ILogger<NavMenu> logger
-@inject Blazored.LocalStorage.ILocalStorageService ls
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navManager
 
 <div class="top-row ps-3 navbar navbar-dark">
@@ -59,8 +59,16 @@
 </div>
 
 @code{
+    protected override async Task OnInitializedAsync()
+    {
+        var temp = new HttpClientBase(localStorage);
+        await temp.SetToken();
+
+        await base.OnInitializedAsync();
+    }
+
     private async Task Logout(){
-        await ls.RemoveItemAsync("jwt");
+        await localStorage.RemoveItemAsync("jwt");
         await HttpClientBase.DeleteToken();
         logger.LogWarning("Logged out");
 

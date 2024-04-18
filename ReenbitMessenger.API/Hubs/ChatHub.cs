@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;
@@ -8,30 +9,28 @@ namespace ReenbitMessenger.API.Hubs
     public class ChatHub : Hub
     {
         private readonly HandlersDispatcher _handlersDispatcher;
-        public ChatHub(HandlersDispatcher handlersDispatcher)
+        private readonly IMapper _mapper;
+
+        public ChatHub(HandlersDispatcher handlersDispatcher, IMapper mapper)
         {
             _handlersDispatcher = handlersDispatcher;
+            _mapper = mapper;
         }
 
         public override async Task OnConnectedAsync()
         {
-            //await SendGroupChatMessage("", new SendMessageToGroupChatRequest());
-
             await base.OnConnectedAsync();
         }
 
         public async Task SendGroupChatMessage(string chatId, string userId, SendMessageToGroupChatRequest sendMessageRequest)
         {
-            var res = await _handlersDispatcher.Dispatch(new SendMessageToGroupChatCommand(new Guid(chatId), userId, sendMessageRequest.Text));
+            var resMessage = await _handlersDispatcher.Dispatch(new SendMessageToGroupChatCommand(new Guid(chatId), userId, sendMessageRequest.Text));
 
-            if (!res) return;
+            if (resMessage is null) return;
 
-            await Clients.All.SendAsync("ReceiveMessage", new GroupChatMessage() { SenderUser = new User() { 
-                UserName = "signalUser"
-                },
-                Text = "signalRTest",
-                SentTime = DateTime.Now,
-            });
+            var resMessageDTO = _mapper.Map<GroupChatMessage>(resMessage);
+
+            await Clients.All.SendAsync("ReceiveMessage", resMessageDTO);
         }
     }
 }

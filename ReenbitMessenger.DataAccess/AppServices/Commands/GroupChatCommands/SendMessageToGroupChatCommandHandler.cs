@@ -1,14 +1,10 @@
-﻿using ReenbitMessenger.DataAccess.Repositories;
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
+using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class SendMessageToGroupChatCommandHandler : ICommandHandler<SendMessageToGroupChatCommand>
+    public class SendMessageToGroupChatCommandHandler : ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>
     {
 
         private readonly IUnitOfWork _unitOfWork;
@@ -18,23 +14,25 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(SendMessageToGroupChatCommand command)
+        public async Task<GroupChatMessage> Handle(SendMessageToGroupChatCommand command)
         {
-            var result = await _unitOfWork.GetRepository<IGroupChatRepository>().CreateGroupChatMessageAsync(new Models.Domain.GroupChatMessage
+            var groupChatRepo = _unitOfWork.GetRepository<IGroupChatRepository>();
+
+            var resultMessage = await groupChatRepo.CreateGroupChatMessageAsync(new Models.Domain.GroupChatMessage
             {
                 GroupChatId = command.GroupChatId,
                 SenderUserId = command.UserId,
                 Text = command.Text
             });
 
-            if (result is null)
+            if (resultMessage is null)
             {
-                return false;
+                return null;
             }
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return await groupChatRepo.GetMessageAsync(resultMessage.Id);
         }
     }
 }

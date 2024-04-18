@@ -1,8 +1,9 @@
-﻿@page "/groupChat/{chatId}"
+﻿@page "/groupChat/{ChatId}"
 
 @inject IChatHttpClient httpClient
 @inject IDialogService DialogService
 @inject NavigationManager navManager
+@inject ILocalStorageService localStorage
 
 
 <style>
@@ -31,11 +32,14 @@ else
                         Add user
                     </MudButton>
                 <MudList Clickable="true">
-                    @foreach (var member in groupChat.GroupChatMembers)
-                    {
-                        <MudListItem Style="margin: 20px">- @member.User.UserName</MudListItem>
-                    }
-                </MudList>
+                        @if (groupChat.GroupChatMembers != null)
+                        {
+                            @foreach (var member in groupChat.GroupChatMembers)
+                            {
+                                <MudListItem Style="margin: 20px">- @member.User.UserName</MudListItem>
+                            }
+                        }
+                    </MudList>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" md="9">
@@ -43,13 +47,16 @@ else
                 <h4>Messages</h4>
                     <div style="height: 300px; overflow-y:scroll">
                         <MudList Clickable="true" id="messages-list">
-                            @foreach (var message in groupChat.GroupChatMessages)
+                            @if (groupChat.GroupChatMessages != null)
                             {
-                                <MudListItem>
-                                    <MudText>@message.SenderUser.UserName: @message.Text</MudText>
-                                    <MudText>@message.SentTime.ToString("HH:mm:ss")</MudText>
-                                </MudListItem>
-                                <MudDivider />
+                                @foreach (var message in groupChat.GroupChatMessages)
+                                {
+                                    <MudListItem>
+                                        <MudText>@message.SenderUser.UserName: @message.Text</MudText>
+                                        <MudText>@message.SentTime.ToString("HH:mm:ss")</MudText>
+                                    </MudListItem>
+                                    <MudDivider />
+                                }
                             }
                         </MudList>
                     </div>
@@ -68,13 +75,13 @@ else
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
-    private string messageText { get; set; }
+    private string messageText { get; set; } = string.Empty;
     private GroupChat groupChat { get; set; } = new GroupChat();
 
     [Parameter]
-    public string ChatId { get; set; }
+    public string ChatId { get; set; } = string.Empty;
 
-    public string AddUserId { get; set; }
+    public string AddUserId { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,7 +95,11 @@ else
 
         hubConnection.On<GroupChatMessage>("ReceiveMessage", (chatMessage) =>
         {
-            groupChat.GroupChatMessages.Add(chatMessage);
+            if (groupChat != null && groupChat.GroupChatMessages != null)
+            {
+                groupChat.GroupChatMessages.Add(chatMessage);
+            }
+
             StateHasChanged();
         });
 
@@ -102,20 +113,16 @@ else
 
     private async Task SendMessage()
     {
-        await httpClient.SendMessageToGroupChatAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
-        await UpdateChat();
+        if (hubConnection is null)
+        {
+            return;
+        }
+
+        var userId = await localStorage.GetItemAsStringAsync("userId");
+
+        await hubConnection.SendAsync("SendGroupChatMessage", ChatId, userId, new SendMessageToGroupChatRequest() { Text = messageText });
+        messageText = string.Empty;
     }
-
-    // private async Task SendMessage()
-    // {
-    //     if (hubConnection is null)
-    //     {
-    //         return;
-    //     }
-
-    //     await hubConnection.SendAsync("SendMessage", ChatId, "", new SendMessageToGroupChatRequest() { Text = messageText });
-    //     messageText = string.Empty;
-    // }
 
     private async Task OpenAddUserDialog()
     {
@@ -126,7 +133,7 @@ else
 
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             string userToAddId = Convert.ToString(result.Data);
 

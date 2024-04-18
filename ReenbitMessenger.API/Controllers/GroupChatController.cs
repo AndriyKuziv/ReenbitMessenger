@@ -158,12 +158,14 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token");
             }
 
-            var result = await _handlersDispatcher.Dispatch(
+            var groupChatMessage = await _handlersDispatcher.Dispatch(
                 new SendMessageToGroupChatCommand(chatId, currUserId, sendMessageRequest.Text));
 
-            if (!result) return BadRequest();
+            if (groupChatMessage is null) return BadRequest();
 
-            return Ok();
+            var groupChatMessageDTO = _mapper.Map<GroupChatMessage>(groupChatMessage);
+
+            return Ok(groupChatMessageDTO);
         }
 
         [HttpDelete]
