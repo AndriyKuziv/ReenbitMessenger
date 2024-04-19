@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class CreateGroupChatCommandHandler : ICommandHandler<CreateGroupChatCommand>
+    public class CreateGroupChatCommandHandler : ICommandHandler<CreateGroupChatCommand, GroupChat>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,7 +18,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(CreateGroupChatCommand command)
+        public async Task<GroupChat> Handle(CreateGroupChatCommand command)
         {
             var gcRepo = _unitOfWork.GetRepository<IGroupChatRepository>();
 
@@ -28,7 +28,7 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
                 Name = command.Name,
             });
 
-            if (resultGroupChat is null) return false;
+            if (resultGroupChat is null) return null;
 
             var resultMember = await gcRepo.AddUserToGroupChatAsync(new GroupChatMember
             {
@@ -36,11 +36,11 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
                 UserId = command.UserId
             });
 
-            if (resultMember is null) return false;
+            if (resultMember is null) return null;
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return resultGroupChat;
         }
     }
 }

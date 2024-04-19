@@ -1,4 +1,5 @@
-﻿using ReenbitMessenger.DataAccess.Repositories;
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
+using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class AddUsersToGroupChatCommandHandler : ICommandHandler<AddUsersToGroupChatCommand>
+    public class AddUsersToGroupChatCommandHandler : ICommandHandler<AddUsersToGroupChatCommand, IEnumerable<GroupChatMember>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -17,9 +18,10 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(AddUsersToGroupChatCommand command)
+        public async Task<IEnumerable<GroupChatMember>> Handle(AddUsersToGroupChatCommand command)
         {
             var repo = _unitOfWork.GetRepository<IGroupChatRepository>();
+            var chatMembers = new List<GroupChatMember>();
 
             foreach (var userId in command.UsersIds)
             {
@@ -27,13 +29,15 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
                 if (chatMember is null)
                 {
-                    return false;
+                    return null;
                 }
+
+                chatMembers.Add(chatMember);
             }
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return chatMembers;
         }
     }
 }

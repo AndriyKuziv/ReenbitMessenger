@@ -53,7 +53,7 @@ else
                                 {
                                     <MudListItem>
                                         <MudText>@message.SenderUser.UserName: @message.Text</MudText>
-                                        <MudText>@message.SentTime.ToString("HH:mm:ss")</MudText>
+                                        <MudText>@message.SentTime.ToString("HH:mm")</MudText>
                                     </MudListItem>
                                     <MudDivider />
                                 }
@@ -85,8 +85,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await UpdateChat();
         await Connect();
+        await ConnectToGroupChat();
     }
 
     private async Task Connect()
@@ -104,6 +104,27 @@ else
                 StateHasChanged();
             });
         });
+        hubConnection.On<GroupChatMember>("ReceiveMember", (chatMember) =>
+        {
+            InvokeAsync(() =>
+            {
+                if (groupChat != null & groupChat.GroupChatMembers != null)
+                {
+                    groupChat.GroupChatMembers.Add(chatMember);
+                }
+
+                StateHasChanged();
+            });
+        });
+        hubConnection.On<GroupChat>("ReceiveFullGroupChat", (fullGroupChat) =>
+        {
+            InvokeAsync(() =>
+            {
+                groupChat = fullGroupChat;
+
+                StateHasChanged();
+            });
+        });
 
         await hubConnection.StartAsync();
     }
@@ -111,6 +132,16 @@ else
     private async Task UpdateChat()
     {
         groupChat = await httpClient.GetFullGroupChatAsync(ChatId);
+    }
+
+    private async Task ConnectToGroupChat()
+    {
+        if (hubConnection is null)
+        {
+            return;
+        }
+
+        await hubConnection.SendAsync("ConnectToGroupChat", ChatId);
     }
 
     private async Task SendMessage()
@@ -124,6 +155,17 @@ else
 
         await hubConnection.SendAsync("SendGroupChatMessage", ChatId, userId, new SendMessageToGroupChatRequest() { Text = messageText });
         messageText = string.Empty;
+    }
+
+    private async Task AddUserToChat(string userId)
+    {
+        if (hubConnection is null)
+        {
+            return;
+        }
+
+        await hubConnection.SendAsync("AddUsersToGroupChat", ChatId, 
+                            new AddUsersToGroupChatRequest { Users = new List<string> { userId } });
     }
 
     private async Task OpenAddUserDialog()
@@ -141,16 +183,6 @@ else
 
             await AddUserToChat(userToAddId);
         }
-    }
-
-    private async Task AddUserToChat(string userId)
-    {
-        await httpClient.AddUsersToGroupChatAsync(ChatId, new AddUsersToGroupRequest
-            {
-                Users = new List<string> { userId }
-            });
-
-        await UpdateChat();
     }
 
     public async ValueTask DisposeAsync()

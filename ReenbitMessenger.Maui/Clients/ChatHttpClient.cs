@@ -64,7 +64,7 @@ namespace ReenbitMessenger.Maui.Clients
             throw new NotImplementedException();
         }
 
-        public async Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupRequest addUsersToChatRequest)
+        public async Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupChatRequest addUsersToChatRequest)
         {
             string jsonRequestBody = JsonConvert.SerializeObject(addUsersToChatRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");

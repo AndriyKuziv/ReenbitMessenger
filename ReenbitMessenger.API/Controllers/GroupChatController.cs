@@ -104,11 +104,13 @@ namespace ReenbitMessenger.API.Controllers
             }
 
             // TODO: remake command to return created chat
-            var createResult = await _handlersDispatcher.Dispatch(command);
+            var chatResult = await _handlersDispatcher.Dispatch(command);
 
-            if (!createResult) return BadRequest("Something went wrong");
+            if (chatResult is null) return BadRequest("Error during chat creation");
 
-            return Ok();
+            var chatResultDTO = _mapper.Map<GroupChat>(chatResult);
+
+            return Ok(chatResultDTO);
         }
 
         [HttpDelete]
@@ -155,7 +157,7 @@ namespace ReenbitMessenger.API.Controllers
         [HttpPut]
         [Route("{chatId:guid}/addUsers")]
         public async Task<IActionResult> AddUsersToGroupChat([FromRoute] Guid chatId,
-            [FromBody] AddUsersToGroupRequest addUsersRequest)
+            [FromBody] AddUsersToGroupChatRequest addUsersRequest)
         {
             var command = new AddUsersToGroupChatCommand(chatId, addUsersRequest.Users);
 
@@ -168,9 +170,11 @@ namespace ReenbitMessenger.API.Controllers
 
             var addResult = await _handlersDispatcher.Dispatch(command);
 
-            if (!addResult) return BadRequest();
+            if (addResult is null) return BadRequest("Error during adding of users");
 
-            return Ok();
+            var addResultDTO = _mapper.Map<IEnumerable<GroupChatMember>>(addResult);
+
+            return Ok(addResultDTO);
         }
 
         [HttpDelete]

@@ -1,6 +1,8 @@
-﻿namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
+
+namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class AddUsersToGroupChatCommand : ICommand
+    public class AddUsersToGroupChatCommand : ICommand<IEnumerable<GroupChatMember>>
     {
         public Guid GroupChatId { get; set; }
         public IEnumerable<string> UsersIds { get; }

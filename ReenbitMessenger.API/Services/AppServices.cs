@@ -38,10 +38,10 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<EditUserInfoCommand>, EditUserInfoCommandHandler>();
 
             // Group chats commands
-            services.AddScoped<ICommandHandler<CreateGroupChatCommand>, CreateGroupChatCommandHandler>();
+            services.AddScoped<ICommandHandler<CreateGroupChatCommand, GroupChat>, CreateGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteGroupChatCommand>, DeleteGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<EditGroupChatCommand>, EditGroupChatCommandHandler>();
-            services.AddScoped<ICommandHandler<AddUsersToGroupChatCommand>, AddUsersToGroupChatCommandHandler>();
+            services.AddScoped<ICommandHandler<AddUsersToGroupChatCommand, IEnumerable<GroupChatMember>>, AddUsersToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<RemoveUsersFromGroupChatCommand>, RemoveUsersFromGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>, SendMessageToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteMessagesFromGroupChatCommand>, DeleteMessagesFromGroupChatCommandHandler>();
