@@ -85,19 +85,33 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task AddUsersToGroupChat(string chatId, AddUsersToGroupChatRequest addUsersRequest)
         {
-            var resMembers = await _handlersDispatcher
-                .Dispatch(new AddUsersToGroupChatCommand(new Guid(chatId), addUsersRequest.Users));
+            var addedMembers = await _handlersDispatcher
+                .Dispatch(new AddUsersToGroupChatCommand(new Guid(chatId), addUsersRequest.UsersIds));
 
-            if (resMembers is null)
+            if (addedMembers is null)
             {
                 return;
             }
 
-            var resMembersDTO = _mapper.Map<IEnumerable<GroupChatMember>>(resMembers);
+            var addedMembersDTO = _mapper.Map<IEnumerable<GroupChatMember>>(addedMembers);
 
-            await Clients.Group(chatId).SendAsync("ReceiveMember", resMembersDTO);
+            await Clients.Group(chatId).SendAsync("ReceiveMembers", addedMembersDTO);
         }
 
+        public async Task RemoveUsersFromGroupChat(string chatId, RemoveUsersFromGroupChatRequest removeUsersRequest)
+        {
+            var removedMembersIds = await _handlersDispatcher
+                .Dispatch(new RemoveUsersFromGroupChatCommand(new Guid(chatId), removeUsersRequest.UsersIds));
+
+            if (removedMembersIds is null)
+            {
+                return;
+            }
+
+            await Clients.Group(chatId).SendAsync("RemoveMembers", removedMembersIds);
+        }
+
+        // Private methods
         private async Task<string> GetUserId()
         {
             if (Context.User is null)

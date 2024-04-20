@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper.Execution;
+using Microsoft.EntityFrameworkCore;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using System.Linq.Expressions;
@@ -7,7 +8,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
 {
     public class GroupChatRepository : IGroupChatRepository
     {
-#pragma warning disable CS8603
         private readonly MessengerDataContext _dbContext;
 
         public GroupChatRepository(MessengerDataContext dbContext)
@@ -16,7 +16,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
         }
 
         // Group chats methods
-
         public async Task<IEnumerable<GroupChat>> GetAllAsync()
         {
             return _dbContext.GroupChat.AsQueryable();
@@ -107,7 +106,23 @@ namespace ReenbitMessenger.DataAccess.Repositories
         }
 
         // Members methods
-        public async Task<IEnumerable<GroupChatMember>> GetMembersAsync(Guid chatId)
+        public async Task<GroupChatMember> GetMemberAsync(long memberId)
+        {
+            return await _dbContext.GroupChatMember
+                .Include(cmem => cmem.Role)
+                .Include(cmem => cmem.User)
+                .FirstOrDefaultAsync(cmem => cmem.Id == memberId);
+        }
+
+        public async Task<IEnumerable<GroupChatMember>> FilterMembersAsync(Func<GroupChatMember, bool> predicate)
+        {
+            return _dbContext.GroupChatMember
+                .Include(cmem => cmem.Role)
+                .Include(cmem => cmem.User)
+                .Where(predicate).AsQueryable();
+        }
+
+        public async Task<IEnumerable<GroupChatMember>> GetGroupChatMembersAsync(Guid chatId)
         {
             return _dbContext.GroupChatMember.Where(gcm => gcm.GroupChatId == chatId);
         }

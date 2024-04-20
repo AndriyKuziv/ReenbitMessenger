@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace ReenbitMessenger.Infrastructure.Models.DTO
 {
-    public class RemoveUsersFromGroupRequest
+    public class RemoveUsersFromGroupChatRequest
     {
-        public IEnumerable<string> Users { get; set; }
+        public IEnumerable<string> UsersIds { get; set; }
     }
 }

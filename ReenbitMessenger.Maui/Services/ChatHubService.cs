@@ -5,12 +5,13 @@ using ReenbitMessenger.Infrastructure.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Maui.Services
 {
-    public class ChatHubService
+    public class ChatHubService : IDisposableAsync
     {
         private static HubConnection? _hubConnection;
         private Dictionary<string, Delegate> _notificationHandlers = new Dictionary<string, Delegate>();
@@ -93,6 +94,22 @@ namespace ReenbitMessenger.Maui.Services
         public async Task AddUsersToGroupChatAsync(string chatId, AddUsersToGroupChatRequest addUsersRequest)
         {
             await _hubConnection.SendAsync("AddUsersToGroupChat", chatId, addUsersRequest);
+        }
+
+        public async Task RemoveUsersFromGroupChatAsync(string chatId, RemoveUsersFromGroupChatRequest removeUsersRequest)
+        {
+            await _hubConnection.SendAsync("RemoveUsersFromGroupChat", chatId, removeUsersRequest);
+        }
+
+        public async Task Dispose()
+        {
+            try {
+                await _hubConnection.StopAsync();
+            }
+            finally
+            {
+                await _hubConnection.DisposeAsync();
+            }
         }
     }
 }

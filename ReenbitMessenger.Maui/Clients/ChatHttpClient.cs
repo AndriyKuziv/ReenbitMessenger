@@ -4,6 +4,7 @@ using ReenbitMessenger.Infrastructure.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace ReenbitMessenger.Maui.Clients
 {
     public class ChatHttpClient : HttpClientBase, IChatHttpClient
     {
+        private const string controllerPathBase = "GroupChat/";
+
         public ChatHttpClient(ILocalStorageService localStorage) : base(localStorage) { }
 
         public async Task<IEnumerable<GroupChat>> GetUserGroupChatsAsync()
@@ -26,9 +29,27 @@ namespace ReenbitMessenger.Maui.Clients
             return result is null ? new List<GroupChat>() : result;
         }
 
+        public async Task<bool> CreateGroupChatAsync(CreateGroupChatRequest createChatRequest)
+        {
+            string jsonRequestBody = JsonConvert.SerializeObject(createChatRequest);
+            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient
+                .PostAsync(_httpClient.BaseAddress + controllerPathBase, content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> DeleteGroupChatAsync(string chatId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + controllerPathBase + chatId);
+
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<GroupChat> GetFullGroupChatAsync(string chatId)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}");
+            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + controllerPathBase + chatId);
 
             if (!response.IsSuccessStatusCode) return null;
 
@@ -41,7 +62,8 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + $"GroupChat/messagesHistory");
+            HttpResponseMessage response = await _httpClient
+                .GetAsync(_httpClient.BaseAddress + controllerPathBase + "messagesHistory");
 
             if (!response.IsSuccessStatusCode) return null;
 
@@ -57,7 +79,7 @@ namespace ReenbitMessenger.Maui.Clients
             string jsonRequestBody = JsonConvert.SerializeObject(sendMessageRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _httpClient.PostAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}/send", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(_httpClient.BaseAddress + controllerPathBase + $"{chatId}/send", content);
 
             return response.IsSuccessStatusCode;
         }
@@ -67,7 +89,8 @@ namespace ReenbitMessenger.Maui.Clients
             string jsonRequestBody = JsonConvert.SerializeObject(addUsersToChatRequest);
             HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _httpClient.PutAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}/addUsers", content);
+            HttpResponseMessage response = await _httpClient
+                .PutAsync(_httpClient.BaseAddress + controllerPathBase + $"{chatId}/addUsers", content);
 
             return response.IsSuccessStatusCode;
         }

@@ -2,8 +2,8 @@
 
 @inject IChatHttpClient httpClient
 @inject IDialogService DialogService
-@inject NavigationManager navManager
 @inject ILocalStorageService localStorage
+@inject NavigationManager navManager
 @inject ChatHubService chatHubService
 
 
@@ -30,6 +30,9 @@ else
                 <h4>Members</h4>
                     <MudButton @onclick="OpenAddUserDialog" Variant="Variant.Filled" Color="Color.Primary">
                         Add user
+                    </MudButton>
+                    <MudButton @onclick="OpenRemoveUserDialog" Variant="Variant.Filled" Color="Color.Primary">
+                        Delete user
                     </MudButton>
                 <MudList Clickable="true">
                         @if (groupChat.GroupChatMembers != null)
@@ -78,7 +81,7 @@ else
     [Parameter]
     public string ChatId { get; set; } = string.Empty;
 
-    public string AddUserId { get; set; } = string.Empty;
+    public string ChosenUserId { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,10 +94,10 @@ else
 
     private async Task OpenAddUserDialog()
     {
-        var parameters = new DialogParameters { ["UserId"] = AddUserId };
+        var parameters = new DialogParameters { ["Id"] = ChosenUserId };
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        var dialog = DialogService.Show<AddUserDialog>("Enter user id", options: closeOnEscapeKey, parameters: parameters);
+        var dialog = DialogService.Show<EnterIdDialog>("Enter id of a user to add", options: closeOnEscapeKey, parameters: parameters);
 
         var result = await dialog.Result;
 
@@ -106,12 +109,30 @@ else
         }
     }
 
+    private async Task OpenRemoveUserDialog()
+    {
+        var parameters = new DialogParameters { ["Id"] = ChosenUserId };
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        var dialog = DialogService.Show<EnterIdDialog>("Enter id of a user to delete", options: closeOnEscapeKey, parameters: parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            string userToDeleteId = Convert.ToString(result.Data);
+
+            await RemoveUserFromChat(userToDeleteId);
+        }
+    }
+
 
     private async Task Connect()
     {
         await chatHubService.SubscribeAsync<GroupChatMessage>("ReceiveMessage", OnMessageReceived);
-        await chatHubService.SubscribeAsync<GroupChatMember>("ReceiveMember", OnMemberReceived);
+        await chatHubService.SubscribeAsync<IEnumerable<GroupChatMember>>("ReceiveMembers", OnMembersReceived);
         await chatHubService.SubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
+        await chatHubService.SubscribeAsync<IEnumerable<string>>("RemoveMembers", OnMembersRemoved);
 
         await chatHubService.StartAsync();
     }
@@ -129,7 +150,12 @@ else
 
     private async Task AddUserToChat(string userId)
     {
-        await chatHubService.AddUsersToGroupChatAsync(ChatId, new AddUsersToGroupChatRequest { Users = new List<string> { userId } });
+        await chatHubService.AddUsersToGroupChatAsync(ChatId, new AddUsersToGroupChatRequest { UsersIds = new List<string> { userId } });
+    }
+
+    private async Task RemoveUserFromChat(string userId)
+    {
+        await chatHubService.RemoveUsersFromGroupChatAsync(ChatId, new RemoveUsersFromGroupChatRequest { UsersIds = new List<string> { userId } });
     }
 
 
@@ -155,25 +181,32 @@ else
         });
     }
 
-    private void OnMemberReceived(GroupChatMember member)
+    private void OnMembersReceived(IEnumerable<GroupChatMember> members)
     {
         InvokeAsync(() =>
         {
             if (groupChat != null && groupChat.GroupChatMembers != null)
             {
-                groupChat.GroupChatMembers.Add(member);
+                groupChat.GroupChatMembers.AddRange(members);
             }
             StateHasChanged();
         });
     }
 
+    private void OnMembersRemoved(IEnumerable<string> removedMembersIds)
+    {
+        InvokeAsync(() =>
+        {
+            if(groupChat != null && groupChat.GroupChatMembers != null)
+            {
+                groupChat.GroupChatMembers.RemoveAll(mem => removedMembersIds.Contains(mem.UserId));
+                StateHasChanged();
+            }
+        });
+    }
 
     public async ValueTask DisposeAsync()
     {
-        await chatHubService.UnsubscribeAsync<GroupChatMessage>("ReceiveMessage", OnMessageReceived);
-        await chatHubService.UnsubscribeAsync<GroupChatMember>("ReceiveMember", OnMemberReceived);
-        await chatHubService.UnsubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
-
-        await chatHubService.StopAsync();
+        await chatHubService.Dispose();
     }
 }

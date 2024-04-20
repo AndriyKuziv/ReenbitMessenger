@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class RemoveUsersFromGroupChatCommandHandler : ICommandHandler<RemoveUsersFromGroupChatCommand>
+    public class RemoveUsersFromGroupChatCommandHandler : ICommandHandler<RemoveUsersFromGroupChatCommand, IEnumerable<string>>
     {
 
         private readonly IUnitOfWork _unitOfWork;
@@ -18,9 +18,11 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(RemoveUsersFromGroupChatCommand command)
+        public async Task<IEnumerable<string>> Handle(RemoveUsersFromGroupChatCommand command)
         {
             var repo = _unitOfWork.GetRepository<IGroupChatRepository>();
+
+            var removedUsersIds = new List<string>();
 
             foreach (var userId in command.UsersIds)
             {
@@ -28,13 +30,14 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
                 if (chatMember is null)
                 {
-                    return false;
+                    return null;
                 }
+                removedUsersIds.Add(chatMember.UserId);
             }
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return removedUsersIds;
         }
     }
 }

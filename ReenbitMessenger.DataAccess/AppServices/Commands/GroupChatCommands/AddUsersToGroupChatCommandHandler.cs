@@ -3,6 +3,7 @@ using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,24 +21,24 @@ namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 
         public async Task<IEnumerable<GroupChatMember>> Handle(AddUsersToGroupChatCommand command)
         {
-            var repo = _unitOfWork.GetRepository<IGroupChatRepository>();
-            var chatMembers = new List<GroupChatMember>();
+            var groupChatRepo = _unitOfWork.GetRepository<IGroupChatRepository>();
+            var chatMembersIds = new List<long>();
 
             foreach (var userId in command.UsersIds)
             {
-                var chatMember = await repo.AddUserToGroupChatAsync(new Models.Domain.GroupChatMember { GroupChatId = command.GroupChatId, UserId = userId });
+                var chatMember = await groupChatRepo.AddUserToGroupChatAsync(new Models.Domain.GroupChatMember { GroupChatId = command.GroupChatId, UserId = userId });
 
                 if (chatMember is null)
                 {
                     return null;
                 }
 
-                chatMembers.Add(chatMember);
+                chatMembersIds.Add(chatMember.Id);
             }
 
             await _unitOfWork.SaveAsync();
 
-            return chatMembers;
+            return (await groupChatRepo.FilterMembersAsync(cmem => cmem.GroupChatId == command.GroupChatId && command.UsersIds.Contains(cmem.UserId))).ToList();
         }
     }
 }

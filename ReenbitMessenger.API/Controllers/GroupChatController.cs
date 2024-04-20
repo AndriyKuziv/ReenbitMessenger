@@ -158,7 +158,7 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> AddUsersToGroupChat([FromRoute] Guid chatId,
             [FromBody] AddUsersToGroupChatRequest addUsersRequest)
         {
-            var command = new AddUsersToGroupChatCommand(chatId, addUsersRequest.Users);
+            var command = new AddUsersToGroupChatCommand(chatId, addUsersRequest.UsersIds);
 
             var result = await _validatorsHandler.ValidateAsync(command);
 
@@ -169,7 +169,7 @@ namespace ReenbitMessenger.API.Controllers
 
             var addResult = await _handlersDispatcher.Dispatch(command);
 
-            if (addResult is null) return BadRequest("Error during adding of users");
+            if (addResult is null) return BadRequest("Error during adding of members");
 
             var addResultDTO = _mapper.Map<IEnumerable<GroupChatMember>>(addResult);
 
@@ -179,9 +179,9 @@ namespace ReenbitMessenger.API.Controllers
         [HttpDelete]
         [Route("{chatId:guid}/removeUsers")]
         public async Task<IActionResult> RemoveUsersFromGroupChat([FromRoute] Guid chatId,
-            [FromBody] RemoveUsersFromGroupRequest removeUsersRequest)
+            [FromBody] RemoveUsersFromGroupChatRequest removeUsersRequest)
         {
-            var command = new RemoveUsersFromGroupChatCommand(chatId, removeUsersRequest.Users);
+            var command = new RemoveUsersFromGroupChatCommand(chatId, removeUsersRequest.UsersIds);
 
             var result = await _validatorsHandler.ValidateAsync(command);
 
@@ -190,9 +190,9 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var removeResult = await _handlersDispatcher.Dispatch(command);
+            var removedMembers = await _handlersDispatcher.Dispatch(command);
 
-            if (!removeResult) return BadRequest();
+            if (removedMembers is null) return BadRequest("Error during removing of members");
 
             return Ok();
         }

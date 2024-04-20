@@ -2,11 +2,28 @@
 
 @inject IChatHttpClient httpClient
 @inject NavigationManager navManager
+@inject IDialogService DialogService
 
 <h3>Your chats</h3>
 
+<style>
+    .limited {
+        max-width: 200px
+    }
+</style>
+
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChatsList">Refresh</MudButton>
 <MudDivider />
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateGroupChat">Create group chat</MudButton>
+<MudTextField @bind-Value="@newGroupChatName" Label="Name of a new chat"
+                                  Variant="Variant.Filled" Class="limited"></MudTextField>
+
+<MudDivider />
+
+<MudButton @onclick="OpenDeleteGroupChatDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Delete group Chat
+</MudButton>
 
 @if (groupChats is null)
 {
@@ -14,17 +31,19 @@
 }
 else
 {
-    <MudList Clickable="true">
-        @foreach(var chat in groupChats)
-        {
-            <MudListItem @onclick="@(async () => await GroupClicked(chat.Id))">
-                @chat.Name
-            </MudListItem>
-        }
-    </MudList>
+    <MudDataGrid T="GroupChat" Items="@groupChats" Hideable="true" RowClick="async (e) => await OnGroupClicked(e.Item.Id)">
+        <Columns>
+            <PropertyColumn Property="chatId => chatId.Name" Title="Username" />
+            <PropertyColumn Property="chatId => chatId.Id" Title="Id" />
+        </Columns>
+    </MudDataGrid>
 }
 
 @code {
+    private string newGroupChatName { get; set; } = string.Empty;
+
+    private string groupChatId { get; set; } = string.Empty;
+
     IEnumerable<GroupChat> groupChats { get; set; } = new List<GroupChat>();
 
     protected override async Task OnInitializedAsync()
@@ -37,8 +56,42 @@ else
         groupChats = await httpClient.GetUserGroupChatsAsync();
     }
 
-    private async Task GroupClicked(Guid chatId)
+    private async Task CreateGroupChat()
+    {
+        if (!string.IsNullOrEmpty(newGroupChatName))
+        {
+            await httpClient.CreateGroupChatAsync(new CreateGroupChatRequest { Name = newGroupChatName });
+        }
+
+        newGroupChatName = string.Empty;
+        UpdateChatsList();
+    }
+
+    private async Task DeleteGroupChat(string groupChatId)
+    {
+        await httpClient.DeleteGroupChatAsync(groupChatId);
+        UpdateChatsList();
+    }
+
+    private async Task OnGroupClicked(Guid chatId)
     {
         navManager.NavigateTo($"/groupChat/{Convert.ToString(chatId)}");
+    }
+
+    private async Task OpenDeleteGroupChatDialog()
+    {
+        var parameters = new DialogParameters { ["Id"] = groupChatId };
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        var dialog = DialogService.Show<EnterIdDialog>("Enter id of a group chat to delete", options: closeOnEscapeKey, parameters: parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            string groupChatToDeleteId = Convert.ToString(result.Data);
+
+            await DeleteGroupChat(groupChatToDeleteId);
+        }
     }
 }

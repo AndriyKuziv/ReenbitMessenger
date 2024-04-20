@@ -10,6 +10,8 @@ namespace ReenbitMessenger.Maui.Clients
     public interface IChatHttpClient
     {
         Task<IEnumerable<GroupChat>> GetUserGroupChatsAsync();
+        Task<bool> CreateGroupChatAsync(CreateGroupChatRequest createChatRequest);
+        Task<bool> DeleteGroupChatAsync(string chatId);
         Task<GroupChat> GetFullGroupChatAsync(string chatId);
         Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync();
 

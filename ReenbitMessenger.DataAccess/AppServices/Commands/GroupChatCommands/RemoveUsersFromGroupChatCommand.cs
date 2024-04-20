@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands
 {
-    public class RemoveUsersFromGroupChatCommand : ICommand
+    public class RemoveUsersFromGroupChatCommand : ICommand<IEnumerable<string>>
     {
         public Guid GroupChatId { get; }
         public IEnumerable<string> UsersIds { get; }
