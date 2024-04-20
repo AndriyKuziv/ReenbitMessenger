@@ -30,18 +30,26 @@ namespace ReenbitMessenger.Maui.Clients
         {
             HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}");
 
-            Console.WriteLine(response);
+            if (!response.IsSuccessStatusCode) return null;
+
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+
+            var resultGroupChat = JsonConvert.DeserializeObject<GroupChat>(jsonResponse);
+
+            return resultGroupChat is null ? new GroupChat() : resultGroupChat;
+        }
+
+        public async Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync()
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + $"GroupChat/messagesHistory");
 
             if (!response.IsSuccessStatusCode) return null;
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<GroupChat>(jsonResponse);
-        }
+            var resultMessages = JsonConvert.DeserializeObject<IEnumerable<GroupChatMessage>>(jsonResponse);
 
-        public async Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync()
-        {
-            throw new NotImplementedException();
+            return resultMessages is null ? new List<GroupChatMessage>() : resultMessages;
         }
 
         public async Task<bool> SendMessageToGroupChatAsync(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
@@ -52,16 +60,6 @@ namespace ReenbitMessenger.Maui.Clients
             HttpResponseMessage response = await _httpClient.PostAsync(_httpClient.BaseAddress + $"GroupChat/{chatId}/send", content);
 
             return response.IsSuccessStatusCode;
-        }
-
-        public async Task<IEnumerable<PrivateMessage>> GetUserPrivateMessagesHistoryAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> SendPrivateMessageAsync(SendPrivateMessageRequest sendPrivateMessageRequest)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupChatRequest addUsersToChatRequest)

@@ -103,7 +103,6 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            // TODO: remake command to return created chat
             var chatResult = await _handlersDispatcher.Dispatch(command);
 
             if (chatResult is null) return BadRequest("Error during chat creation");

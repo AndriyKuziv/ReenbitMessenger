@@ -4,6 +4,7 @@
 @inject IDialogService DialogService
 @inject NavigationManager navManager
 @inject ILocalStorageService localStorage
+@inject ChatHubService chatHubService
 
 
 <style>
@@ -12,7 +13,7 @@
     }
 </style>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChat" Style="margin: 30px">Refresh</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ConnectToGroupChat" Style="margin: 30px">Refresh</MudButton>
 <MudDivider />
 
 @if(groupChat is null)
@@ -22,7 +23,6 @@
 else
 {
     <h3>@groupChat.Name</h3>
-
     <MudContainer>
     <MudGrid>
             <MudItem xs="12" md="3">
@@ -72,9 +72,6 @@ else
 
 
 @code {
-    private HubConnection? hubConnection;
-    public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
-
     private string messageText { get; set; } = string.Empty;
     private GroupChat groupChat { get; set; } = new GroupChat();
 
@@ -85,88 +82,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await chatHubService.InitializeAsync(await localStorage.GetItemAsStringAsync("jwt"));
+
         await Connect();
         await ConnectToGroupChat();
     }
 
-    private async Task Connect()
-    {
-        hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7051" + "/chathub").Build();
-
-        hubConnection.On<GroupChatMessage>("ReceiveMessage", (chatMessage) =>
-        {
-            InvokeAsync(() =>
-            {
-                if (groupChat != null && groupChat.GroupChatMessages != null)
-                {
-                    groupChat.GroupChatMessages.Add(chatMessage);
-                }
-                StateHasChanged();
-            });
-        });
-        hubConnection.On<GroupChatMember>("ReceiveMember", (chatMember) =>
-        {
-            InvokeAsync(() =>
-            {
-                if (groupChat != null & groupChat.GroupChatMembers != null)
-                {
-                    groupChat.GroupChatMembers.Add(chatMember);
-                }
-
-                StateHasChanged();
-            });
-        });
-        hubConnection.On<GroupChat>("ReceiveFullGroupChat", (fullGroupChat) =>
-        {
-            InvokeAsync(() =>
-            {
-                groupChat = fullGroupChat;
-
-                StateHasChanged();
-            });
-        });
-
-        await hubConnection.StartAsync();
-    }
-
-    private async Task UpdateChat()
-    {
-        groupChat = await httpClient.GetFullGroupChatAsync(ChatId);
-    }
-
-    private async Task ConnectToGroupChat()
-    {
-        if (hubConnection is null)
-        {
-            return;
-        }
-
-        await hubConnection.SendAsync("ConnectToGroupChat", ChatId);
-    }
-
-    private async Task SendMessage()
-    {
-        if (hubConnection is null)
-        {
-            return;
-        }
-
-        var userId = await localStorage.GetItemAsStringAsync("userId");
-
-        await hubConnection.SendAsync("SendGroupChatMessage", ChatId, userId, new SendMessageToGroupChatRequest() { Text = messageText });
-        messageText = string.Empty;
-    }
-
-    private async Task AddUserToChat(string userId)
-    {
-        if (hubConnection is null)
-        {
-            return;
-        }
-
-        await hubConnection.SendAsync("AddUsersToGroupChat", ChatId, 
-                            new AddUsersToGroupChatRequest { Users = new List<string> { userId } });
-    }
 
     private async Task OpenAddUserDialog()
     {
@@ -185,11 +106,74 @@ else
         }
     }
 
+
+    private async Task Connect()
+    {
+        await chatHubService.SubscribeAsync<GroupChatMessage>("ReceiveMessage", OnMessageReceived);
+        await chatHubService.SubscribeAsync<GroupChatMember>("ReceiveMember", OnMemberReceived);
+        await chatHubService.SubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
+
+        await chatHubService.StartAsync();
+    }
+
+    private async Task ConnectToGroupChat()
+    {
+        await chatHubService.ConnectToGroupChatAsync(ChatId);
+    }
+
+    private async Task SendMessage()
+    {
+        await chatHubService.SendMessageAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
+        messageText = string.Empty;
+    }
+
+    private async Task AddUserToChat(string userId)
+    {
+        await chatHubService.AddUsersToGroupChatAsync(ChatId, new AddUsersToGroupChatRequest { Users = new List<string> { userId } });
+    }
+
+
+    private void OnChatReceived(GroupChat receivedGroupChat)
+    {
+        InvokeAsync(() =>
+        {
+            groupChat = receivedGroupChat;
+
+            StateHasChanged();
+        });
+    }
+
+    private void OnMessageReceived(GroupChatMessage message)
+    {
+        InvokeAsync(() =>
+        {
+            if (groupChat != null && groupChat.GroupChatMessages != null)
+            {
+                groupChat.GroupChatMessages.Add(message);
+            }
+            StateHasChanged();
+        });
+    }
+
+    private void OnMemberReceived(GroupChatMember member)
+    {
+        InvokeAsync(() =>
+        {
+            if (groupChat != null && groupChat.GroupChatMembers != null)
+            {
+                groupChat.GroupChatMembers.Add(member);
+            }
+            StateHasChanged();
+        });
+    }
+
+
     public async ValueTask DisposeAsync()
     {
-        if (hubConnection != null)
-        {
-            await hubConnection.DisposeAsync();
-        }
+        await chatHubService.UnsubscribeAsync<GroupChatMessage>("ReceiveMessage", OnMessageReceived);
+        await chatHubService.UnsubscribeAsync<GroupChatMember>("ReceiveMember", OnMemberReceived);
+        await chatHubService.UnsubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
+
+        await chatHubService.StopAsync();
     }
 }

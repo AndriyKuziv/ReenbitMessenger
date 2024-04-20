@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using NuGet.Protocol;
 using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.DataAccess.AppServices.Queries.GroupChatQueries;
 using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;
+using System.Security.Claims;
 
 namespace ReenbitMessenger.API.Hubs
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class ChatHub : Hub
     {
         private readonly HandlersDispatcher _handlersDispatcher;
@@ -28,7 +31,10 @@ namespace ReenbitMessenger.API.Hubs
         {
             var resChat = await _handlersDispatcher.Dispatch(new GetFullGroupChatQuery(new Guid(chatId)));
 
-            if (resChat is null) return;
+            if (resChat is null)
+            {
+                return;
+            }
 
             var resChatDTO = _mapper.Map<GroupChat>(resChat);
 
@@ -36,22 +42,41 @@ namespace ReenbitMessenger.API.Hubs
             await Clients.Caller.SendAsync("ReceiveFullGroupChat", resChatDTO);
         }
 
-        public async Task CreateGroupChat(string userId, CreateGroupChatRequest createRequest)
+        public async Task CreateGroupChat(CreateGroupChatRequest createRequest)
         {
+            var userId = await GetUserId();
+            if (userId is null)
+            {
+                return;
+            }
+
             var resChat = await _handlersDispatcher.Dispatch(new CreateGroupChatCommand(createRequest.Name, userId));
 
-            if (resChat is null) return;
+            if (resChat is null)
+            {
+                return;
+            }
 
             var resChatDTO = _mapper.Map<GroupChat>(resChat);
 
             await Clients.Caller.SendAsync("ReceiveGroupChat", resChatDTO);
         }
 
-        public async Task SendGroupChatMessage(string chatId, string userId, SendMessageToGroupChatRequest sendMessageRequest)
+        public async Task SendGroupChatMessage(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
         {
+            var userId = await GetUserId();
+
+            if (userId is null)
+            {
+                return;
+            }
+
             var resMessage = await _handlersDispatcher.Dispatch(new SendMessageToGroupChatCommand(new Guid(chatId), userId, sendMessageRequest.Text));
 
-            if (resMessage is null) return;
+            if (resMessage is null)
+            {
+                return;
+            }
 
             var resMessageDTO = _mapper.Map<GroupChatMessage>(resMessage);
 
@@ -63,16 +88,32 @@ namespace ReenbitMessenger.API.Hubs
             var resMembers = await _handlersDispatcher
                 .Dispatch(new AddUsersToGroupChatCommand(new Guid(chatId), addUsersRequest.Users));
 
-            if (resMembers is null) return;
+            if (resMembers is null)
+            {
+                return;
+            }
 
             var resMembersDTO = _mapper.Map<IEnumerable<GroupChatMember>>(resMembers);
 
-            foreach(var userId in addUsersRequest.Users)
+            await Clients.Group(chatId).SendAsync("ReceiveMember", resMembersDTO);
+        }
+
+        private async Task<string> GetUserId()
+        {
+            if (Context.User is null)
             {
-                await Groups.AddToGroupAsync("", chatId);
+                return null;
             }
 
-            await Clients.Group(chatId).SendAsync("ReceiveMember", resMembersDTO);
+            var identity = Context.User.Identity as ClaimsIdentity;
+            if (identity is null)
+            {
+                return null;
+            }
+
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            return userId;
         }
     }
 }

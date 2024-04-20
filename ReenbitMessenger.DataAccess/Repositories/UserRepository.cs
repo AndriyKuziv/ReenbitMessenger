@@ -42,18 +42,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return sortedList.Skip(startAt).Take(take);
         }
 
-        //public async Task<IEnumerable<IdentityUser>> FindItems<TValue>(TValue propertyValue)
-        //{
-        //    var props = typeof(IdentityUser).GetProperties();
-
-        //    var res = _dbContext.Users.Where(user =>
-        //    {
-                
-        //    });
-
-        //    return null;
-        //}
-
         public async Task<IdentityUser> GetAsync(string id)
         {
             return await _dbContext.Users.FindAsync(id);

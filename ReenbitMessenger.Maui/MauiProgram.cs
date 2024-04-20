@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using ReenbitMessenger.Maui.Auth;
 using ReenbitMessenger.Maui.Clients;
+using ReenbitMessenger.Maui.Services;
 
 namespace ReenbitMessenger.Maui
 {
@@ -26,10 +27,13 @@ namespace ReenbitMessenger.Maui
             builder.Logging.AddDebug();
 #endif
             builder.Services.AddAuthorizationCore();
+
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             builder.Services.AddScoped<IUserHttpClient, UserHttpClient>();
             builder.Services.AddScoped<IChatHttpClient, ChatHttpClient>();
             builder.Services.AddScoped<IAuthHttpClient, AuthHttpClient>();
+            builder.Services.AddScoped<ChatHubService>();
+
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddMudServices();
 
