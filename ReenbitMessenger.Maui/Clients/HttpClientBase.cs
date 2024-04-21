@@ -1,9 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Maui.Clients
 {
@@ -14,10 +9,12 @@ namespace ReenbitMessenger.Maui.Clients
             BaseAddress = new Uri("https://localhost:7051")
         };
         protected readonly ILocalStorageService _localStorage;
+        protected readonly string controllerPathBase;
 
-        public HttpClientBase(ILocalStorageService localStorage)
+        public HttpClientBase(ILocalStorageService localStorage, string controllerPathBase = "")
         {
             _localStorage = localStorage;
+            this.controllerPathBase = controllerPathBase;
         }
 
         protected async Task<bool> HasToken()

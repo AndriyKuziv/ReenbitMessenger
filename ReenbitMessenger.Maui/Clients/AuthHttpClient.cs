@@ -1,4 +1,5 @@
-﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+﻿using ReenbitMessenger.Infrastructure.Models.Requests;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -13,10 +14,7 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<string> LogInAsync(LoginRequest loginRequest)
         {
-            string jsonRequestBody = JsonSerializer.Serialize(loginRequest);
-            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PostAsync("auth/login", content);
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("auth/login", loginRequest);
 
             if (response.IsSuccessStatusCode)
             {
@@ -28,10 +26,7 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<bool> RegisterAsync(CreateUserRequest createUserRequest)
         {
-            string jsonRequestBody = JsonSerializer.Serialize(createUserRequest);
-            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PostAsync("auth/register", content);
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("auth/signup", createUserRequest);
 
             return response.IsSuccessStatusCode;
         }

@@ -1,0 +1,30 @@
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
+using ReenbitMessenger.DataAccess.Repositories;
+using ReenbitMessenger.AppServices.Utils;
+
+namespace ReenbitMessenger.AppServices.Commands.GroupChatCommands
+{
+    public class EditGroupChatCommandHandler : ICommandHandler<EditGroupChatCommand>
+    {
+
+        private readonly IUnitOfWork _unitOfWork;
+
+        public EditGroupChatCommandHandler(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<bool> Handle(EditGroupChatCommand command)
+        {
+            var groupChat = await _unitOfWork.GetRepository<IGroupChatRepository>()
+                .UpdateAsync(command.GroupChatId, new GroupChat()
+            {
+                Name = command.Name
+            });
+
+            await _unitOfWork.SaveAsync();
+
+            return true;
+        }
+    }
+}

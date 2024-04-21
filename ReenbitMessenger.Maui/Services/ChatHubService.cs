@@ -1,17 +1,9 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.VisualBasic.FileIO;
-using ReenbitMessenger.Infrastructure.Models.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using ReenbitMessenger.Infrastructure.Models.Requests;
 
 namespace ReenbitMessenger.Maui.Services
 {
-    public class ChatHubService : IDisposableAsync
+    public class ChatHubService : IDisposable
     {
         private static HubConnection? _hubConnection;
         private Dictionary<string, Delegate> _notificationHandlers = new Dictionary<string, Delegate>();
@@ -101,14 +93,14 @@ namespace ReenbitMessenger.Maui.Services
             await _hubConnection.SendAsync("RemoveUsersFromGroupChat", chatId, removeUsersRequest);
         }
 
-        public async Task Dispose()
+        public void Dispose()
         {
             try {
-                await _hubConnection.StopAsync();
+                Task.FromResult(_hubConnection.StopAsync());
             }
             finally
             {
-                await _hubConnection.DisposeAsync();
+                Task.FromResult(_hubConnection.DisposeAsync());
             }
         }
     }

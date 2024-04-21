@@ -1,35 +1,19 @@
-﻿using ReenbitMessenger.DataAccess.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Models.Domain;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
+using LinqKit;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
-    public class PrivateMessageRepository : IPrivateMessageRepository
+    public class PrivateMessageRepository : GenericRepository<PrivateMessage, long>, IPrivateMessageRepository
     {
-        private readonly MessengerDataContext _dbContext;
 
-        public PrivateMessageRepository(MessengerDataContext messengerDataContext)
-        {
-            _dbContext = messengerDataContext;
-        }
+        public PrivateMessageRepository(MessengerDataContext dbContext) : base(dbContext) { }
 
-        public async Task<IEnumerable<PrivateMessage>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PrivateMessage> GetAsync(long messageId)
-        {
-            return await _dbContext.PrivateMessage.FindAsync(messageId);
-        }
-
-        public async Task<PrivateMessage> AddAsync(PrivateMessage message)
+        public async new Task<PrivateMessage> AddAsync(PrivateMessage message)
         {
             message.SentTime = DateTime.Now;
             var result = await _dbContext.PrivateMessage.AddAsync(message);
@@ -37,21 +21,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return result.Entity;
         }
 
-        public async Task<PrivateMessage> DeleteAsync(long messageId)
-        {
-            var message = await _dbContext.PrivateMessage.FindAsync(messageId);
-
-            if (message is null)
-            {
-                return null;
-            }
-
-            _dbContext.PrivateMessage.Remove(message);
-
-            return message;
-        }
-
-        public async Task<PrivateMessage> UpdateAsync(long messageId, PrivateMessage message)
+        public async new Task<PrivateMessage> UpdateAsync(long messageId, PrivateMessage message)
         {
             var existingMessage = await _dbContext.PrivateMessage.FindAsync(messageId);
 
@@ -62,32 +32,49 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return existingMessage;
         }
 
-        public async Task<IEnumerable<PrivateMessage>> FilterAsync(Func<PrivateMessage, bool> predicate, string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
+        public async Task<IEnumerable<PrivateMessage>> FindAsync(string searchValue,
+            string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
         {
-            var messageProp = typeof(PrivateMessage).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
+            var orderByProp = typeof(PrivateMessage).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
                 StringComparison.OrdinalIgnoreCase));
-
-            if (messageProp is null)
+            if (orderByProp is null)
             {
-                messageProp = typeof(PrivateMessage).GetProperty("SentTime");
+                orderByProp = typeof(PrivateMessage).GetProperty("Id");
             }
 
-            var privateMessages = _dbContext.PrivateMessage.AsQueryable();
+            var users = _dbContext.PrivateMessage
+                .Include(msg => msg.SenderUser)
+                .Include(msg => msg.ReceiverUser)
+                .AsQueryable();
 
-            var sorted = ascending ? privateMessages.Where(predicate).OrderBy(pm => Convert.ToString(messageProp.GetValue(pm))) :
-                privateMessages.Where(predicate).OrderByDescending(pm => Convert.ToString(messageProp.GetValue(pm)));
+            var props = typeof(PrivateMessage).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            Expression<Func<PrivateMessage, bool>> combinedExpression = null;
+
+            foreach (var prop in props)
+            {
+                Expression<Func<PrivateMessage, bool>> expr = user => Convert.ToString(prop.GetValue(user)).Contains(searchValue);
+
+                if (combinedExpression is null)
+                {
+                    combinedExpression = expr;
+                }
+                else
+                {
+                    combinedExpression = CombineExpressions(combinedExpression, expr);
+                }
+            }
+
+            var sortedList = ascending ?
+                users.AsExpandable().Where(combinedExpression.Compile()).OrderBy(usr => orderByProp.GetValue(usr)) :
+                    users.AsExpandable().Where(combinedExpression.Compile()).OrderByDescending(usr => orderByProp.GetValue(usr));
 
             if (take <= 0)
             {
-                return sorted;
+                return sortedList.AsEnumerable();
             }
 
-            return sorted.Skip(startAt).Take(take);
-        }
-
-        public async Task<IEnumerable<PrivateMessage>> FindAsync(Expression<Func<PrivateMessage, bool>> predicate)
-        {
-            return _dbContext.PrivateMessage.Where(predicate);
+            return sortedList.Skip(startAt).Take(take);
         }
 
         public async Task<IEnumerable<PrivateMessage>> GetPrivateChatAsync(string firstUserId, string secondUserId)

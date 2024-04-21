@@ -1,20 +1,20 @@
 ﻿using Blazored.LocalStorage;
 using Newtonsoft.Json;
 using ReenbitMessenger.Infrastructure.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.Requests;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace ReenbitMessenger.Maui.Clients
 {
     public class UserHttpClient : HttpClientBase, IUserHttpClient
     {
-        public UserHttpClient(ILocalStorageService localStorage) : base(localStorage) { }
+        public UserHttpClient(ILocalStorageService localStorage) : base(localStorage, "users/") { }
 
         public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
         {
-            string jsonRequestBody = JsonConvert.SerializeObject(getUsersRequest);
-            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PostAsync(_httpClient.BaseAddress + "users/usersList", content);
+            HttpResponseMessage response = await _httpClient
+                .PostAsJsonAsync(_httpClient.BaseAddress + controllerPathBase + "usersList", getUsersRequest);
 
             if (!response.IsSuccessStatusCode) return null;
 
@@ -30,14 +30,18 @@ namespace ReenbitMessenger.Maui.Clients
             return await _httpClient.GetFromJsonAsync<User>($"{userId}");
         }
 
-        public Task<User> EditUserInfoAsync(string userId, EditUserInfoRequest editUserInfoRequest)
+        public async Task<bool> EditUserInfoAsync(EditUserInfoRequest editUserInfoRequest)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync(_httpClient.BaseAddress + controllerPathBase, editUserInfoRequest);
+
+            return response.IsSuccessStatusCode;
         }
 
-        public Task<string> DeleteUserAsync(string userId)
+        public async Task<bool> DeleteUserAsync()
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = await _httpClient.DeleteAsync(_httpClient.BaseAddress + controllerPathBase);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

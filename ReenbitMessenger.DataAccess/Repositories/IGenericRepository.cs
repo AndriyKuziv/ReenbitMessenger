@@ -13,8 +13,8 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         Task<IEnumerable<TEntity>> FilterAsync(Func<TEntity, bool> predicate,
             string orderBy = "", bool ascending = true, int startAt = 0, int take = 20);
-
-        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<IEnumerable<TEntity>> FindAsync(string searchValue,
+            string orderBy = "", bool ascending = true, int startAt = 0, int take = 20);
 
         Task<TEntity> AddAsync(TEntity entity);
 

@@ -1,32 +1,19 @@
-﻿using AutoMapper.Execution;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using System.Linq.Expressions;
+using System.Reflection;
+using LinqKit;
+using System.Linq;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
-    public class GroupChatRepository : IGroupChatRepository
+    public class GroupChatRepository : GenericRepository<GroupChat, Guid>, IGroupChatRepository
     {
-        private readonly MessengerDataContext _dbContext;
 
-        public GroupChatRepository(MessengerDataContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        public GroupChatRepository(MessengerDataContext dbContext) : base(dbContext){ }
 
         // Group chats methods
-        public async Task<IEnumerable<GroupChat>> GetAllAsync()
-        {
-            return _dbContext.GroupChat.AsQueryable();
-        }
-
-        public async Task<GroupChat> GetAsync(Guid chatId)
-        {
-            return await _dbContext.GroupChat
-                .FirstOrDefaultAsync(chat => chat.Id == chatId);
-        }
-
         public async Task<GroupChat> GetFullAsync(Guid chatId)
         {
             return await _dbContext.GroupChat
@@ -46,53 +33,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId));
         }
 
-        public async Task<IEnumerable<GroupChat>> FilterAsync(Func<GroupChat, bool> predicate, string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
-        {
-            var chatProp = typeof(GroupChat).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
-                StringComparison.OrdinalIgnoreCase));
-
-            if (chatProp is null)
-            {
-                chatProp = typeof(GroupChat).GetProperty("Name");
-            }
-
-            var groupChats = _dbContext.GroupChat.AsQueryable();
-
-            var sorted = ascending ? groupChats.Where(predicate).OrderBy(gc => Convert.ToString(chatProp.GetValue(gc))) :
-                groupChats.Where(predicate).OrderByDescending(gc => Convert.ToString(chatProp.GetValue(gc)));
-
-            if (take <= 0)
-            {
-                return sorted;
-            }
-
-            return sorted.Skip(startAt).Take(take);
-        }
-
-        public async Task<IEnumerable<GroupChat>> FindAsync(Expression<Func<GroupChat, bool>> predicate)
-        {
-            return _dbContext.GroupChat.Where(predicate);
-        }
-
-        public async Task<GroupChat> AddAsync(GroupChat groupChat)
-        {
-            var result = await _dbContext.GroupChat.AddAsync(groupChat);
-
-            return result.Entity;
-        }
-
-        public async Task<GroupChat> DeleteAsync(Guid chatId)
-        {
-            var groupChat = await _dbContext.GroupChat.FindAsync(chatId);
-            if (groupChat != null)
-            {
-                _dbContext.GroupChat.Remove(groupChat);
-            }
-
-            return groupChat;
-        }
-
-        public async Task<GroupChat> UpdateAsync(Guid chatId, GroupChat entity)
+        public async new Task<GroupChat> UpdateAsync(Guid chatId, GroupChat entity)
         {
             var groupChat = await _dbContext.GroupChat.FindAsync(chatId);
             if (groupChat is null)

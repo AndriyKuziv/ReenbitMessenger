@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
-using NuGet.Protocol;
-using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
-using ReenbitMessenger.DataAccess.AppServices.Queries.GroupChatQueries;
-using ReenbitMessenger.DataAccess.Utils;
+using Microsoft.AspNetCore.Authorization;
+using ReenbitMessenger.AppServices.Utils;
+using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
+using ReenbitMessenger.AppServices.Queries.GroupChatQueries;
 using ReenbitMessenger.Infrastructure.Models.DTO;
-using System.Security.Claims;
+using ReenbitMessenger.Infrastructure.Models.Requests;
+using AutoMapper;
 
 namespace ReenbitMessenger.API.Hubs
 {
@@ -44,7 +44,7 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task CreateGroupChat(CreateGroupChatRequest createRequest)
         {
-            var userId = await GetUserId();
+            var userId = await HubHelper.GetUserId(Context);
             if (userId is null)
             {
                 return;
@@ -64,7 +64,7 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task SendGroupChatMessage(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
         {
-            var userId = await GetUserId();
+            var userId = await HubHelper.GetUserId(Context);
 
             if (userId is null)
             {
@@ -109,25 +109,6 @@ namespace ReenbitMessenger.API.Hubs
             }
 
             await Clients.Group(chatId).SendAsync("RemoveMembers", removedMembersIds);
-        }
-
-        // Private methods
-        private async Task<string> GetUserId()
-        {
-            if (Context.User is null)
-            {
-                return null;
-            }
-
-            var identity = Context.User.Identity as ClaimsIdentity;
-            if (identity is null)
-            {
-                return null;
-            }
-
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            return userId;
         }
     }
 }

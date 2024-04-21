@@ -1,4 +1,4 @@
-﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+﻿using ReenbitMessenger.Infrastructure.Models.Requests;
 
 namespace ReenbitMessenger.Maui.Clients
 {

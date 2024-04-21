@@ -55,7 +55,7 @@ builder.Services.AddAuthenticationServices(config);
 
 builder.Services.AddRepositories();
 
-builder.Services.AddAppServices();
+builder.Services.AddApiServices();
 
 builder.Services.AddValidators();
 
@@ -88,5 +88,11 @@ app.UseAuthorization();
 app.MapHub<ChatHub>("/chathub");
 
 app.MapControllers();
+
+app.UseCors(builder => builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed( _ => true)
+                .AllowCredentials());
 
 app.Run();

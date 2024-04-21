@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Auth\" />
+    <Folder Include="GroupChat\Commands\" />
+    <Folder Include="GroupChat\Queries\Validators\" />
+    <Folder Include="PrivateMessage\Commands\Validators\" />
+    <Folder Include="PrivateMessage\Queries\Validators\" />
+    <Folder Include="User\Commands\Validators\" />
+    <Folder Include="User\Queries\Validators\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReenbitMessenger.DataAccess\ReenbitMessenger.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>

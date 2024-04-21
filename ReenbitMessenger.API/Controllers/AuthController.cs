@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.DataAccess.AppServices.Commands.User;
-using ReenbitMessenger.DataAccess.AppServices.Queries.Auth;
-using ReenbitMessenger.DataAccess.Repositories;
-using ReenbitMessenger.DataAccess.Utils;
-using ReenbitMessenger.Infrastructure.Models.DTO;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ReenbitMessenger.AppServices.Commands.User;
+using ReenbitMessenger.AppServices.Queries.Auth;
+using ReenbitMessenger.AppServices.Utils;
+using ReenbitMessenger.Infrastructure.Models.Requests;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -13,12 +13,15 @@ namespace ReenbitMessenger.API.Controllers
     {
         private readonly HandlersDispatcher _handlersDispatcher;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IValidatorsHandler _validatorsHandler;
 
         public AuthController(HandlersDispatcher handlersDispatcher,
-            ITokenHandler tokenHandler)
+            ITokenHandler tokenHandler,
+            IValidatorsHandler validatorsHandler)
         {
             _handlersDispatcher = handlersDispatcher;
             _tokenHandler = tokenHandler;
+            _validatorsHandler = validatorsHandler;
         }
 
         [HttpPost]
@@ -26,7 +29,7 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> LogIn([FromBody]LoginRequest loginRequest)
         {
             var query = new LogInQuery(loginRequest.Username, loginRequest.Password);
-            
+
             var user = await _handlersDispatcher.Dispatch(query);
 
             if (user is null)
@@ -40,13 +43,20 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody] CreateUserRequest createUserRequest)
+        [Route("signup")]
+        public async Task<IActionResult> SignUp([FromBody] CreateUserRequest createUserRequest)
         {
             var command = new CreateUserCommand(
                 createUserRequest.Username,
                 createUserRequest.Email,
                 createUserRequest.Password);
+
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
 
             var success = await _handlersDispatcher.Dispatch(command);
 

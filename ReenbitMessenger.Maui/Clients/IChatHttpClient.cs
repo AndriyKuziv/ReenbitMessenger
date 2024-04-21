@@ -1,4 +1,5 @@
 ﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;

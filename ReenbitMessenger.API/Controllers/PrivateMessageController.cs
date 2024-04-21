@@ -1,11 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.DataAccess.AppServices.Commands.PrivateMessageCommands;
-using ReenbitMessenger.DataAccess.AppServices.Queries.PrivateMessageQueries;
-using ReenbitMessenger.DataAccess.Utils;
+using Microsoft.AspNetCore.Authorization;
+using ReenbitMessenger.AppServices.Utils;
+using ReenbitMessenger.AppServices.Queries.PrivateMessageQueries;
+using ReenbitMessenger.AppServices.Commands.PrivateMessageCommands;
 using ReenbitMessenger.Infrastructure.Models.DTO;
-using System.Security.Claims;
+using ReenbitMessenger.Infrastructure.Models.Requests;
+using AutoMapper;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -23,10 +24,10 @@ namespace ReenbitMessenger.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetPrivateChat([FromBody]GetPrivateChatRequest getChatRequest)
         {
-            var currUserId = await GetUserId();
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token.");
@@ -45,7 +46,7 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpGet]
-        [Route("{msgId:long}")]
+        [Route("message/{msgId:long}")]
         public async Task<IActionResult> GetPrivateMessage([FromRoute] long msgId)
         {
             var message = await _handlersDispatcher.Dispatch(new GetPrivateMessageQuery(msgId));
@@ -61,10 +62,11 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPost]
+        [Route("send")]
         public async Task<IActionResult> SendPrivateMessage([FromBody] SendPrivateMessageRequest sendMessageRequest)
         {
-            var currUserId = await GetUserId();
-            if(string.IsNullOrEmpty(currUserId))
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
+            if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token.");
             }
@@ -81,9 +83,10 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPut]
+        [Route("message")]
         public async Task<IActionResult> EditPrivateMessage([FromBody] EditPrivateMessageRequest editMessageRequest)
         {
-            var currUserId = await GetUserId();
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token.");
@@ -101,7 +104,7 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpDelete]
-        [Route("{msgId:long}")]
+        [Route("message/{msgId:long}")]
         public async Task<IActionResult> DeletePrivateMessage([FromRoute] long msgId)
         {
             var result = await _handlersDispatcher.Dispatch(new DeletePrivateMessageCommand(msgId));
@@ -112,20 +115,6 @@ namespace ReenbitMessenger.API.Controllers
             }
 
             return Ok();
-        }
-
-
-        private async Task<string> GetUserId()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
-            {
-                return null;
-            }
-
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            return userId;
         }
     }
 }

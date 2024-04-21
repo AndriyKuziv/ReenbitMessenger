@@ -1,4 +1,5 @@
 ﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.Requests;
 
 namespace ReenbitMessenger.Maui.Clients
 {
@@ -8,8 +9,8 @@ namespace ReenbitMessenger.Maui.Clients
 
         Task<User> GetUserAsync(string userId);
 
-        Task<User> EditUserInfoAsync(string userId, EditUserInfoRequest editUserInfoRequest);
+        Task<bool> EditUserInfoAsync(EditUserInfoRequest editUserInfoRequest);
 
-        Task<string> DeleteUserAsync(string userId);
+        Task<bool> DeleteUserAsync();
     }
 }

@@ -2,12 +2,11 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.DataAccess.AppServices.Commands;
-using ReenbitMessenger.DataAccess.AppServices.Commands.User;
-using ReenbitMessenger.DataAccess.AppServices.Commands.User.Validators;
-using ReenbitMessenger.DataAccess.AppServices.Queries.User;
-using ReenbitMessenger.DataAccess.Utils;
+using ReenbitMessenger.AppServices.Commands.User;
+using ReenbitMessenger.AppServices.Queries.User;
+using ReenbitMessenger.AppServices.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.Requests;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -59,33 +58,9 @@ namespace ReenbitMessenger.API.Controllers
             return Ok(userDTO);
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> CreateUser(
-            [FromBody] CreateUserRequest createUserRequest)
-        {
-            var command = new CreateUserCommand(
-                createUserRequest.Username,
-                createUserRequest.Email,
-                createUserRequest.Password);
-
-            var result = await _validatorsHandler.ValidateAsync(command);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result);
-            }
-
-            var dispatchResult = await _handlersDispatcher.Dispatch(command);
-
-            if (!dispatchResult) return BadRequest();
-
-            return Ok();
-        }
-
         [HttpDelete]
         [Route("{userId:guid}")]
-        public async Task<IActionResult> DeleteUser([FromRoute] Guid userId)
+        public async Task<IActionResult> DeleteUserById([FromRoute] Guid userId)
         {
             var command = new DeleteUserCommand(Convert.ToString(userId));
 
@@ -96,9 +71,30 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var deleteResult = await _handlersDispatcher.Dispatch(command);
+            var deleteSuccess = await _handlersDispatcher.Dispatch(command);
 
-            if (!deleteResult) return BadRequest();
+            if (!deleteSuccess) return BadRequest();
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var userId = await ControllerHelper.GetUserId(HttpContext);
+
+            var command = new DeleteUserCommand(userId);
+
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var deleteSuccess = await _handlersDispatcher.Dispatch(command);
+
+            if (!deleteSuccess) return BadRequest();
 
             return Ok();
         }
@@ -119,9 +115,32 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var editResult = await _handlersDispatcher.Dispatch(command);
+            var editSuccess = await _handlersDispatcher.Dispatch(command);
 
-            if (!editResult) return BadRequest();
+            if (!editSuccess) return BadRequest();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditUserInfo(
+            [FromBody] EditUserInfoRequest editUserInfoRequest)
+        {
+            var userId = await ControllerHelper.GetUserId(HttpContext);
+
+            var command = new EditUserInfoCommand(userId,
+                editUserInfoRequest.Username, editUserInfoRequest.Email);
+
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var editSuccess = await _handlersDispatcher.Dispatch(command);
+
+            if (!editSuccess) return BadRequest();
 
             return Ok();
         }

@@ -65,62 +65,8 @@ else
 
     private UsersFilterModel usersFilterModel = new UsersFilterModel();
 
-    private class UsersFilterModel
-    {
-        public int NumberOfUsers { get; set; } = 5;
-        public int Page { get; set; } = 0;
-        public string ValueContains { get; set; } = "";
-        public bool Ascending { get; set; } = true;
-        public string OrderBy { get; set; } = "Username";
-    }
-
     protected override async Task OnInitializedAsync()
     {
-        await UpdateUsersList();
-    }
-
-    private async Task UpdateUsersList()
-    {
-        users = await httpClient.GetUsersAsync(new GetUsersRequest
-        {
-            NumberOfUsers = usersFilterModel.NumberOfUsers,
-            Page = usersFilterModel.Page,
-            ValueContains = usersFilterModel.ValueContains,
-            Ascending = usersFilterModel.Ascending,
-            OrderBy = usersFilterModel.OrderBy
-        });
-        // users = new List<User>
-        // {
-        //     new User { Id = "1", Email = "user1@gmail.com", UserName = "user1" },
-        //     new User { Id = "2", Email = "ser@gmail.com", UserName = "user2" },
-        //     new User { Id = "3", Email = "user3@gmail.com", UserName = "user3" },
-        //     new User { Id = "4", Email = "test@gmail.com", UserName = "user4" },
-        // };
-    }
-
-    private async Task OnValueChanged(int newValue)
-    {
-        usersFilterModel.NumberOfUsers = newValue;
-
-        await UpdateUsersList();
-    }
-
-    private async Task Refresh()
-    {
-        usersFilterModel.Page = 0;
-
-        await UpdateUsersList();
-    }
-
-    private async Task MoveForward()
-    {
-        usersFilterModel.Page++;
-        await UpdateUsersList();
-    }
-
-    private async Task MoveBackward()
-    {
-        usersFilterModel.Page--;
         await UpdateUsersList();
     }
 }

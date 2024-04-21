@@ -31,12 +31,6 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             var token = tokenHandler.ReadJwtToken(tokenString);
             var claims = token.Claims;
             identity = new ClaimsIdentity(claims, "jwt");
-
-            var userId = claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (userId != null)
-            {
-                await _localStorage.SetItemAsStringAsync("userId", userId);
-            }
         }
 
         currentUser = new ClaimsPrincipal(identity);

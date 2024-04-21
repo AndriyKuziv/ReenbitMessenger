@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
-using Microsoft.AspNetCore.Identity;
-using ReenbitMessenger.DataAccess.AppServices.Commands.User.Validators;
-using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands.Validators;
-using ReenbitMessenger.DataAccess.AppServices.Commands.PrivateMessageCommands.Validators;
-using ReenbitMessenger.DataAccess.Utils;
-using ReenbitMessenger.DataAccess;
+using ReenbitMessenger.AppServices.Commands.User.Validators;
+using ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators;
+using ReenbitMessenger.AppServices.Commands.PrivateMessageCommands.Validators;
+using ReenbitMessenger.AppServices.Utils;
 
 namespace ReenbitMessenger.API.Services
 {

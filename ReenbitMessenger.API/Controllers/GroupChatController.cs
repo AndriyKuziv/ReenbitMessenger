@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.Infrastructure.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
-using ReenbitMessenger.DataAccess.Utils;
+using ReenbitMessenger.Infrastructure.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.Requests;
+using ReenbitMessenger.AppServices.Utils;
+using ReenbitMessenger.AppServices.Queries.GroupChatQueries;
+using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
 using AutoMapper;
-using ReenbitMessenger.DataAccess.AppServices.Queries.GroupChatQueries;
-using System.Security.Claims;
-using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -42,7 +42,7 @@ namespace ReenbitMessenger.API.Controllers
         [Route("userGroupChats")]
         public async Task<IActionResult> GetUserGroupChats()
         {
-            var currUserId = await GetUserId();
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token");
@@ -59,7 +59,7 @@ namespace ReenbitMessenger.API.Controllers
         [Route("messagesHistory")]
         public async Task<IActionResult> GetUserMessagesHistory()
         {
-            var currUserId = await GetUserId();
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token");
@@ -88,7 +88,7 @@ namespace ReenbitMessenger.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGroupChat([FromBody] CreateGroupChatRequest createGroupChatRequest)
         {
-            var currUserId = await GetUserId();
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token");
@@ -125,9 +125,9 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var deleteResult = await _handlersDispatcher.Dispatch(command);
+            var deleteSuccess = await _handlersDispatcher.Dispatch(command);
 
-            if (!deleteResult) return BadRequest();
+            if (!deleteSuccess) return BadRequest();
 
             return Ok();
         }
@@ -146,9 +146,9 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var editResult = await _handlersDispatcher.Dispatch(command);
+            var editSuccess = await _handlersDispatcher.Dispatch(command);
 
-            if (!editResult) return BadRequest();
+            if (!editSuccess) return BadRequest();
 
             return Ok();
         }
@@ -202,7 +202,7 @@ namespace ReenbitMessenger.API.Controllers
         public async Task<IActionResult> SendMessageToGroupChat([FromRoute] Guid chatId,
             [FromBody] SendMessageToGroupChatRequest sendMessageRequest)
         {
-            var currUserId = await GetUserId();
+            var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
             {
                 return BadRequest("Cannot obtain user id from token");
@@ -239,25 +239,11 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var deleteResult = await _handlersDispatcher.Dispatch(command);
+            var deleteSuccess = await _handlersDispatcher.Dispatch(command);
 
-            if (!deleteResult) return BadRequest();
+            if (!deleteSuccess) return BadRequest();
 
             return Ok();
-        }
-
-        // Private methods
-        private async Task<string> GetUserId()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
-            {
-                return null;
-            }
-
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            return userId;
         }
     }
 }
