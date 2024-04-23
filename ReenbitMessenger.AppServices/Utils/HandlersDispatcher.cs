@@ -2,7 +2,7 @@
 
 namespace ReenbitMessenger.AppServices.Utils
 {
-    public sealed class HandlersDispatcher
+    public class HandlersDispatcher
     {
         private readonly IServiceProvider _serviceProvider;
 

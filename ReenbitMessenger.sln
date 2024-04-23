@@ -13,7 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.DataAccess", "ReenbitMessenger.DataAccess\ReenbitMessenger.DataAccess.csproj", "{36A2D43E-095A-430A-A011-EC343A06826C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReenbitMessenger.AppServices", "ReenbitMessenger.AppServices\ReenbitMessenger.AppServices.csproj", "{67A58AF8-4384-4487-8713-4C48872C6C6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.AppServices", "ReenbitMessenger.AppServices\ReenbitMessenger.AppServices.csproj", "{67A58AF8-4384-4487-8713-4C48872C6C6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{99253CF4-B621-4505-AA9B-B20B342F0992}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BDBE1683-F605-4EC7-AA84-5220F7A87446}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReenbitMessenger.API.Tests.Unit", "ReenbitMessenger.API.Tests.Unit\ReenbitMessenger.API.Tests.Unit.csproj", "{F9D302B4-784B-4F18-B0B0-74E2A80596F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReenbitMessenger.DataAccess.Tests.Unit", "ReenbitMessenger.DataAccess.Tests.Unit\ReenbitMessenger.DataAccess.Tests.Unit.csproj", "{39AE06BA-5F63-4832-B4B1-58F2F07B8A3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,9 +57,27 @@ Global
 		{67A58AF8-4384-4487-8713-4C48872C6C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67A58AF8-4384-4487-8713-4C48872C6C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67A58AF8-4384-4487-8713-4C48872C6C6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9D302B4-784B-4F18-B0B0-74E2A80596F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9D302B4-784B-4F18-B0B0-74E2A80596F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9D302B4-784B-4F18-B0B0-74E2A80596F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9D302B4-784B-4F18-B0B0-74E2A80596F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39AE06BA-5F63-4832-B4B1-58F2F07B8A3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39AE06BA-5F63-4832-B4B1-58F2F07B8A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39AE06BA-5F63-4832-B4B1-58F2F07B8A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39AE06BA-5F63-4832-B4B1-58F2F07B8A3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E7B22DFA-6A24-4650-82A4-B7A6BF8F785D} = {99253CF4-B621-4505-AA9B-B20B342F0992}
+		{8E860999-29B8-470D-8B30-BFA31DED9C7A} = {99253CF4-B621-4505-AA9B-B20B342F0992}
+		{43DE9E30-0C66-44BD-A458-7B35D6DBFFE3} = {99253CF4-B621-4505-AA9B-B20B342F0992}
+		{7C1D7ABD-F54D-4ABC-BD1B-29E95CE5F4B8} = {99253CF4-B621-4505-AA9B-B20B342F0992}
+		{36A2D43E-095A-430A-A011-EC343A06826C} = {99253CF4-B621-4505-AA9B-B20B342F0992}
+		{67A58AF8-4384-4487-8713-4C48872C6C6B} = {99253CF4-B621-4505-AA9B-B20B342F0992}
+		{F9D302B4-784B-4F18-B0B0-74E2A80596F5} = {BDBE1683-F605-4EC7-AA84-5220F7A87446}
+		{39AE06BA-5F63-4832-B4B1-58F2F07B8A3E} = {BDBE1683-F605-4EC7-AA84-5220F7A87446}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {55171F32-3FDB-47F2-959B-DB5FF6BAD22A}

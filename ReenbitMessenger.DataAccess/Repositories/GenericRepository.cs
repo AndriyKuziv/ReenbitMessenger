@@ -19,6 +19,16 @@ namespace ReenbitMessenger.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            return _dbContext.Set<TEntity>().AsQueryable().AsEnumerable();
+        }
+
+        public async Task<TEntity> GetAsync(TId id)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(id);
+        }
+
         public async Task<TEntity> AddAsync(TEntity entity)
         {
             var result = await _dbContext.Set<TEntity>().AddAsync(entity);
@@ -37,7 +47,22 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return entity;
         }
 
-        public async Task<IEnumerable<TEntity>> FilterAsync(Func<TEntity, bool> predicate, string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
+        public async Task<TEntity> UpdateAsync(TId id, TEntity entity)
+        {
+            var existingEntity = await _dbContext.Set<TEntity>().FindAsync(id);
+
+            if (existingEntity is null)
+            {
+                return null;
+            }
+
+            existingEntity = entity;
+
+            return existingEntity;
+        }
+
+        public async Task<IEnumerable<TEntity>> FilterAsync(Func<TEntity, bool> predicate, 
+            string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
         {
             var orderByProp = typeof(TEntity).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
                 StringComparison.OrdinalIgnoreCase));
@@ -63,7 +88,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
         }
 
         public async Task<IEnumerable<TEntity>> FindAsync(string searchValue,
-    string orderBy, bool ascending = true, int startAt = 0, int take = 20)
+            string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
         {
             var orderByProp = typeof(TEntity).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
                 StringComparison.OrdinalIgnoreCase));
@@ -101,30 +126,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
             }
 
             return sortedList.Skip(startAt).Take(take);
-        }
-
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
-        {
-            return _dbContext.Set<TEntity>().AsQueryable().AsEnumerable();
-        }
-
-        public async Task<TEntity> GetAsync(TId id)
-        {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
-        }
-
-        public async Task<TEntity> UpdateAsync(TId id, TEntity entity)
-        {
-            var existingEntity = await _dbContext.Set<TEntity>().FindAsync(id);
-
-            if (existingEntity is null)
-            {
-                return null;
-            }
-
-            existingEntity = entity;
-
-            return existingEntity;
         }
 
         protected Expression<Func<T, bool>> CombineExpressions<T>(
