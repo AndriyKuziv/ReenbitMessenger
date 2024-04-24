@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
 {
-    public class UserRepositoryShould : IDisposable
+    public class UserRepositoryTests : IDisposable
     {
         IQueryable<IdentityUser> testData = new List<IdentityUser>()
             {
@@ -26,7 +26,7 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
 
         MessengerDataContext context;
 
-        public UserRepositoryShould()
+        public UserRepositoryTests()
         {
             context = new MessengerDataContext(options);
 

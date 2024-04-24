@@ -11,7 +11,7 @@ namespace ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators
             RuleFor(cmd => cmd.GroupChatId).MustAsync(async (chatId, _) =>
             {
                 return await groupChatRepository.GetAsync(chatId) != null;
-            }).WithMessage("Group chat must exist");
+            }).WithMessage("Group chat must exist.");
 
             RuleFor(cmd => cmd.Name).NotEmpty();
         }

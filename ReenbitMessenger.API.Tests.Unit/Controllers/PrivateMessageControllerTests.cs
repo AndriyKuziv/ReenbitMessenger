@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.API.Tests.Unit.Controllers
 {
-    public class GroupChatControllerShould
+    public class PrivateMessageControllerTests
     {
     }
 }

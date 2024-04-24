@@ -9,7 +9,6 @@ namespace ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators
         public RemoveUsersFromGroupChatCommandValidator(IUserRepository userRepository, IGroupChatRepository groupChatRepository)
         {
             RuleFor(cmd => cmd.GroupChatId)
-                .NotEmpty().WithMessage("Group chat id cannot be empty.")
                 .MustAsync(async (gcId, _) =>
                 {
                     return await groupChatRepository.GetAsync(gcId) != null;
@@ -28,6 +27,16 @@ namespace ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators
                     }
                     return true;
                 }).WithMessage("All users must exist.");
+
+            RuleFor(cmd => new { cmd.GroupChatId, cmd.UsersIds })
+                .MustAsync(async (cmd, _) =>
+                {
+                    foreach (var userId in cmd.UsersIds)
+                    {
+                        if (!await groupChatRepository.IsInGroupChat(cmd.GroupChatId, userId)) return false;
+                    }
+                    return true;
+                }).WithMessage("All of the given users must be members of this group chat.");
         }
     }
 }

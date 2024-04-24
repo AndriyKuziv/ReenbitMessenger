@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
 {
-    public class PrivateMessageRepositoryShould : IDisposable
+    public class PrivateMessageRepositoryTests : IDisposable
     {
         IQueryable<PrivateMessage> testData = new List<PrivateMessage>()
             {
@@ -27,7 +27,7 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
 
         MessengerDataContext context;
 
-        public PrivateMessageRepositoryShould()
+        public PrivateMessageRepositoryTests()
         {
             context = new MessengerDataContext(options);
 

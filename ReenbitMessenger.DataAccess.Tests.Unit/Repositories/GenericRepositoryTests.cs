@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
 {
-    public class GenericRepositoryShould : IDisposable
+    public class GenericRepositoryTests : IDisposable
     {
         IQueryable<PrivateMessage> testData = new List<PrivateMessage>()
             {
@@ -30,7 +30,7 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
         MessengerDataContext context;
         GenericRepository<PrivateMessage, long> repository;
 
-        public GenericRepositoryShould()
+        public GenericRepositoryTests()
         {
             context = new MessengerDataContext(options);
 

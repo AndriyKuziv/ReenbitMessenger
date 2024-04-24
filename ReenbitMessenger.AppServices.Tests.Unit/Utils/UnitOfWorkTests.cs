@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReenbitMessenger.API.Tests.Unit.Controllers
+namespace ReenbitMessenger.AppServices.Tests.Unit.Utils
 {
-    public class PrivateMessageControllerShould
+    public class UnitOfWorkTests
     {
     }
 }

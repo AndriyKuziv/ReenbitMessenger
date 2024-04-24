@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.API.Tests.Unit.Controllers
 {
-    public class ControllerHelperShould
+    public class ControllerHelperTests
     {
         private Mock<HttpContext> _httpContextMock = new Mock<HttpContext>();
 

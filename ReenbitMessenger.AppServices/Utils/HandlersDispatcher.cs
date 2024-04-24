@@ -11,7 +11,7 @@ namespace ReenbitMessenger.AppServices.Utils
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<bool> Dispatch(ICommand command)
+        public virtual async Task<bool> Dispatch(ICommand command)
         {
             Type type = typeof(ICommandHandler<>);
             Type commandType = command.GetType();
@@ -24,7 +24,7 @@ namespace ReenbitMessenger.AppServices.Utils
             return result;
         }
 
-        public async Task<T> Dispatch<T>(ICommand<T> command)
+        public virtual async Task<T> Dispatch<T>(ICommand<T> command)
         {
             Type type = typeof(ICommandHandler<,>);
             Type[] typeArgs = { command.GetType(), typeof(T) };
@@ -37,7 +37,7 @@ namespace ReenbitMessenger.AppServices.Utils
             return result;
         }
 
-        public async Task<T> Dispatch<T>(IQuery<T> query)
+        public virtual async Task<T> Dispatch<T>(IQuery<T> query)
         {
             Type type = typeof(IQueryHandler<,>);
             Type[] typeArgs = { query.GetType(), typeof(T) };

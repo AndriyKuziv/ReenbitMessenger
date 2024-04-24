@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
 {
-    public class GroupChatRepositoryShould : IDisposable
+    public class GroupChatRepositoryTests : IDisposable
     {
         IQueryable<GroupChat> groupChatTestData = new List<GroupChat>()
             {
@@ -46,7 +46,7 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
         MessengerDataContext context;
         GroupChatRepository repository;
 
-        public GroupChatRepositoryShould()
+        public GroupChatRepositoryTests()
         {
             context = new MessengerDataContext(options);
 
@@ -64,7 +64,7 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
         public async Task GetFullAsync_ReturnsFullGroupChat()
         {
             // Arrange
-            var chatId = context.GroupChat.First().Id;
+            var chatId = new Guid("c5f89626-28ed-4acb-990a-8eddcfa67219");
 
             // Act
             var resultGroupChat = await repository.GetFullAsync(chatId);
