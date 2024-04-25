@@ -5,7 +5,7 @@
 @inject ILocalStorageService localStorage
 @inject NavigationManager navManager
 @inject ChatHubService chatHubService
-
+@inject IJSRuntime Js
 
 <style>
     .limited {
@@ -13,7 +13,7 @@
     }
 </style>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ConnectToGroupChat" Style="margin: 30px">Refresh</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetFullGroupChat" Style="margin: 30px">Refresh</MudButton>
 <MudDivider />
 
 @if(groupChat is null)
@@ -23,10 +23,12 @@
 else
 {
     <h3>@groupChat.Name</h3>
+    <MudButton>Leave chat</MudButton>
+    <MudButton>Delete chat</MudButton>
     <MudContainer>
-    <MudGrid>
-            <MudItem xs="12" md="3">
-            <MudPaper Style="padding: 10px">
+    <MudGrid Spacing="1" Justify="Justify.FlexStart">
+        <MudItem>
+            <MudPaper Style="padding: 10px;">
                 <h4>Members</h4>
                     <MudButton @onclick="OpenAddUserDialog" Variant="Variant.Filled" Color="Color.Primary">
                         Add user
@@ -34,22 +36,26 @@ else
                     <MudButton @onclick="OpenRemoveUserDialog" Variant="Variant.Filled" Color="Color.Primary">
                         Delete user
                     </MudButton>
-                <MudList Clickable="true">
-                        @if (groupChat.GroupChatMembers != null)
-                        {
-                            @foreach (var member in groupChat.GroupChatMembers)
+                    <div style="height: 30vh; overflow-y:auto">
+                        <MudList Clickable="true" Style="padding: 10px">
+                            @if (groupChat.GroupChatMembers != null)
                             {
-                                <MudListItem Style="margin: 20px">- @member.User.UserName</MudListItem>
+                                @foreach (var member in groupChat.GroupChatMembers)
+                                {
+                                    <MudListItem>- @member.User.UserName</MudListItem>
+                                }
                             }
-                        }
-                    </MudList>
+                        </MudList>
+                    </div>
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" md="9">
-            <MudPaper Style="padding: 10px">
-                <h4>Messages</h4>
-                    <div style="height: 300px; overflow-y:scroll">
+        <MudItem>
+            <MudPaper Width="50vw" Style="padding: 10px" id="scroll-paper">
+                    <h4>Messages</h4>
+                    <div id="scroll-container" @onscroll="IsUsed ? OnScrolled : null"
+                        style="overflow-y:auto; height: 45vh; display: flex; flex-direction:column-reverse">
                         <MudList Clickable="true" id="messages-list">
+                            <MudListItem id="last-item"></MudListItem>
                             @if (groupChat.GroupChatMessages != null)
                             {
                                 @foreach (var message in groupChat.GroupChatMessages)
@@ -72,11 +78,11 @@ else
     </MudContainer>
 }
 
-
-
 @code {
     [Parameter]
     public string ChatId { get; set; } = string.Empty;
+
+    private int Page = 0;
 
     private GroupChat groupChat { get; set; } = new GroupChat();
 
@@ -84,12 +90,25 @@ else
 
     public string ChosenUserId { get; set; } = string.Empty;
 
+    public bool IsUsed = true;
+
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/GroupChatContent.razor.js");
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await chatHubService.InitializeAsync(await localStorage.GetItemAsStringAsync("jwt"));
-
         await Setup();
+
         await ConnectToGroupChat();
+        await GetFullGroupChat();
     }
 
     private async Task Setup()
@@ -98,12 +117,15 @@ else
         await chatHubService.SubscribeAsync<IEnumerable<GroupChatMember>>("ReceiveMembers", OnMembersReceived);
         await chatHubService.SubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
         await chatHubService.SubscribeAsync<IEnumerable<string>>("RemoveMembers", OnMembersRemoved);
+        await chatHubService.SubscribeAsync<IEnumerable<GroupChatMessage>>("ReceiveGroupChatMessages", OnMessageListReceived);
 
         await chatHubService.StartAsync();
     }
 
     public async ValueTask DisposeAsync()
     {
+        await chatHubService.UnsubscribeAllAsync();
+
         chatHubService.Dispose();
     }
 }

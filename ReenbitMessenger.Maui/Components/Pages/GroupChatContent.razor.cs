@@ -1,4 +1,6 @@
-﻿using MudBlazor;
+﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.JSInterop;
+using MudBlazor;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 
@@ -45,6 +47,18 @@ namespace ReenbitMessenger.Maui.Components.Pages
             await chatHubService.ConnectToGroupChatAsync(ChatId);
         }
 
+        private async Task GetFullGroupChat()
+        {
+            await chatHubService.GetGroupChatInfoAsync(ChatId);
+            await chatHubService.GetGroupChatMessages(ChatId);
+        }
+
+        [JSInvokable]
+        public async Task GetGroupChatMessages()
+        {
+            await chatHubService.GetGroupChatMessages(ChatId, Page);
+        }
+
         private async Task SendMessage()
         {
             await chatHubService.SendMessageAsync(ChatId, new SendMessageToGroupChatRequest() { Text = messageText });
@@ -66,6 +80,30 @@ namespace ReenbitMessenger.Maui.Components.Pages
             InvokeAsync(() =>
             {
                 groupChat = receivedGroupChat;
+
+                StateHasChanged();
+            });
+        }
+
+        private void OnMessageListReceived(IEnumerable<GroupChatMessage> groupChatMessages)
+        {
+            InvokeAsync(() =>
+            {
+                if(groupChat is null || groupChatMessages.IsNullOrEmpty())
+                {
+                    StopInfiniteScrolling();
+                    return;
+                }
+
+                if (groupChat.GroupChatMessages is null)
+                {
+                    groupChat.GroupChatMessages = groupChatMessages.ToList();
+                }
+                else
+                {
+                    groupChat.GroupChatMessages.InsertRange(0, groupChatMessages);
+                }
+                Page++;
 
                 StateHasChanged();
             });
@@ -105,6 +143,16 @@ namespace ReenbitMessenger.Maui.Components.Pages
                     StateHasChanged();
                 }
             });
+        }
+
+        private async Task OnScrolled()
+        {
+            await module.InvokeVoidAsync("checkLastElement", DotNetObjectReference.Create(this));
+        }
+
+        private async Task StopInfiniteScrolling()
+        {
+            IsUsed = false;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using ReenbitMessenger.DataAccess.Data;
 
-namespace ReenbitMessenger.AppServices.Utils
+namespace ReenbitMessenger.DataAccess.Utils
 {
     public class UnitOfWork : IUnitOfWork
     {

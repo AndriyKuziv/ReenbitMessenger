@@ -36,10 +36,42 @@ namespace ReenbitMessenger.API.Hubs
                 return;
             }
 
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
+        }
+
+        public async Task DisconnectFromGroupChat(string chatId)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
+        }
+
+        public async Task GetFullGroupChat(string chatId)
+        {
+            var resChat = await _handlersDispatcher.Dispatch(new GetFullGroupChatQuery(new Guid(chatId)));
+
+            if (resChat is null)
+            {
+                return;
+            }
+
             var resChatDTO = _mapper.Map<GroupChat>(resChat);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
             await Clients.Caller.SendAsync("ReceiveFullGroupChat", resChatDTO);
+        }
+
+        public async Task GetGroupChatMessages(string chatId,
+            int page = 0, int numberOfMessages = 20, string messageContains = "", bool ascending = true)
+        {
+            var resMessages = await _handlersDispatcher
+                .Dispatch(new GetGroupChatMessagesQuery(new Guid(chatId), numberOfMessages, messageContains, page, ascending));
+
+            if (resMessages is null)
+            {
+                return;
+            }
+
+            var resMessagesDTO = _mapper.Map<IEnumerable<GroupChatMessage>>(resMessages);
+
+            await Clients.Caller.SendAsync("ReceiveGroupChatMessages", resMessagesDTO);
         }
 
         public async Task CreateGroupChat(CreateGroupChatRequest createRequest)

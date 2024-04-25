@@ -1,5 +1,6 @@
 ﻿using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.AppServices.Utils;
+using ReenbitMessenger.DataAccess.Utils;
 
 namespace ReenbitMessenger.API.Services
 {

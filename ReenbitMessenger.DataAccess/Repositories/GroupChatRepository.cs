@@ -21,8 +21,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
                     .ThenInclude(cmem => cmem.Role)
                 .Include(chat => chat.GroupChatMembers)
                     .ThenInclude(cmem => cmem.User)
-                .Include(chat => chat.GroupChatMessages)
-                    .ThenInclude(msg => msg.SenderUser)
                 .FirstOrDefaultAsync(chat => chat.Id == chatId);
         }
 
@@ -139,6 +137,31 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 .OrderBy(mssg => mssg.SentTime);
 
             return res;
+        }
+
+        public async Task<IEnumerable<GroupChatMessage>> FilterMessagesAsync(Func<GroupChatMessage, bool> predicate,
+            int startAt = 0, int take = 20, bool ascending = true)
+        {
+            var orderByProp = typeof(GroupChatMessage).GetProperty("SentTime");
+
+            var query = _dbContext.Set<GroupChatMessage>()
+                .Include(cmem => cmem.SenderUser)
+                .AsQueryable();
+
+            var filteredList = query.Where(predicate);
+
+            if (take <= 0)
+            {
+                return ascending ?
+                    filteredList.OrderBy(cmem => orderByProp.GetValue(cmem)).AsEnumerable() :
+                    filteredList.OrderByDescending(cmem => orderByProp.GetValue(cmem)).AsEnumerable();
+            }
+
+            return ascending ?
+                filteredList.OrderByDescending(cmem => orderByProp.GetValue(cmem))
+                    .Skip(startAt).Take(take).OrderBy(cmem => orderByProp.GetValue(cmem)) :
+                filteredList.OrderBy(cmem => orderByProp.GetValue(cmem))
+                    .Skip(startAt).Take(take).OrderByDescending(cmem => orderByProp.GetValue(cmem));
         }
 
         public async Task<GroupChatMessage> CreateGroupChatMessageAsync(GroupChatMessage groupChatMessage)

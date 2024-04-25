@@ -5,21 +5,25 @@ namespace ReenbitMessenger.Maui.Services
 {
     public class ChatHubService : IDisposable
     {
-        private static HubConnection? _hubConnection;
+        private HubConnection? _hubConnection;
         private Dictionary<string, Delegate> _notificationHandlers = new Dictionary<string, Delegate>();
+        private List<string> _connectedChats = new List<string>();
 
         public async Task InitializeAsync(string accessToken)
         {
-            _hubConnection = new HubConnectionBuilder()
+            if(_hubConnection is null)
+            {
+                _hubConnection = new HubConnectionBuilder()
                 .WithUrl("https://localhost:7051" + "/chathub", options => {
                     options.AccessTokenProvider = () => Task.FromResult(accessToken);
                 })
                 .Build();
+            }
         }
 
         public async Task StartAsync()
         {
-            if (_hubConnection != null)
+            if (_hubConnection != null && _hubConnection.State == HubConnectionState.Disconnected)
             {
                 await _hubConnection.StartAsync();
             }
@@ -27,7 +31,7 @@ namespace ReenbitMessenger.Maui.Services
 
         public async Task StopAsync()
         {
-            if (_hubConnection != null)
+            if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected)
             {
                 await _hubConnection.StopAsync();
             }
@@ -35,14 +39,12 @@ namespace ReenbitMessenger.Maui.Services
 
         public async Task SubscribeAsync<T>(string notificationName, Action<T> handler)
         {
-            if (!_notificationHandlers.ContainsKey(notificationName))
+            if (_notificationHandlers is null || _notificationHandlers.ContainsKey(notificationName))
             {
-                _notificationHandlers[notificationName] = handler;
+                return;
             }
-            else
-            {
-                _notificationHandlers[notificationName] = Delegate.Combine(_notificationHandlers[notificationName], handler);
-            }
+
+            _notificationHandlers[notificationName] = handler;
 
             if (_hubConnection != null)
             {
@@ -55,7 +57,7 @@ namespace ReenbitMessenger.Maui.Services
 
         public async Task UnsubscribeAsync<T>(string notificationName, Action<T> handler)
         {
-            if (!_notificationHandlers.ContainsKey(notificationName))
+            if (_notificationHandlers != null && !_notificationHandlers.ContainsKey(notificationName))
             {
                 return;
             }
@@ -64,9 +66,24 @@ namespace ReenbitMessenger.Maui.Services
             _notificationHandlers.Remove(notificationName);
         }
 
+        public async Task UnsubscribeAllAsync()
+        {
+            if(_notificationHandlers is null)
+            {
+                return;
+            }
+
+            foreach(var pair in _notificationHandlers)
+            {
+                _hubConnection.Remove(pair.Key);
+                Delegate.Remove(_notificationHandlers[pair.Key], pair.Value);
+                _notificationHandlers.Remove(pair.Key);
+            }
+        }
+
         private void HandleMessage<T>(string notificationName, T notificationObject)
         {
-            if (_notificationHandlers.ContainsKey(notificationName))
+            if (_notificationHandlers != null && _notificationHandlers.ContainsKey(notificationName))
             {
                 ((Action<T>)_notificationHandlers[notificationName])?.Invoke(notificationObject);
             }
@@ -75,7 +92,32 @@ namespace ReenbitMessenger.Maui.Services
 
         public async Task ConnectToGroupChatAsync(string chatId)
         {
-            await _hubConnection.SendAsync("ConnectToGroupChat", chatId);
+            if (!_connectedChats.Contains(chatId))
+            {
+                await _hubConnection.SendAsync("ConnectToGroupChat", chatId);
+                _connectedChats.Add(chatId);
+            }
+        }
+
+        public async Task DisconnectFromGroupChatAsync(string chatId)
+        {
+            if (_connectedChats.Contains(chatId))
+            {
+                await _hubConnection.SendAsync("DisconnectFromGroupChat", chatId);
+                _connectedChats.Remove(chatId);
+            }
+        }
+
+        public async Task GetGroupChatInfoAsync(string chatId)
+        {
+            await _hubConnection.SendAsync("GetFullGroupChat", chatId);
+        }
+
+        public async Task GetGroupChatMessages(string chatId,
+            int page = 0, int numberOfMessages = 20, string messageContains = "", bool ascending = true)
+        {
+            await _hubConnection.SendAsync("GetGroupChatMessages", chatId,
+                page, numberOfMessages, messageContains, ascending);
         }
 
         public async Task SendMessageAsync(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
@@ -100,6 +142,7 @@ namespace ReenbitMessenger.Maui.Services
             }
             finally
             {
+                Task.FromResult(UnsubscribeAllAsync());
                 Task.FromResult(_hubConnection.DisposeAsync());
             }
         }

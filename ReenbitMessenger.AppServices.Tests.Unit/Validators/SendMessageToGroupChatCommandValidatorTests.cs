@@ -5,11 +5,6 @@ using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.AppServices.Tests.Unit.Validators
 {

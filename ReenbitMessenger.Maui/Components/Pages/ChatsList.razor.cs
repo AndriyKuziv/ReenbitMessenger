@@ -29,7 +29,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         protected async Task OnGroupClicked(Guid chatId)
         {
-            navManager.NavigateTo($"/groupChat/{Convert.ToString(chatId)}");
+            navManager.NavigateTo($"/groupChat/{Convert.ToString(chatId)}", true);
         }
 
         protected async Task OpenDeleteGroupChatDialog()

@@ -39,7 +39,7 @@ namespace ReenbitMessenger.Maui.Clients
 
         public async Task<bool> DeleteGroupChatAsync(string chatId)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + controllerPathBase + chatId);
+            HttpResponseMessage response = await _httpClient.DeleteAsync(_httpClient.BaseAddress + controllerPathBase + new Guid(chatId));
 
             return response.IsSuccessStatusCode;
         }

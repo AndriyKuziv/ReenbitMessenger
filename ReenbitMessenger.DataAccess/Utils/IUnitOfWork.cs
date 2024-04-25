@@ -1,4 +1,4 @@
-﻿namespace ReenbitMessenger.AppServices.Utils
+﻿namespace ReenbitMessenger.DataAccess.Utils
 {
     public interface IUnitOfWork : IDisposable
     {

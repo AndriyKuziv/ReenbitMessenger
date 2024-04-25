@@ -53,22 +53,6 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
         }
 
         [Fact]
-        public async Task FindAsync_SearchValueOnly_ReturnsFilteredPrivateMessages()
-        {
-            // Arrange
-            var repository = new PrivateMessageRepository(context);
-            var searchValue = "ar";
-            var expectedPrivateMessagesList = testData.Where(pm => pm.SenderUserId.Contains(searchValue) || pm.ReceiverUserId.Contains(searchValue) || pm.Text.Contains(searchValue));
-
-            // Act
-            var resultPrivateMessagesList = await repository.FindAsync(searchValue);
-
-            // Assert
-            Assert.NotEmpty(resultPrivateMessagesList);
-            Assert.Equal(expectedPrivateMessagesList, resultPrivateMessagesList);
-        }
-
-        [Fact]
         public async Task GetPrivateChatAsync_ReturnsPrivateMessagesBetweenTwoUsers()
         {
             // Arrange

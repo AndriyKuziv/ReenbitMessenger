@@ -1,4 +1,4 @@
-﻿using ReenbitMessenger.AppServices.Utils;
+﻿using ReenbitMessenger.DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace ReenbitMessenger.AppServices.Commands.User

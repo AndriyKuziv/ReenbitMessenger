@@ -1,6 +1,6 @@
 ﻿using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Models.Domain;
-using ReenbitMessenger.AppServices.Utils;
+using ReenbitMessenger.DataAccess.Utils;
 
 namespace ReenbitMessenger.AppServices.Commands.PrivateMessageCommands
 {

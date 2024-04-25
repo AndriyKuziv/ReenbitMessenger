@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.DataAccess.Utils;
 using ReenbitMessenger.DataAccess.Repositories;
 
 namespace ReenbitMessenger.AppServices.Queries.User
 {
     public class GetUsersQueryHandler : IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>
     {
-        private readonly IUserRepository _userRepository;
-        public GetUsersQueryHandler(IUserRepository userRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public GetUsersQueryHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<IdentityUser>> Handle(GetUsersQuery query)
         {
-            return (await _userRepository.FindAsync(
+            return (await _unitOfWork.GetRepository<IUserRepository>().FindAsync(
                 searchValue: query.ValueContains,
                 orderBy: query.OrderBy,
                 ascending: query.Ascending,

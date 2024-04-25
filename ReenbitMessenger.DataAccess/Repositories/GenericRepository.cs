@@ -6,8 +6,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using LinqKit;
-using System.Buffers;
-using ReenbitMessenger.Infrastructure.Models.DTO;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
@@ -61,7 +59,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return existingEntity;
         }
 
-        public async Task<IEnumerable<TEntity>> FilterAsync(Func<TEntity, bool> predicate, 
+        public async Task<IEnumerable<TEntity>> FilterAsync(Func<TEntity, bool> predicate,
             string orderBy = "", bool ascending = true, int startAt = 0, int take = 20)
         {
             var orderByProp = typeof(TEntity).GetProperties().FirstOrDefault(prop => string.Equals(prop.Name, orderBy,
