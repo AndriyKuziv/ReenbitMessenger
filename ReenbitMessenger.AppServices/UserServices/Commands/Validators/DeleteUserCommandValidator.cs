@@ -1,13 +1,17 @@
 ﻿using FluentValidation;
 using ReenbitMessenger.AppServices.UserServices.Commands;
+using ReenbitMessenger.DataAccess.Repositories;
 
 namespace ReenbitMessenger.AppServices.UserServices.Commands.Validators
 {
     public sealed class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
     {
-        public DeleteUserCommandValidator()
+        public DeleteUserCommandValidator(IUserRepository userRepository)
         {
-            RuleFor(delcomm => delcomm.UserId).NotEmpty();
+            RuleFor(cmd => cmd.UserId).MustAsync(async (userId, _) =>
+            {
+                return await userRepository.GetAsync(userId) != null;
+            }).WithMessage("User must exist.");
         }
     }
 }

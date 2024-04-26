@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Moq;
-using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands;
 using ReenbitMessenger.AppServices.Utils;
 
 namespace ReenbitMessenger.AppServices.Tests.Unit.Utils

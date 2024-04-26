@@ -8,6 +8,11 @@ namespace ReenbitMessenger.AppServices.UserServices.Commands.Validators
     {
         public EditUserInfoCommandValidator(IUserRepository userRepository)
         {
+            RuleFor(x => x.UserId).MustAsync(async (userId, _) =>
+            {
+                return await userRepository.GetAsync(userId) != null;
+            });
+
             RuleFor(edcomm => edcomm.Username)
                 .NotEmpty().WithMessage("User name cannot be empty.");
 

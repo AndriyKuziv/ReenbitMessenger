@@ -10,8 +10,4 @@
     <ProjectReference Include="..\ReenbitMessenger.DataAccess\ReenbitMessenger.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="GroupChatServices\Commands\Validators\" />
-  </ItemGroup>
-
 </Project>

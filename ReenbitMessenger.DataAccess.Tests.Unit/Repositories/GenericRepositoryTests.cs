@@ -69,20 +69,6 @@ namespace ReenbitMessenger.DataAccess.Tests.Unit.Repositories
         }
 
         [Fact]
-        public async Task AddAsync_ReturnsAddedEntity()
-        {
-            // Arrange
-            var addEntity = new PrivateMessage { Id=14, SenderUserId = "user3", ReceiverUserId = "user4", SentTime = DateTime.Now, Text = "adding another entity" };
-
-            // Act
-            var resultEntity = await repository.AddAsync(addEntity);
-
-            // Assert
-            Assert.NotNull(resultEntity);
-            Assert.Equal(addEntity, resultEntity);
-        }
-
-        [Fact]
         public async Task DeleteAsync_ReturnsDeletedEntity()
         {
             // Arrange

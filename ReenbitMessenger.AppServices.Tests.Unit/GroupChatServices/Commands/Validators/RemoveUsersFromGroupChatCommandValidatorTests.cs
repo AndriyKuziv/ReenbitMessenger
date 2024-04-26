@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands;
 using ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Repositories;
 
-namespace ReenbitMessenger.AppServices.Tests.Unit.Validators
+namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Validators
 {
     public class RemoveUsersFromGroupChatCommandValidatorTests
     {
@@ -43,7 +43,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.Validators
             // Arrange
             _groupChatRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(new GroupChat { Id = new Guid() });
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
-                .ReturnsAsync(new IdentityUser() { Id = "user1"});
+                .ReturnsAsync(new IdentityUser() { Id = "user1" });
 
             _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(true);
 

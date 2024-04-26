@@ -2,13 +2,13 @@
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
-using ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators;
 using ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Repositories;
 
-namespace ReenbitMessenger.AppServices.Tests.Unit.Validators
+namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Validators
 {
     public class DeleteGroupChatCommandValidatorTests
     {

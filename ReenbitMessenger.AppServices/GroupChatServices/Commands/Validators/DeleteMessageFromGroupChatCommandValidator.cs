@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
-using ReenbitMessenger.AppServices.GroupChatServices.Commands;
 using ReenbitMessenger.DataAccess.Repositories;
-using System.Security.Cryptography;
 
 namespace ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators
 {
@@ -13,7 +11,7 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators
                 .MustAsync(async (gcId, _) =>
                 {
                     return await groupChatRepository.GetAsync(gcId) != null;
-                }).WithMessage("Group chat must exist");
+                }).WithMessage("Group chat must exist.");
 
             RuleFor(cmd => cmd.MessageId)
                 .MustAsync(async (msgId, _) =>

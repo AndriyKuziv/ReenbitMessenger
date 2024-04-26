@@ -6,7 +6,6 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
 {
     public class SendMessageToGroupChatCommandHandler : ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>
     {
-
         private readonly IUnitOfWork _unitOfWork;
 
         public SendMessageToGroupChatCommandHandler(IUnitOfWork unitOfWork)
