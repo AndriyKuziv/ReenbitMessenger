@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
+using System.Collections.Generic;
 
 namespace ReenbitMessenger.Maui.Clients
 {
@@ -9,10 +10,22 @@ namespace ReenbitMessenger.Maui.Clients
     {
         public ChatHttpClient(ILocalStorageService localStorage) : base(localStorage, "groupchat/") { }
 
-        public async Task<IEnumerable<GroupChat>> GetUserGroupChatsAsync()
+        public async Task<IEnumerable<GroupChatMessage>> GetMessagesHistory(GetMessagesHistoryRequest getMessagesRequest)
         {
             HttpResponseMessage response = await _httpClient
-                .GetAsync(_httpClient.BaseAddress + controllerPathBase + "userGroupChats");
+                .PostAsJsonAsync(_httpClient.BaseAddress + controllerPathBase + "messagesHistory", getMessagesRequest);
+
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<List<GroupChatMessage>>(jsonResponse);
+
+            return result is null ? new List<GroupChatMessage>() : result;
+        }
+
+        public async Task<IEnumerable<GroupChat>> GetUserGroupChatsAsync(GetGroupChatsRequest getChatsRequest)
+        {
+            HttpResponseMessage response = await _httpClient
+                .PostAsJsonAsync(_httpClient.BaseAddress + controllerPathBase + "userGroupChats", getChatsRequest);
 
             if (!response.IsSuccessStatusCode) return null;
 

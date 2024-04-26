@@ -26,21 +26,9 @@ namespace ReenbitMessenger.API.Controllers
             _validatorsHandler = validatorsHandler;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllGroupChats()
-        {
-            var query = new GetGroupChatsQuery(0);
-
-            var groupChats = await _handlersDispatcher.Dispatch(query);
-
-            var groupChatsDTO = _mapper.Map<IEnumerable<GroupChat>>(groupChats);
-
-            return Ok(groupChatsDTO);
-        }
-
-        [HttpGet]
+        [HttpPost]
         [Route("userGroupChats")]
-        public async Task<IActionResult> GetUserGroupChats()
+        public async Task<IActionResult> GetUserGroupChats([FromBody] GetGroupChatsRequest getChatsRequest)
         {
             var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))
@@ -48,16 +36,23 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token");
             }
 
-            var groupChats = await _handlersDispatcher.Dispatch(new GetUserGroupChatsQuery(currUserId));
+            var groupChats = await _handlersDispatcher
+                .Dispatch(new GetGroupChatsQuery(currUserId,
+                                    getChatsRequest.NumberOfGroupChats,
+                                    getChatsRequest.ValueContains,
+                                    getChatsRequest.Page,
+                                    getChatsRequest.Ascending,
+                                    getChatsRequest.OrderBy));
 
             var groupChatsDTO = _mapper.Map<IEnumerable<GroupChat>>(groupChats);
 
             return Ok(groupChatsDTO);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("messagesHistory")]
-        public async Task<IActionResult> GetUserMessagesHistory()
+        public async Task<IActionResult> GetUserMessagesHistory(
+            [FromBody] GetMessagesHistoryRequest getMessagesRequest)
         {
             var currUserId = await ControllerHelper.GetUserId(HttpContext);
             if (string.IsNullOrEmpty(currUserId))

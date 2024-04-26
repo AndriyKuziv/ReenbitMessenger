@@ -16,30 +16,30 @@
 
 @if (users is null)
 {
-    <p style="margin: 15px"><em>We got a problem here</em></p>
+    <h3>We got some problem obtaining necessary information</h3>
 }
 else
 {
-    <MudSelect Label="Order type" @bind-Value="usersFilterModel.Ascending" Class="limited">
+    <MudSelect Label="Order type" @bind-Value="filterModel.Ascending" Class="limited">
         <MudSelectItem Value="@(true)">Ascending</MudSelectItem>
         <MudSelectItem Value="@(false)">Descending</MudSelectItem>
     </MudSelect>
 
-    <MudSelect Label="Order by" @bind-Value="usersFilterModel.OrderBy" Class="limited">
+    <MudSelect Label="Order by" @bind-Value="filterModel.OrderBy" Class="limited">
         <MudSelectItem Value="@("Id")">Id</MudSelectItem>
         <MudSelectItem Value="@("Username")">Username</MudSelectItem>
         <MudSelectItem Value="@("Email")">Email</MudSelectItem>
     </MudSelect>
 
 
-    <MudSelect T="int" Label="Page size" Value=@usersFilterModel.NumberOfUsers ValueChanged=@OnValueChanged Class="limited">
+    <MudSelect T="int" Label="Page size" Value="filterModel.NumberOfUsers" ValueChanged="OnValueChanged" Class="limited">
         <MudSelectItem Value="@(2)">2</MudSelectItem>
         <MudSelectItem Value="@(5)">5</MudSelectItem>
         <MudSelectItem Value="@(10)">10</MudSelectItem>
         <MudSelectItem Value="@(15)">15</MudSelectItem>
     </MudSelect>
 
-    <MudTextField @bind-Value="usersFilterModel.ValueContains" Label="Row contains"
+    <MudTextField @bind-Value="filterModel.ValueContains" Label="Row contains"
                   Variant="Variant.Filled" Class="limited"></MudTextField>
 
     <MudDataGrid T="User" Items="@users" Hideable="true">
@@ -50,11 +50,11 @@ else
         </Columns>
     </MudDataGrid>
 
-    if (usersFilterModel.Page > 0)
+    if (filterModel.Page > 0)
     {
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MoveBackward">Previous</MudButton>
     }
-    if(usersFilterModel.NumberOfUsers == users.Count())
+    if (filterModel.NumberOfUsers == users.Count())
     {
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MoveForward">Next</MudButton>
     }
@@ -63,7 +63,7 @@ else
 @code {
     private IEnumerable<User> users { get; set; } = new List<User>();
 
-    private UsersFilterModel usersFilterModel = new UsersFilterModel();
+    private UsersFilterModel filterModel = new UsersFilterModel();
 
     protected override async Task OnInitializedAsync()
     {

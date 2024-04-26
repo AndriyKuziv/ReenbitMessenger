@@ -26,7 +26,9 @@ namespace ReenbitMessenger.DataAccess.Repositories
         Task<GroupChatMessage> GetMessageAsync(long messageId);
         Task<IEnumerable<GroupChatMessage>> FilterMessagesAsync(Func<GroupChatMessage, bool> predicate,
             int startAt = 0, int take = 20, bool ascending = true);
-        Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId);
+        Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId,
+            int startAt = 0, int take = 20, string valueContains = "",
+            bool ascending = true, string orderBy = "SentTime");
         Task<GroupChatMessage> CreateGroupChatMessageAsync(GroupChatMessage groupChatMessage);
         Task<GroupChatMessage> DeleteGroupChatMessageAsync(Guid chatId, long messageId);
     }

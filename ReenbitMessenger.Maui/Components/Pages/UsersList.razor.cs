@@ -1,9 +1,4 @@
 ﻿using ReenbitMessenger.Infrastructure.Models.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Maui.Components.Pages
 {
@@ -22,37 +17,37 @@ namespace ReenbitMessenger.Maui.Components.Pages
         {
             users = await httpClient.GetUsersAsync(new GetUsersRequest
             {
-                NumberOfUsers = usersFilterModel.NumberOfUsers,
-                Page = usersFilterModel.Page,
-                ValueContains = usersFilterModel.ValueContains,
-                Ascending = usersFilterModel.Ascending,
-                OrderBy = usersFilterModel.OrderBy
+                NumberOfUsers = filterModel.NumberOfUsers,
+                Page = filterModel.Page,
+                ValueContains = filterModel.ValueContains,
+                Ascending = filterModel.Ascending,
+                OrderBy = filterModel.OrderBy
             });
-        }
-
-        private async Task OnValueChanged(int newValue)
-        {
-            usersFilterModel.NumberOfUsers = newValue;
-
-            await UpdateUsersList();
         }
 
         private async Task Refresh()
         {
-            usersFilterModel.Page = 0;
+            filterModel.Page = 0;
+
+            await UpdateUsersList();
+        }
+
+        private async Task OnValueChanged(int newValue)
+        {
+            filterModel.NumberOfUsers = newValue;
 
             await UpdateUsersList();
         }
 
         private async Task MoveForward()
         {
-            usersFilterModel.Page++;
+            filterModel.Page++;
             await UpdateUsersList();
         }
 
         private async Task MoveBackward()
         {
-            usersFilterModel.Page--;
+            filterModel.Page--;
             await UpdateUsersList();
         }
     }

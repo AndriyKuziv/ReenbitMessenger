@@ -6,9 +6,24 @@ namespace ReenbitMessenger.Maui.Components.Pages
 {
     public partial class ChatsList
     {
+        private class GroupChatsFilterModel
+        {
+            public int NumberOfGroupChats { get; set; } = 5;
+            public int Page { get; set; } = 0;
+            public string ValueContains { get; set; } = "";
+            public bool Ascending { get; set; } = true;
+            public string OrderBy { get; set; } = "Name";
+        }
+
         protected async Task UpdateChatsList()
         {
-            groupChats = await httpClient.GetUserGroupChatsAsync();
+            groupChats = await httpClient.GetUserGroupChatsAsync(new GetGroupChatsRequest { 
+                NumberOfGroupChats = filterModel.NumberOfGroupChats,
+                Page = filterModel.Page,
+                ValueContains = filterModel.ValueContains,
+                Ascending = filterModel.Ascending,
+                OrderBy = filterModel.OrderBy
+            });
         }
 
         protected async Task CreateGroupChat()
@@ -29,7 +44,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         protected async Task OpenJoinGroupChatDialog()
         {
-            var parameters = new DialogParameters { ["Id"] = groupChatId };
+            var parameters = new DialogParameters { ["Value"] = groupChatId };
             DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
             var dialog = DialogService.Show<EnterValueDialog>("Enter id of a group chat you want to join", options: closeOnEscapeKey, parameters: parameters);
@@ -43,6 +58,25 @@ namespace ReenbitMessenger.Maui.Components.Pages
                 await httpClient.JoinGroupChatAsync(groupChatToJoinId);
                 await UpdateChatsList();
             }
+        }
+
+        private async Task OnValueChanged(int newValue)
+        {
+            filterModel.NumberOfGroupChats = newValue;
+
+            await UpdateChatsList();
+        }
+
+        private async Task MoveForward()
+        {
+            filterModel.Page++;
+            await UpdateChatsList();
+        }
+
+        private async Task MoveBackward()
+        {
+            filterModel.Page--;
+            await UpdateChatsList();
         }
     }
 }

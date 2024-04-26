@@ -12,18 +12,10 @@
     }
 </style>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateChatsList">Refresh</MudButton>
+<MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="UpdateChatsList">Refresh</MudButton>
 <MudDivider />
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateGroupChat">Create group chat</MudButton>
-<MudTextField @bind-Value="@newGroupChatName" Label="Name of a new chat"
-                                  Variant="Variant.Filled" Class="limited"></MudTextField>
 
-<MudDivider />
-
-<MudButton @onclick="OpenJoinGroupChatDialog" Variant="Variant.Filled" Color="Color.Primary">
-    Join group chat
-</MudButton>
 
 @if (groupChats is null)
 {
@@ -31,18 +23,65 @@
 }
 else
 {
-    <MudDataGrid T="GroupChat" Items="@groupChats" Hideable="true" RowClick="async (e) => await OnGroupClicked(e.Item.Id)">
+    <MudGrid Spacing="2">
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateGroupChat">Create group chat</MudButton>
+            <MudTextField @bind-Value="@newGroupChatName" Label="Name of a new chat"
+                          Variant="Variant.Filled" Class="limited"></MudTextField>
+            <MudDivider />
+
+            <MudButton @onclick="OpenJoinGroupChatDialog" Variant="Variant.Filled" Color="Color.Secondary">
+                Join group chat
+            </MudButton>
+        </MudItem>
+        <MudItem>
+            <MudSelect Label="Order type" @bind-Value="filterModel.Ascending" Class="limited">
+                <MudSelectItem Value="@(true)">Ascending</MudSelectItem>
+                <MudSelectItem Value="@(false)">Descending</MudSelectItem>
+            </MudSelect>
+
+            <MudSelect Label="Order by" @bind-Value="filterModel.OrderBy" Class="limited">
+                <MudSelectItem Value="@("Id")">Id</MudSelectItem>
+                <MudSelectItem Value="@("Name")">Name</MudSelectItem>
+            </MudSelect>
+
+
+            <MudSelect T="int" Label="Page size" Value="filterModel.NumberOfGroupChats" ValueChanged="OnValueChanged" Class="limited">
+                <MudSelectItem Value="@(2)">2</MudSelectItem>
+                <MudSelectItem Value="@(5)">5</MudSelectItem>
+                <MudSelectItem Value="@(10)">10</MudSelectItem>
+                <MudSelectItem Value="@(15)">15</MudSelectItem>
+            </MudSelect>
+
+            <MudTextField @bind-Value="filterModel.ValueContains" Label="Row contains"
+                          Variant="Variant.Filled" Class="limited"></MudTextField>
+        </MudItem>
+    </MudGrid>
+
+    <MudDataGrid T="GroupChat" Items="@groupChats" Hideable="true" 
+        RowClick="async (e) => await OnGroupClicked(e.Item.Id)">
         <Columns>
             <PropertyColumn Property="chatId => chatId.Name" Title="Username" />
             <PropertyColumn Property="chatId => chatId.Id" Title="Id" />
         </Columns>
     </MudDataGrid>
+
+    if (filterModel.Page > 0)
+    {
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MoveBackward">Previous</MudButton>
+    }
+    if (filterModel.NumberOfGroupChats == groupChats.Count())
+    {
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MoveForward">Next</MudButton>
+    }
 }
 
 @code {
     private string newGroupChatName { get; set; } = string.Empty;
 
     private string groupChatId { get; set; } = string.Empty;
+
+    GroupChatsFilterModel filterModel = new GroupChatsFilterModel();
 
     IEnumerable<GroupChat> groupChats { get; set; } = new List<GroupChat>();
 

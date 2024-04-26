@@ -120,7 +120,9 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return _dbContext.GroupChatMessage.Where(gcm => gcm.GroupChatId == chatId);
         }
 
-        public async Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId)
+        public async Task<IEnumerable<GroupChatMessage>> GetMessageHistoryAsync(string userId,
+            int startAt = 0, int take = 20, string valueContains = "",
+            bool ascending = true, string orderBy = "SentTime")
         {
             var user = await _dbContext.Users.FindAsync(userId);
 
@@ -129,14 +131,32 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 return null;
             }
 
-            var res = _dbContext.GroupChat
-                .Include(chat => chat.GroupChatMembers)
-                .Include(chat => chat.GroupChatMessages)
-                .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId))
-                .SelectMany(chat => chat.GroupChatMessages)
-                .OrderBy(mssg => mssg.SentTime);
+            var query = _dbContext.Set<GroupChatMessage>()
+                .Include(cmem => cmem.SenderUser)
+                .AsQueryable();
 
-            return res;
+            var orderByProp = typeof(GroupChatMessage).GetProperty(orderBy);
+            if (orderByProp is null)
+            {
+                orderByProp = typeof(GroupChatMessage).GetProperty("SentTime");
+            }
+
+            var sortedList = ascending ? _dbContext.GroupChatMessage
+                .Where(msg => msg.Text.Contains(valueContains) ||
+                    msg.SenderUser.UserName.Contains(valueContains) ||
+                    Convert.ToString(msg.Id).Contains(valueContains) ||
+                    Convert.ToString(msg.GroupChatId).Contains(valueContains)
+                    )
+                .OrderBy(msg => orderByProp.GetValue(msg)) :
+                _dbContext.GroupChatMessage
+                .Where(msg => msg.Text.Contains(valueContains) ||
+                    msg.SenderUser.UserName.Contains(valueContains) ||
+                    Convert.ToString(msg.Id).Contains(valueContains) ||
+                    Convert.ToString(msg.GroupChatId).Contains(valueContains)
+                    )
+                .OrderByDescending(msg => orderByProp.GetValue(msg));
+
+            return sortedList.Skip(startAt).Take(take).AsEnumerable();
         }
 
         public async Task<IEnumerable<GroupChatMessage>> FilterMessagesAsync(Func<GroupChatMessage, bool> predicate,

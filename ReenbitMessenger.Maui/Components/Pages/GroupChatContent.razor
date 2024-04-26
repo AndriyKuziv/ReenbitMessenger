@@ -15,16 +15,23 @@
 
 @if(groupChat is null)
 {
-    <h3>We got a problem here</h3>
+    <h3>We got some problem obtaining necessary information</h3>
 }
 else
 {
-    <h3>@groupChat.Name</h3>
-    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="OpenLeaveChatDialog">Leave chat</MudButton>
-    <MudDivider/>
+    <MudGrid Spacing="2">
+        <MudItem>
+            <h3 @onclick="async () => await AddToClipboard(ChatId)">@groupChat.Name</h3>
+        </MudItem>
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="OpenLeaveChatDialog">Leave chat</MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenDeleteChatMessageDialog">Delete a message</MudButton>
+        </MudItem>
+    </MudGrid>
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenDeleteChatMessageDialog">DeleteMessage</MudButton>
-
+    <MudDivider />
     <MudContainer>
     <MudGrid Spacing="1" Justify="Justify.FlexStart">
         <MudItem>

@@ -16,8 +16,8 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Queries
         public async Task<IEnumerable<GroupChat>> Handle(GetGroupChatsQuery query)
         {
             return (await _unitOfWork.GetRepository<IGroupChatRepository>()
-                .FilterAsync(
-                    predicate: gc => gc.Name.Contains(query.ValueContains),
+                .FindAsync(
+                    query.ValueContains,
                     orderBy: query.OrderBy,
                     ascending: query.Ascending,
                     startAt: query.Page * query.NumberOfChats,
