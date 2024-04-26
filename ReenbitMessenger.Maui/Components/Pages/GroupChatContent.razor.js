@@ -25,6 +25,17 @@ function isScrolledIntoView(elem, scrollElem) {
     return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 }
 
+window.clipboardCopy = {
+    copyText: function (text) {
+        navigator.clipboard.writeText(text).then(function () {
+            alert("Copied to clipboard!");
+        })
+            .catch(function (error) {
+                alert(error);
+            });
+    }
+}
+
 export function getScrollPosition() {
     return document.getElementById('scroll-container').scrollTop;
 }

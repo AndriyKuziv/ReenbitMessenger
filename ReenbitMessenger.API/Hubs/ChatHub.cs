@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using ReenbitMessenger.AppServices.Utils;
-using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
-using ReenbitMessenger.AppServices.Queries.GroupChatQueries;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands;
+using ReenbitMessenger.AppServices.GroupChatServices.Queries;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using AutoMapper;
@@ -113,6 +113,27 @@ namespace ReenbitMessenger.API.Hubs
             var resMessageDTO = _mapper.Map<GroupChatMessage>(resMessage);
 
             await Clients.Group(chatId).SendAsync("ReceiveMessage", resMessageDTO);
+        }
+
+        public async Task DeleteGroupChatMessage(string chatId, DeleteMessageFromGroupChatRequest deleteMessageRequest)
+        {
+            var userId = await HubHelper.GetUserId(Context);
+
+            if (userId is null)
+            {
+                return;
+            }
+
+            var removedMessage = await _handlersDispatcher.Dispatch(new DeleteMessageFromGroupChatCommand(new Guid(chatId), userId, deleteMessageRequest.MessageId));
+
+            if (removedMessage is null)
+            {
+                return;
+            }
+
+            var removedMessageDTO = _mapper.Map<GroupChatMessage>(removedMessage);
+
+            await Clients.Group(chatId).SendAsync("DeleteMessage", removedMessageDTO);
         }
 
         public async Task AddUsersToGroupChat(string chatId, AddUsersToGroupChatRequest addUsersRequest)

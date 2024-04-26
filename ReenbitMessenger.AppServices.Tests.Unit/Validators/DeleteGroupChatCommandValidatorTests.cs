@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.AppServices.Commands.GroupChatCommands.Validators;
-using ReenbitMessenger.DataAccess.AppServices.Commands.GroupChatCommands.Validators;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators;
 using ReenbitMessenger.DataAccess.Models.Domain;
 using ReenbitMessenger.DataAccess.Repositories;
 

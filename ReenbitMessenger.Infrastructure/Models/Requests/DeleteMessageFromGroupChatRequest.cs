@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ReenbitMessenger.Infrastructure.Models.Requests
+﻿namespace ReenbitMessenger.Infrastructure.Models.Requests
 {
-    public class DeleteMessagesFromGroupChatRequest
+    public class DeleteMessageFromGroupChatRequest
     {
-        public IEnumerable<long> MessagesIds { get; set; }
+        public long MessageId { get; set; }
     }
 }

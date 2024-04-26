@@ -2,8 +2,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReenbitMessenger.AppServices.Commands.User;
-using ReenbitMessenger.AppServices.Queries.User;
+using ReenbitMessenger.AppServices.UserServices.Commands;
+using ReenbitMessenger.AppServices.UserServices.Queries;
 using ReenbitMessenger.AppServices.Utils;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;

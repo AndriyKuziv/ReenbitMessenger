@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ReenbitMessenger.AppServices.Utils;
-using ReenbitMessenger.AppServices.Queries.PrivateMessageQueries;
-using ReenbitMessenger.AppServices.Commands.PrivateMessageCommands;
+using ReenbitMessenger.AppServices.PrivateMessageServices.Queries;
+using ReenbitMessenger.AppServices.PrivateMessageServices.Commands;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using AutoMapper;

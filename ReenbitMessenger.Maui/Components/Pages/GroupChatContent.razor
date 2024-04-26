@@ -13,9 +13,6 @@
     }
 </style>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetFullGroupChat" Style="margin: 30px">Refresh</MudButton>
-<MudDivider />
-
 @if(groupChat is null)
 {
     <h3>We got a problem here</h3>
@@ -23,8 +20,11 @@
 else
 {
     <h3>@groupChat.Name</h3>
-    <MudButton>Leave chat</MudButton>
-    <MudButton>Delete chat</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="OpenLeaveChatDialog">Leave chat</MudButton>
+    <MudDivider/>
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenDeleteChatMessageDialog">DeleteMessage</MudButton>
+
     <MudContainer>
     <MudGrid Spacing="1" Justify="Justify.FlexStart">
         <MudItem>
@@ -42,7 +42,7 @@ else
                             {
                                 @foreach (var member in groupChat.GroupChatMembers)
                                 {
-                                    <MudListItem>- @member.User.UserName</MudListItem>
+                                    <MudListItem OnClick="() => AddToClipboard(member.UserId)">- @member.User.UserName</MudListItem>
                                 }
                             }
                         </MudList>
@@ -60,17 +60,19 @@ else
                             {
                                 @foreach (var message in groupChat.GroupChatMessages)
                                 {
-                                    <MudListItem>
-                                        <MudText>@message.SenderUser.UserName: @message.Text</MudText>
-                                        <MudText>@message.SentTime.ToString("HH:mm")</MudText>
-                                    </MudListItem>
+                                    <ContextMenuTrigger MenuId="cont-menu">
+                                        <MudListItem OnClick="() => AddToClipboard(Convert.ToString(message.Id))">
+                                            <MudText>@message.SenderUser.UserName: @message.Text</MudText>
+                                            <MudText>@message.SentTime.ToString("HH:mm")</MudText>
+                                        </MudListItem>
+                                    </ContextMenuTrigger>
                                     <MudDivider />
                                 }
                             }
                         </MudList>
                     </div>
                     <MudTextField @bind-Value="@messageText" Label="Write your message"
-                                  Variant="Variant.Filled" Class="limited"></MudTextField>
+                                  Variant="Variant.Filled"></MudTextField>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SendMessage">Send</MudButton>
             </MudPaper>
         </MudItem>
@@ -81,18 +83,6 @@ else
 @code {
     [Parameter]
     public string ChatId { get; set; } = string.Empty;
-
-    private int Page = 0;
-
-    private GroupChat groupChat { get; set; } = new GroupChat();
-
-    private string messageText { get; set; } = string.Empty;
-
-    public string ChosenUserId { get; set; } = string.Empty;
-
-    public bool IsUsed = true;
-
-    private IJSObjectReference? module;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -109,23 +99,5 @@ else
 
         await ConnectToGroupChat();
         await GetFullGroupChat();
-    }
-
-    private async Task Setup()
-    {
-        await chatHubService.SubscribeAsync<GroupChatMessage>("ReceiveMessage", OnMessageReceived);
-        await chatHubService.SubscribeAsync<IEnumerable<GroupChatMember>>("ReceiveMembers", OnMembersReceived);
-        await chatHubService.SubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
-        await chatHubService.SubscribeAsync<IEnumerable<string>>("RemoveMembers", OnMembersRemoved);
-        await chatHubService.SubscribeAsync<IEnumerable<GroupChatMessage>>("ReceiveGroupChatMessages", OnMessageListReceived);
-
-        await chatHubService.StartAsync();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await chatHubService.UnsubscribeAllAsync();
-
-        chatHubService.Dispose();
     }
 }

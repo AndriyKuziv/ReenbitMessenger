@@ -1,5 +1,6 @@
 ﻿using MudBlazor;
 using ReenbitMessenger.Infrastructure.Models.Requests;
+using ReenbitMessenger.Maui.Components.Utils;
 
 namespace ReenbitMessenger.Maui.Components.Pages
 {
@@ -21,31 +22,26 @@ namespace ReenbitMessenger.Maui.Components.Pages
             await UpdateChatsList();
         }
 
-        protected async Task DeleteGroupChat(string groupChatId)
-        {
-            await httpClient.DeleteGroupChatAsync(groupChatId);
-            await UpdateChatsList();
-        }
-
         protected async Task OnGroupClicked(Guid chatId)
         {
             navManager.NavigateTo($"/groupChat/{Convert.ToString(chatId)}", true);
         }
 
-        protected async Task OpenDeleteGroupChatDialog()
+        protected async Task OpenJoinGroupChatDialog()
         {
             var parameters = new DialogParameters { ["Id"] = groupChatId };
             DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-            var dialog = DialogService.Show<EnterIdDialog>("Enter id of a group chat to delete", options: closeOnEscapeKey, parameters: parameters);
+            var dialog = DialogService.Show<EnterValueDialog>("Enter id of a group chat you want to join", options: closeOnEscapeKey, parameters: parameters);
 
             var result = await dialog.Result;
 
             if (!result.Canceled)
             {
-                string groupChatToDeleteId = Convert.ToString(result.Data);
+                string groupChatToJoinId = Convert.ToString(result.Data);
 
-                await DeleteGroupChat(groupChatToDeleteId);
+                await httpClient.JoinGroupChatAsync(groupChatToJoinId);
+                await UpdateChatsList();
             }
         }
     }

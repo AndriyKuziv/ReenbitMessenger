@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ReenbitMessenger.API.Controllers;
 using ReenbitMessenger.AppServices;
-using ReenbitMessenger.AppServices.Commands.User;
-using ReenbitMessenger.AppServices.Queries.Auth;
+using ReenbitMessenger.AppServices.AuthServices;
+using ReenbitMessenger.AppServices.UserServices.Commands;
 using ReenbitMessenger.AppServices.Utils;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 

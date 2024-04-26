@@ -2,12 +2,6 @@
 using Newtonsoft.Json;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.Maui.Clients
 {
@@ -37,24 +31,18 @@ namespace ReenbitMessenger.Maui.Clients
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> DeleteGroupChatAsync(string chatId)
+        public async Task<bool> JoinGroupChatAsync(string chatId)
         {
-            HttpResponseMessage response = await _httpClient.DeleteAsync(_httpClient.BaseAddress + controllerPathBase + new Guid(chatId));
+            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + controllerPathBase + chatId + "/join");
 
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<GroupChat> GetFullGroupChatAsync(string chatId)
+        public async Task<bool> LeaveGroupChatAsync(string chatId)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + controllerPathBase + chatId);
+            HttpResponseMessage response = await _httpClient.DeleteAsync(_httpClient.BaseAddress + controllerPathBase +  chatId + "/leave");
 
-            if (!response.IsSuccessStatusCode) return null;
-
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-
-            var resultGroupChat = JsonConvert.DeserializeObject<GroupChat>(jsonResponse);
-
-            return resultGroupChat is null ? new GroupChat() : resultGroupChat;
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<IEnumerable<GroupChatMessage>> GetUserGroupChatsMessagesHistoryAsync()
@@ -69,24 +57,6 @@ namespace ReenbitMessenger.Maui.Clients
             var resultMessages = JsonConvert.DeserializeObject<IEnumerable<GroupChatMessage>>(jsonResponse);
 
             return resultMessages is null ? new List<GroupChatMessage>() : resultMessages;
-        }
-
-        public async Task<bool> SendMessageToGroupChatAsync(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
-        {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_httpClient.BaseAddress + controllerPathBase + $"{chatId}/send", sendMessageRequest);
-
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<bool> AddUsersToGroupChatAsync(string chatId, AddUsersToGroupChatRequest addUsersToChatRequest)
-        {
-            string jsonRequestBody = JsonConvert.SerializeObject(addUsersToChatRequest);
-            HttpContent content = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient
-                .PutAsync(_httpClient.BaseAddress + controllerPathBase + $"{chatId}/addUsers", content);
-
-            return response.IsSuccessStatusCode;
         }
     }
 }

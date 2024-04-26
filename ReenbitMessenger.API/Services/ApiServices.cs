@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.AppServices;
 using ReenbitMessenger.AppServices.Utils;
-using ReenbitMessenger.AppServices.Commands.User;
-using ReenbitMessenger.AppServices.Queries.Auth;
-using ReenbitMessenger.AppServices.Queries.User;
-using ReenbitMessenger.AppServices.Queries.GroupChatQueries;
 using ReenbitMessenger.DataAccess.Models.Domain;
-using ReenbitMessenger.AppServices.Queries.PrivateMessageQueries;
-using ReenbitMessenger.AppServices.Commands.PrivateMessageCommands;
-using ReenbitMessenger.AppServices.Commands.GroupChatCommands;
 using ReenbitMessenger.API.Controllers;
+using ReenbitMessenger.AppServices.GroupChatServices.Commands;
+using ReenbitMessenger.AppServices.GroupChatServices.Queries;
+using ReenbitMessenger.AppServices.AuthServices;
+using ReenbitMessenger.AppServices.PrivateMessageServices.Queries;
+using ReenbitMessenger.AppServices.UserServices.Queries;
+using ReenbitMessenger.AppServices.PrivateMessageServices.Commands;
+using ReenbitMessenger.AppServices.UserServices.Commands;
 
 namespace ReenbitMessenger.API.Services
 {
@@ -45,7 +45,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<AddUsersToGroupChatCommand, IEnumerable<GroupChatMember>>, AddUsersToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<RemoveUsersFromGroupChatCommand, IEnumerable<string>>, RemoveUsersFromGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>, SendMessageToGroupChatCommandHandler>();
-            services.AddScoped<ICommandHandler<DeleteMessagesFromGroupChatCommand>, DeleteMessagesFromGroupChatCommandHandler>();
+            services.AddScoped<ICommandHandler<DeleteMessageFromGroupChatCommand, GroupChatMessage>, DeleteMessageFromGroupChatCommandHandler>();
 
             // Private messages commands
             services.AddScoped<ICommandHandler<SendPrivateMessageCommand>, SendPrivateMessageCommandHandler>();

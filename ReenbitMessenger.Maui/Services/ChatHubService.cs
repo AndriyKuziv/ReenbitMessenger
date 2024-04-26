@@ -125,6 +125,11 @@ namespace ReenbitMessenger.Maui.Services
             await _hubConnection.SendAsync("SendGroupChatMessage", chatId, sendMessageRequest);
         }
 
+        public async Task DeleteMessageAsync(string chatId, DeleteMessageFromGroupChatRequest deleteMessageRequest)
+        {
+            await _hubConnection.SendAsync("DeleteGroupChatMessage", chatId, deleteMessageRequest);
+        }
+
         public async Task AddUsersToGroupChatAsync(string chatId, AddUsersToGroupChatRequest addUsersRequest)
         {
             await _hubConnection.SendAsync("AddUsersToGroupChat", chatId, addUsersRequest);
