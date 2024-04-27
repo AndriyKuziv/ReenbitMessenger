@@ -16,7 +16,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         private AddUsersToGroupChatCommandValidator _validator;
 
         [Fact]
-        public async Task AddUsersToGroupChatCommandValidator_ValidCommand_ReturnsValid()
+        public async Task Validate_ValidCommand_ReturnsValid()
         {
             // Arrange
             _groupChatRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(new GroupChat { Id = new Guid() });
@@ -39,7 +39,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task AddUsersToGroupChatCommandValidator_EmptyUsersList_ReturnsErrorWithMessage()
+        public async Task Validate_EmptyUsersList_ReturnsErrorWithMessage()
         {
             // Arrange
             _groupChatRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(new GroupChat { Id = new Guid() });
@@ -62,7 +62,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task AddUsersToGroupChatCommandValidator_NotValid_ReturnsErrorsWithMessages()
+        public async Task Validate_NotValid_ReturnsErrorsWithMessages()
         {
             // Arrange
             GroupChat nullChat = null;

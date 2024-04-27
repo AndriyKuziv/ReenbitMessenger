@@ -1,6 +1,8 @@
-﻿namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
+
+namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
 {
-    public class SendPrivateMessageCommand : ICommand
+    public class SendPrivateMessageCommand : ICommand<PrivateMessage>
     {
         public string SenderUserId { get; }
         public string ReceiverUserId { get; }

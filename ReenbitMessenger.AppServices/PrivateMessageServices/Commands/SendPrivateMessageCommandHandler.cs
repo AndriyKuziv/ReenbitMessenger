@@ -4,7 +4,7 @@ using ReenbitMessenger.DataAccess.Models.Domain;
 
 namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
 {
-    public class SendPrivateMessageCommandHandler : ICommandHandler<SendPrivateMessageCommand>
+    public class SendPrivateMessageCommandHandler : ICommandHandler<SendPrivateMessageCommand, PrivateMessage>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -13,7 +13,7 @@ namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(SendPrivateMessageCommand command)
+        public async Task<PrivateMessage> Handle(SendPrivateMessageCommand command)
         {
             var result = await _unitOfWork.GetRepository<IPrivateMessageRepository>().AddAsync(new PrivateMessage
             {
@@ -25,12 +25,12 @@ namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
 
             if (result is null)
             {
-                return false;
+                return null;
             }
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return result;
         }
     }
 }

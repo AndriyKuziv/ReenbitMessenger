@@ -27,14 +27,17 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.UserServices.Queries
         [Fact]
         public async Task Handle_ValidCommand_ReturnsUser()
         {
+            // Arrange
             _userManagerMock.Setup(cr => cr.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(new IdentityUser());
 
             var query = new GetUserByUsernameQuery("user1");
 
             var handler = new GetUserByUsernameQueryHandler(_userManagerMock.Object);
 
+            // Act
             var result = await handler.Handle(query);
 
+            // Assert
             Assert.NotNull(result);
         }
     }

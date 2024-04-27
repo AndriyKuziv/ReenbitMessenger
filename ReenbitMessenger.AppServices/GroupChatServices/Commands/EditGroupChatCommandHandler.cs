@@ -22,6 +22,11 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
                     Name = command.Name
                 });
 
+            if (groupChat is null)
+            {
+                return false;
+            }
+
             await _unitOfWork.SaveAsync();
 
             return true;

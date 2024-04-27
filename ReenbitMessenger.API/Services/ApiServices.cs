@@ -48,9 +48,9 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<DeleteMessageFromGroupChatCommand, GroupChatMessage>, DeleteMessageFromGroupChatCommandHandler>();
 
             // Private messages commands
-            services.AddScoped<ICommandHandler<SendPrivateMessageCommand>, SendPrivateMessageCommandHandler>();
-            services.AddScoped<ICommandHandler<DeletePrivateMessageCommand>,  DeletePrivateMessageCommandHandler>();
-            services.AddScoped<ICommandHandler<EditPrivateMessageCommand>, EditPrivateMessageCommandHandler>();
+            services.AddScoped<ICommandHandler<SendPrivateMessageCommand, PrivateMessage>, SendPrivateMessageCommandHandler>();
+            services.AddScoped<ICommandHandler<DeletePrivateMessageCommand, PrivateMessage>,  DeletePrivateMessageCommandHandler>();
+            services.AddScoped<ICommandHandler<EditPrivateMessageCommand, PrivateMessage>, EditPrivateMessageCommandHandler>();
 
             services.AddScoped<IValidatorsHandler, ValidatorsHandler>();
 

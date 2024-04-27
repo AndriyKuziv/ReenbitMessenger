@@ -24,16 +24,20 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.UserServices.Commands
         [Fact]
         public async Task Handle_ValidCommand_ReturnsTrue()
         {
-            _userManagerMock.Setup(um => um.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>())).ReturnsAsync(new IdentityResult());
+            // Arrange
+            _userManagerMock.Setup(um => um.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IUserRepository>()).Returns(_userRepositoryMock.Object);
 
             var query = new CreateUserCommand("user1", "user1@email.com", "password");
 
             var handler = new CreateUserCommandHandler(_unitOfWorkMock.Object, _userManagerMock.Object);
 
+            // Act
             var result = await handler.Handle(query);
 
-            Assert.NotNull(result);
+            // Assert
+            Assert.True(result);
         }
     }
 }

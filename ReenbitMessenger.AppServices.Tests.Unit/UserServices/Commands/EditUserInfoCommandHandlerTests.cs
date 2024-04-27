@@ -25,6 +25,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.UserServices.Commands
         [Fact]
         public async Task Handle_ValidCommand_ReturnsTrue()
         {
+            // Arrange
             _userRepositoryMock.Setup(ur => ur.UpdateAsync(It.IsAny<string>(), It.IsAny<IdentityUser>())).ReturnsAsync(new IdentityUser());
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IUserRepository>()).Returns(_userRepositoryMock.Object);
 
@@ -32,8 +33,10 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.UserServices.Commands
 
             var handler = new EditUserInfoCommandHandler(_unitOfWorkMock.Object);
 
+            // Act
             var result = await handler.Handle(query);
 
+            // Assert
             Assert.True(result);
         }
     }

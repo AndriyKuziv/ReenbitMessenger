@@ -12,18 +12,23 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Queries
         private readonly Mock<IGroupChatRepository> _groupChatRepositoryMock = new Mock<IGroupChatRepository>();
 
         [Fact]
-        public async Task Handle_ValidCommand_ReturnsUserGroupChats()
+        public async Task Handle_ValidQuery_ReturnsUserGroupChats()
         {
+            // Arrange
             _groupChatRepositoryMock.Setup(cr => cr.GetUserChatsAsync(It.IsAny<string>())).ReturnsAsync(new List<GroupChat>() { new GroupChat(), new GroupChat() });
+
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IGroupChatRepository>()).Returns(_groupChatRepositoryMock.Object);
 
             var query = new GetUserGroupChatsQuery("user1");
 
             var handler = new GetUserGroupChatsQueryHandler(_unitOfWorkMock.Object);
 
+            // Act
             var result = await handler.Handle(query);
 
+            // Assert
             Assert.NotNull(result);
+            Assert.NotEmpty(result);
         }
     }
 }

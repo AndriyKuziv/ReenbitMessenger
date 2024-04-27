@@ -15,7 +15,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         private EditGroupChatCommandValidator _validator;
 
         [Fact]
-        public async Task EditGroupChatCommandValidator_ValidCommand_ReturnsValid()
+        public async Task Validate_ValidCommand_ReturnsValid()
         {
             // Arrange
             _groupChatRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(new GroupChat { Id = new Guid() });
@@ -33,7 +33,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task EditGroupChatCommandValidator_WrongChatId_ReturnsErrorWithMessage()
+        public async Task Validate_WrongChatId_ReturnsErrorWithMessage()
         {
             // Arrange
             GroupChat nullChat = null;
@@ -52,7 +52,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task EditGroupChatCommandValidator_WrongChatName_ReturnsError()
+        public async Task Validate_WrongChatName_ReturnsError()
         {
             // Arrange
             GroupChat nullChat = null;

@@ -17,7 +17,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         private DeleteGroupChatCommandValidator _validator;
 
         [Fact]
-        public async Task DeleteGroupChatCommandValidator_ValidCommand_ReturnValid()
+        public async Task Validate_ValidCommand_ReturnValid()
         {
             // Arrange
             _groupChatRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(new GroupChat { Id = new Guid() });
@@ -36,7 +36,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task DeleteGroupChatCommandValidator_WrongChatId_ReturnErrorWithMessage()
+        public async Task Validate_WrongChatId_ReturnErrorWithMessage()
         {
             // Arrange
             GroupChat nullChat = null;

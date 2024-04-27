@@ -14,17 +14,45 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands
         [Fact]
         public async Task Handle_ValidCommand_ReturnsDeletedMessage()
         {
+            // Arrange
             _groupChatRepositoryMock.Setup(cr => cr.GetMessageAsync(It.IsAny<long>())).ReturnsAsync(new GroupChatMessage() { Id = 5, SenderUserId = "user1" });
+
             _groupChatRepositoryMock.Setup(cr => cr.DeleteGroupChatMessageAsync(It.IsAny<Guid>(), It.IsAny<long>())).ReturnsAsync(new GroupChatMessage() { Id = 5 });
+
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IGroupChatRepository>()).Returns(_groupChatRepositoryMock.Object);
 
             var command = new DeleteMessageFromGroupChatCommand(new Guid(), "user1", 5);
 
             var handler = new DeleteMessageFromGroupChatCommandHandler(_unitOfWorkMock.Object);
 
+            // Act
             var result = await handler.Handle(command);
 
+            // Assert
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Handle_InvalidCommand_ReturnsNull()
+        {
+            // Arrange
+            GroupChatMessage nullMessage = null;
+
+            _groupChatRepositoryMock.Setup(cr => cr.GetMessageAsync(It.IsAny<long>())).ReturnsAsync(new GroupChatMessage() { Id = 5, SenderUserId = "user1" });
+
+            _groupChatRepositoryMock.Setup(cr => cr.DeleteGroupChatMessageAsync(It.IsAny<Guid>(), It.IsAny<long>())).ReturnsAsync(nullMessage);
+
+            _unitOfWorkMock.Setup(uw => uw.GetRepository<IGroupChatRepository>()).Returns(_groupChatRepositoryMock.Object);
+
+            var command = new DeleteMessageFromGroupChatCommand(new Guid(), "user1", 5);
+
+            var handler = new DeleteMessageFromGroupChatCommandHandler(_unitOfWorkMock.Object);
+
+            // Act
+            var result = await handler.Handle(command);
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }

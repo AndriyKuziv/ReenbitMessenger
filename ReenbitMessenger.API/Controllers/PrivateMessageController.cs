@@ -7,6 +7,8 @@ using ReenbitMessenger.AppServices.PrivateMessageServices.Commands;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using AutoMapper;
+using Microsoft.CodeAnalysis.Emit;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -17,11 +19,14 @@ namespace ReenbitMessenger.API.Controllers
     {
         private readonly HandlersDispatcher _handlersDispatcher;
         private readonly IMapper _mapper;
+        private readonly IValidatorsHandler _validatorsHandler;
 
-        public PrivateMessageController(HandlersDispatcher handlersDispatcher, IMapper mapper)
+        public PrivateMessageController(HandlersDispatcher handlersDispatcher, IMapper mapper,
+            IValidatorsHandler validatorsHandler)
         {
             _handlersDispatcher = handlersDispatcher;
             _mapper = mapper;
+            _validatorsHandler = validatorsHandler;
         }
 
         [HttpPost]
@@ -33,7 +38,16 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token.");
             }
 
-            var chat = await _handlersDispatcher.Dispatch(new GetPrivateChatQuery(currUserId, getChatRequest.UserId));
+            var command = new GetPrivateChatQuery(currUserId, getChatRequest.UserId);
+
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var chat = await _handlersDispatcher.Dispatch(command);
 
             if(chat is null)
             {
@@ -71,15 +85,26 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token.");
             }
 
-            var result = await _handlersDispatcher.Dispatch(new SendPrivateMessageCommand(
-                currUserId, sendMessageRequest.ReceiverId, sendMessageRequest.Text, sendMessageRequest.MessageToReplyId));
+            var command = new SendPrivateMessageCommand(
+                currUserId, sendMessageRequest.ReceiverId, sendMessageRequest.Text, sendMessageRequest.MessageToReplyId);
 
-            if (!result)
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var sentMessage = await _handlersDispatcher.Dispatch(command);
+
+            if (sentMessage is null)
             {
                 return BadRequest("Error while sending a message.");
             }
 
-            return Ok();
+            var sentMessageDTO = _mapper.Map<PrivateMessage>(sentMessage);
+
+            return Ok(sentMessageDTO);
         }
 
         [HttpPut]
@@ -92,29 +117,51 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest("Cannot obtain user id from token.");
             }
 
-            var result = await _handlersDispatcher.Dispatch(new EditPrivateMessageCommand(
-                editMessageRequest.MessageId, editMessageRequest.Text));
+            var command = new EditPrivateMessageCommand(
+                editMessageRequest.MessageId, editMessageRequest.Text);
 
-            if (!result)
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var editedMessage = await _handlersDispatcher.Dispatch(command);
+
+            if (editedMessage is null)
             {
                 return BadRequest("Error while editing a message.");
             }
 
-            return Ok();
+            var editedMessageDTO = _mapper.Map<PrivateMessage>(editedMessage);
+
+            return Ok(editedMessageDTO);
         }
 
         [HttpDelete]
         [Route("message/{msgId:long}")]
         public async Task<IActionResult> DeletePrivateMessage([FromRoute] long msgId)
         {
-            var result = await _handlersDispatcher.Dispatch(new DeletePrivateMessageCommand(msgId));
+            var command = new DeletePrivateMessageCommand(msgId);
 
-            if (!result)
+            var result = await _validatorsHandler.ValidateAsync(command);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            var deletedMessage = await _handlersDispatcher.Dispatch(command);
+
+            if (deletedMessage is null)
             {
                 return BadRequest("Error while deleting a message.");
             }
 
-            return Ok();
+            var deletedMessageDTO = _mapper.Map<PrivateMessage>(deletedMessage);
+
+            return Ok(deletedMessageDTO);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace ReenbitMessenger.API.Controllers
         private readonly IMapper _mapper;
         private readonly IValidatorsHandler _validatorsHandler;
 
-        public GroupChatController(HandlersDispatcher handlersDispatcher, 
+        public GroupChatController(HandlersDispatcher handlersDispatcher,
             IMapper mapper, IValidatorsHandler validatorsHandler)
         {
             _handlersDispatcher = handlersDispatcher;

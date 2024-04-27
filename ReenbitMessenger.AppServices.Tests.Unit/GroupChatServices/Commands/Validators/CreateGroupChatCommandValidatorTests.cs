@@ -14,7 +14,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         private CreateGroupChatCommandValidator _validator;
 
         [Fact]
-        public async Task CreateGroupChatCommandValidator_ValidCommand_ReturnsValid()
+        public async Task Validate_ValidCommand_ReturnsValid()
         {
             // Arrange
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
@@ -33,7 +33,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task CreateGroupChatCommandValidator_EmptyUserId_ReturnsError()
+        public async Task Validate_EmptyUserId_ReturnsError()
         {
             // Arrange
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
@@ -52,7 +52,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task CreateGroupChatCommandValidator_EmptyChatName_ReturnsError()
+        public async Task Validate_EmptyChatName_ReturnsError()
         {
             // Arrange
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
@@ -71,7 +71,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
         }
 
         [Fact]
-        public async Task CreateGroupChatCommandValidator_WrongUserId_ReturnsErrorWithMessage()
+        public async Task Validate_WrongUserId_ReturnsErrorWithMessage()
         {
             // Arrange
             IdentityUser nullUser = null;

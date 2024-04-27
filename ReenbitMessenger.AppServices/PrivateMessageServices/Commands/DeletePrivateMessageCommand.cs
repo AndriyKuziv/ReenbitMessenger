@@ -1,6 +1,8 @@
-﻿namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
+﻿using ReenbitMessenger.DataAccess.Models.Domain;
+
+namespace ReenbitMessenger.AppServices.PrivateMessageServices.Commands
 {
-    public class DeletePrivateMessageCommand : ICommand
+    public class DeletePrivateMessageCommand : ICommand<PrivateMessage>
     {
         public long MessageId { get; }
 

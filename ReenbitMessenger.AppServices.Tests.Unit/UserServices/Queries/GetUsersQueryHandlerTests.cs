@@ -14,15 +14,20 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.UserServices.Queries
         [Fact]
         public async Task Handle_ValidCommand_ReturnsFilteredUsers()
         {
+            // Arrange
             _userRepositoryMock.Setup(cr => cr.FindAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<IdentityUser>() { new IdentityUser(), new IdentityUser() });
+
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IUserRepository>()).Returns(_userRepositoryMock.Object);
 
             var query = new GetUsersQuery();
             var handler = new GetUsersQueryHandler(_unitOfWorkMock.Object);
 
+            // Act
             var result = await handler.Handle(query);
 
+            // Assert
             Assert.NotNull(result);
+            Assert.NotEmpty(result);
         }
     }
 }

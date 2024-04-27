@@ -20,7 +20,7 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
 
             var existingMessage = await groupChatRepository.GetMessageAsync(command.MessageId);
 
-            if (existingMessage != null && existingMessage.SenderUserId != command.UserId)
+            if (existingMessage is null || existingMessage.SenderUserId != command.UserId)
             {
                 return null;
             }

@@ -12,17 +12,21 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Queries
         private readonly Mock<IGroupChatRepository> _groupChatRepositoryMock = new Mock<IGroupChatRepository>();
 
         [Fact]
-        public async Task Handle_ValidCommand_ReturnsFullGroupChat()
+        public async Task Handle_ValidQuery_ReturnsFullGroupChat()
         {
-            _groupChatRepositoryMock.Setup(cr => cr.GetMessageHistoryAsync(It.IsAny<string>())).ReturnsAsync(new List<GroupChatMessage>() { new GroupChatMessage(), new GroupChatMessage() });
+            // Arrange
+            _groupChatRepositoryMock.Setup(cr => cr.GetMessageHistoryAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(new List<GroupChatMessage>() { new GroupChatMessage(), new GroupChatMessage() });
+
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IGroupChatRepository>()).Returns(_groupChatRepositoryMock.Object);
 
-            var query = new GetUserMessagesHistoryQuery("user1");
+            var query = new GetUserMessagesHistoryQuery("user1", 20, "", 0, true, "UserName");
 
             var handler = new GetUserMessagesHistoryQueryHandler(_unitOfWorkMock.Object);
 
+            // Act
             var result = await handler.Handle(query);
 
+            // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result);
         }
