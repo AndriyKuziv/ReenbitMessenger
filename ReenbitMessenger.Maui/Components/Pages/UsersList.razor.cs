@@ -1,4 +1,5 @@
-﻿using ReenbitMessenger.Infrastructure.Models.Requests;
+﻿using ReenbitMessenger.Infrastructure.Models.DTO;
+using ReenbitMessenger.Infrastructure.Models.Requests;
 
 namespace ReenbitMessenger.Maui.Components.Pages
 {
@@ -13,9 +14,19 @@ namespace ReenbitMessenger.Maui.Components.Pages
             public string OrderBy { get; set; } = "Username";
         }
 
+        private IEnumerable<User> users { get; set; } = new List<User>();
+
+        private UsersFilterModel filterModel = new UsersFilterModel();
+
+        protected override async Task OnInitializedAsync()
+        {
+            await UpdateUsersList();
+            userService.Initialize();
+        }
+
         private async Task UpdateUsersList()
         {
-            users = await httpClient.GetUsersAsync(new GetUsersRequest
+            users = await userService.GetUsersAsync(new GetUsersRequest
             {
                 NumberOfUsers = filterModel.NumberOfUsers,
                 Page = filterModel.Page,

@@ -1,4 +1,5 @@
 ﻿using MudBlazor;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using ReenbitMessenger.Maui.Components.Utils;
 
@@ -15,9 +16,23 @@ namespace ReenbitMessenger.Maui.Components.Pages
             public string OrderBy { get; set; } = "Name";
         }
 
+        private string newGroupChatName { get; set; } = string.Empty;
+
+        private string groupChatId { get; set; } = string.Empty;
+
+        GroupChatsFilterModel filterModel = new GroupChatsFilterModel();
+
+        IEnumerable<GroupChat> groupChats { get; set; } = new List<GroupChat>();
+
+        protected override async Task OnInitializedAsync()
+        {
+            chatService.Initialize();
+            await UpdateChatsList();
+        }
+
         protected async Task UpdateChatsList()
         {
-            groupChats = await httpClient.GetUserGroupChatsAsync(new GetGroupChatsRequest { 
+            groupChats = await chatService.GetUserGroupChatsAsync(new GetGroupChatsRequest { 
                 NumberOfGroupChats = filterModel.NumberOfGroupChats,
                 Page = filterModel.Page,
                 ValueContains = filterModel.ValueContains,
@@ -30,7 +45,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
         {
             if (!string.IsNullOrEmpty(newGroupChatName))
             {
-                await httpClient.CreateGroupChatAsync(new CreateGroupChatRequest { Name = newGroupChatName });
+                await chatService.CreateGroupChatAsync(new CreateGroupChatRequest { Name = newGroupChatName });
             }
 
             newGroupChatName = string.Empty;
@@ -55,7 +70,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
             {
                 string groupChatToJoinId = Convert.ToString(result.Data);
 
-                await httpClient.JoinGroupChatAsync(groupChatToJoinId);
+                await chatService.JoinGroupChatAsync(groupChatToJoinId);
                 await UpdateChatsList();
             }
         }

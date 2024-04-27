@@ -1,6 +1,6 @@
 ﻿@page "/chatsList"
 
-@inject IChatHttpClient httpClient
+@inject GroupChatService chatService
 @inject NavigationManager navManager
 @inject IDialogService DialogService
 
@@ -14,8 +14,6 @@
 
 <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="UpdateChatsList">Refresh</MudButton>
 <MudDivider />
-
-
 
 @if (groupChats is null)
 {
@@ -73,20 +71,5 @@ else
     if (filterModel.NumberOfGroupChats == groupChats.Count())
     {
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MoveForward">Next</MudButton>
-    }
-}
-
-@code {
-    private string newGroupChatName { get; set; } = string.Empty;
-
-    private string groupChatId { get; set; } = string.Empty;
-
-    GroupChatsFilterModel filterModel = new GroupChatsFilterModel();
-
-    IEnumerable<GroupChat> groupChats { get; set; } = new List<GroupChat>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await UpdateChatsList();
     }
 }

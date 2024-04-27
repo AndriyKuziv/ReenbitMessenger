@@ -1,4 +1,4 @@
-﻿@inject ILogger<NavMenu> logger
+﻿@inject IHttpClientWrapper clientWrapper
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navManager
 
@@ -56,16 +56,14 @@
 @code{
     protected override async Task OnInitializedAsync()
     {
-        var temp = new HttpClientBase(localStorage);
-        await temp.SetToken();
+        await clientWrapper.SetToken();
 
         await base.OnInitializedAsync();
     }
 
     private async Task Logout(){
         await localStorage.RemoveItemAsync("jwt");
-        await HttpClientBase.DeleteToken();
-        logger.LogWarning("Logged out");
+        await clientWrapper.DeleteToken();
 
         navManager.NavigateTo("", true);
     }

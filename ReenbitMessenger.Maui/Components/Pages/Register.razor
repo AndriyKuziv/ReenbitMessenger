@@ -1,7 +1,7 @@
 ﻿@page "/register"
 
 @inject NavigationManager navManager
-@inject IAuthHttpClient httpClient
+@inject AuthService authService
 @inject Blazored.LocalStorage.ILocalStorageService ls
 @inject ILogger<Login> logger
 
@@ -55,11 +55,9 @@
             Password = registerModel.Password
         };
 
-        var success = await httpClient.RegisterAsync(request);
+        var success = await authService.RegisterAsync(request);
         if (success)
         {
-            Console.WriteLine("registered");
-
             navManager.NavigateTo("login");
         }
     }

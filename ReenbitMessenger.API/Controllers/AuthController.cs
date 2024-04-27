@@ -4,6 +4,7 @@ using ReenbitMessenger.AppServices.UserServices.Commands;
 using ReenbitMessenger.AppServices.AuthServices;
 using ReenbitMessenger.AppServices.Utils;
 using ReenbitMessenger.Infrastructure.Models.Requests;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -39,7 +40,7 @@ namespace ReenbitMessenger.API.Controllers
 
             var token = await _tokenHandler.CreateTokenAsync(user);
 
-            return Ok(token);
+            return Ok(new AuthToken() { Token = token});
         }
 
         [HttpPost]

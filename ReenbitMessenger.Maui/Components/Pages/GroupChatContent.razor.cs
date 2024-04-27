@@ -3,7 +3,6 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
-using ReenbitMessenger.Maui.Clients;
 using ReenbitMessenger.Maui.Components.Utils;
 
 namespace ReenbitMessenger.Maui.Components.Pages
@@ -19,6 +18,24 @@ namespace ReenbitMessenger.Maui.Components.Pages
         public bool IsUsed = true;
 
         private IJSObjectReference? module;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/GroupChatContent.razor.js");
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            chatService.Initialize();
+            await chatHubService.InitializeAsync(await localStorage.GetItemAsStringAsync("jwt"));
+            await Setup();
+
+            await ConnectToGroupChat();
+            await GetFullGroupChat();
+        }
 
         private async Task Setup()
         {
@@ -75,7 +92,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
             if (!result.Canceled)
             {
-                await httpClient.LeaveGroupChatAsync(ChatId);
+                await chatService.LeaveGroupChatAsync(ChatId);
                 navManager.NavigateTo("/chatsList", true);
             }
         }

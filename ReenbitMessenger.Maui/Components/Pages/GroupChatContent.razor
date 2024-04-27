@@ -1,6 +1,6 @@
 ﻿@page "/groupChat/{ChatId}"
 
-@inject IChatHttpClient httpClient
+@inject GroupChatService chatService
 @inject IDialogService DialogService
 @inject ILocalStorageService localStorage
 @inject NavigationManager navManager
@@ -90,21 +90,4 @@ else
 @code {
     [Parameter]
     public string ChatId { get; set; } = string.Empty;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/GroupChatContent.razor.js");
-        }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await chatHubService.InitializeAsync(await localStorage.GetItemAsStringAsync("jwt"));
-        await Setup();
-
-        await ConnectToGroupChat();
-        await GetFullGroupChat();
-    }
 }

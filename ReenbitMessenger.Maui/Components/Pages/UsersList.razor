@@ -1,6 +1,6 @@
 ﻿@page "/usersList"
 
-@inject IUserHttpClient httpClient
+@inject UserService userService
 @using System.Linq.Expressions
 
 <style>
@@ -57,16 +57,5 @@ else
     if (filterModel.NumberOfUsers == users.Count())
     {
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MoveForward">Next</MudButton>
-    }
-}
-
-@code {
-    private IEnumerable<User> users { get; set; } = new List<User>();
-
-    private UsersFilterModel filterModel = new UsersFilterModel();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await UpdateUsersList();
     }
 }

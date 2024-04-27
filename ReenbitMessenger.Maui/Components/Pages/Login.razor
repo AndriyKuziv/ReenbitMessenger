@@ -1,7 +1,8 @@
 ﻿@page "/login"
 
 @inject NavigationManager navManager
-@inject IAuthHttpClient httpClient
+@inject AuthService authService
+@inject IHttpClientWrapper clientWrapper
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject ILogger<Login> logger
 
@@ -46,19 +47,15 @@
             Password = loginModel.Password
         };
 
-        var token = await httpClient.LogInAsync(loginRequest);
+        var token = await authService.LogInAsync(loginRequest);
         if (token is null)
         {
-            logger.LogWarning("token is null");
+            return;
         }
         else
         {
             await localStorage.SetItemAsStringAsync("jwt", token);
-            var tempClient = new HttpClientBase(localStorage);
-            await tempClient.SetToken();
-
-            logger.LogWarning(token);
-
+            await clientWrapper.SetToken();
             navManager.NavigateTo("", true);
         }
     }
