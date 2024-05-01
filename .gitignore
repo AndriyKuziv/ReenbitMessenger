@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /ReenbitMessenger.API/Controllers/TestController.cs
+/ReenbitMessenger.API/Controllers/HealthCheck.cs
+/ReenbitMessenger.API.Tests.Integration/Controllers/HealthCheckTests.cs
