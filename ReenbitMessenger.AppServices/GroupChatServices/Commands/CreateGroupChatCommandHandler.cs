@@ -23,7 +23,10 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
                 Name = command.Name,
             });
 
-            if (resultGroupChat is null) return null;
+            if (resultGroupChat is null)
+            {
+                return null;
+            }
 
             var resultMember = await gcRepo.AddUserToGroupChatAsync(new GroupChatMember
             {
@@ -31,7 +34,10 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
                 UserId = command.UserId
             });
 
-            if (resultMember is null) return null;
+            if (resultMember is null)
+            {
+                return null;
+            }
 
             await _unitOfWork.SaveAsync();
 

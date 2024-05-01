@@ -19,6 +19,7 @@ namespace ReenbitMessenger.AppServices.UserServices.Commands
             var user = new IdentityUser()
             {
                 UserName = command.Username,
+                NormalizedUserName = command.Username.Normalize(),
                 Email = command.Email
             };
 

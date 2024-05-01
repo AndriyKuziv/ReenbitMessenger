@@ -133,18 +133,6 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Username = "updatedUsername"
             };
 
-            using var scope = _factory.Services.CreateScope();
-            var services = scope.ServiceProvider;
-            var dbContext = services.GetRequiredService<MessengerDataContext>();
-            await dbContext.Database.OpenConnectionAsync();
-
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
-
-            var command = dbContext.Database.GetDbConnection().CreateCommand();
-            command.Transaction = transaction.GetDbTransaction();
-
-            dbContext.Database.UseTransaction(command.Transaction);
-
             var response = await _httpClient.PutAsJsonAsync($"{userId}", validRequest);
 
             response.EnsureSuccessStatusCode();
@@ -154,8 +142,6 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.NotNull(resultUser);
             Assert.Equal(resultUser.UserName, validRequest.Username);
             Assert.Equal(resultUser.Email, validRequest.Email);
-
-            await transaction.RollbackAsync();
         }
 
         [Fact]
@@ -191,11 +177,6 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Username = "selfUpdatedUsername"
             };
 
-            using var scope = _factory.Services.CreateScope();
-            var services = scope.ServiceProvider;
-            var dbContext = services.GetRequiredService<MessengerDataContext>();
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
-
             var response = await _httpClient.PutAsJsonAsync("", validRequest);
 
             response.EnsureSuccessStatusCode();
@@ -205,8 +186,6 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.NotNull(resultUser);
             Assert.Equal(resultUser.UserName, validRequest.Username);
             Assert.Equal(resultUser.Email, validRequest.Email);
-
-            await transaction.RollbackAsync();
         }
 
         [Fact]

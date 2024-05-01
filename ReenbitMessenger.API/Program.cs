@@ -51,7 +51,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
-}, ServiceLifetime.Transient);
+});
 
 builder.Services.AddAuthenticationServices(config);
 

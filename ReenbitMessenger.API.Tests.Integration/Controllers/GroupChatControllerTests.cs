@@ -11,25 +11,20 @@ using System.Transactions;
 
 namespace ReenbitMessenger.API.Tests.Integration.Controllers
 {
-    public class GroupChatControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>, IClassFixture<GroupChatTestFixture>
+    public class GroupChatControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _httpClient;
         private readonly CustomWebApplicationFactory<Program> _factory;
 
-        private GroupChatTestFixture _fixture;
-
         protected MessengerDataContext DbContext;
         protected TransactionScope TransactionScope;
 
-        public GroupChatControllerTests(CustomWebApplicationFactory<Program> factory, GroupChatTestFixture fixture)
+        public GroupChatControllerTests(CustomWebApplicationFactory<Program> factory)
         {
             factory.ClientOptions.BaseAddress = new Uri("https://localhost:7051/groupchat/");
 
             _factory = factory;
             _httpClient = factory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
-
-            _fixture = fixture;
         }
 
         [Fact]
@@ -98,8 +93,6 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             var resultChat = JsonConvert.DeserializeObject<GroupChat>(await response.Content.ReadAsStringAsync());
 
             Assert.NotNull(resultChat);
-
-            _fixture.ChatId = resultChat.Id;
         }
 
         [Fact]
@@ -125,7 +118,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             var token = TestsHelper.GetValidToken();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var chatId = _fixture.ChatId;
+            var chatId = new Guid("e6637bb6-67f9-40fe-b001-6488918488ca");
 
             var response = await _httpClient.GetAsync($"{chatId}");
 
@@ -151,7 +144,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Name = "updatedChat"
             };
 
-            var chatId = _fixture.ChatId;
+            var chatId = new Guid("bfda2ff5-f6bb-46bf-8140-5132f38e3e22");
 
             var response = await _httpClient.PutAsJsonAsync($"{chatId}/editInfo", validRequest);
 
@@ -170,7 +163,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Name = ""
             };
 
-            var chatId = _fixture.ChatId;
+            var chatId = new Guid("00fd0418-345d-4630-afbd-de86fb01dc5d");
 
             var response = await _httpClient.PutAsJsonAsync($"{chatId}/editInfo", validRequest);
 
@@ -184,7 +177,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var chatId = _fixture.ChatId;
+            var chatId = new Guid("e6637bb6-67f9-40fe-b001-6488918488ca");
 
             var response = await _httpClient.GetAsync($"{chatId}/join");
 
@@ -217,7 +210,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var chatId = _fixture.ChatId;
+            var chatId = new Guid("e6637bb6-67f9-40fe-b001-6488918488ca");
 
             var response = await _httpClient.DeleteAsync($"{chatId}/leave");
 
@@ -245,7 +238,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var chatId = _fixture.ChatId;
+            var chatId = new Guid("");
 
             var response = await _httpClient.DeleteAsync($"{chatId}");
 
