@@ -15,6 +15,8 @@ var config = builder.Configuration;
 
 builder.Services.AddControllers().AddFluentValidation();
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(options =>
 {
@@ -49,7 +51,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
-});
+}, ServiceLifetime.Transient);
 
 builder.Services.AddAuthenticationServices(config);
 
@@ -96,3 +98,5 @@ app.UseCors(builder => builder
                 .AllowCredentials());
 
 app.Run();
+
+public partial class Program { }

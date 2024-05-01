@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Emit;
 using ReenbitMessenger.AppServices.UserServices.Commands;
 using ReenbitMessenger.AppServices.UserServices.Queries;
 using ReenbitMessenger.AppServices.Utils;
@@ -52,6 +53,11 @@ namespace ReenbitMessenger.API.Controllers
             var query = new GetUserByIdQuery(Convert.ToString(userId));
 
             var user = await _handlersDispatcher.Dispatch(query);
+
+            if (user is null)
+            {
+                return NotFound("There is no user with such id.");
+            }
 
             var userDTO = _mapper.Map<User>(user);
 
@@ -115,11 +121,16 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var editSuccess = await _handlersDispatcher.Dispatch(command);
+            var editResult = await _handlersDispatcher.Dispatch(command);
 
-            if (!editSuccess) return BadRequest();
+            if (editResult is null)
+            {
+                return BadRequest("Error during editing user.");
+            }
 
-            return Ok();
+            var editResultDTO = _mapper.Map<User>(editResult);
+
+            return Ok(editResultDTO);
         }
 
         [HttpPut]
@@ -138,11 +149,16 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var editSuccess = await _handlersDispatcher.Dispatch(command);
+            var editResult = await _handlersDispatcher.Dispatch(command);
 
-            if (!editSuccess) return BadRequest();
+            if (editResult is null)
+            {
+                return BadRequest("Error during editing user.");
+            }
 
-            return Ok();
+            var editResultDTO = _mapper.Map<User>(editResult);
+
+            return Ok(editResultDTO);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace ReenbitMessenger.API.Controllers
 
             if (user is null)
             {
-                return NotFound();
+                return BadRequest("Wrong credentials.");
             }
 
             var token = await _tokenHandler.CreateTokenAsync(user);

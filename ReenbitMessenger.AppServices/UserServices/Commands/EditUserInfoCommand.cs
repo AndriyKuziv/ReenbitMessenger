@@ -1,6 +1,8 @@
-﻿namespace ReenbitMessenger.AppServices.UserServices.Commands
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ReenbitMessenger.AppServices.UserServices.Commands
 {
-    public class EditUserInfoCommand : ICommand
+    public class EditUserInfoCommand : ICommand<IdentityUser>
     {
         public string UserId { get; }
         public string Username { get; }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ReenbitMessenger.AppServices.UserServices.Commands
 {
-    public class EditUserInfoCommandHandler : ICommandHandler<EditUserInfoCommand>
+    public class EditUserInfoCommandHandler : ICommandHandler<EditUserInfoCommand, IdentityUser>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -13,7 +13,7 @@ namespace ReenbitMessenger.AppServices.UserServices.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(EditUserInfoCommand command)
+        public async Task<IdentityUser> Handle(EditUserInfoCommand command)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
             var user = new IdentityUser()
@@ -24,11 +24,14 @@ namespace ReenbitMessenger.AppServices.UserServices.Commands
 
             user = await userRepository.UpdateAsync(command.UserId, user);
 
-            if (user is null) return false;
+            if (user is null)
+            {
+                return null;
+            }
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return user;
         }
     }
 }

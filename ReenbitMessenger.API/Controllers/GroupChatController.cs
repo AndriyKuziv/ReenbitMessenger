@@ -49,24 +49,6 @@ namespace ReenbitMessenger.API.Controllers
             return Ok(groupChatsDTO);
         }
 
-        [HttpPost]
-        [Route("messagesHistory")]
-        public async Task<IActionResult> GetUserMessagesHistory(
-            [FromBody] GetMessagesHistoryRequest getMessagesRequest)
-        {
-            var currUserId = await ControllerHelper.GetUserId(HttpContext);
-            if (string.IsNullOrEmpty(currUserId))
-            {
-                return BadRequest("Cannot obtain user id from token");
-            }
-
-            var messages = await _handlersDispatcher.Dispatch(new GetUserMessagesHistoryQuery(currUserId));
-
-            var messagesDTO = _mapper.Map<IEnumerable<GroupChatMessage>>(messages);
-
-            return Ok(messagesDTO);
-        }
-
         [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetGroupChatById([FromRoute]Guid chatId)
@@ -100,7 +82,10 @@ namespace ReenbitMessenger.API.Controllers
 
             var chatResult = await _handlersDispatcher.Dispatch(command);
 
-            if (chatResult is null) return BadRequest("Error during chat creation");
+            if (chatResult is null)
+            {
+                return BadRequest("Error during chat creation");
+            }
 
             var chatResultDTO = _mapper.Map<GroupChat>(chatResult);
 
@@ -122,7 +107,10 @@ namespace ReenbitMessenger.API.Controllers
 
             var deleteSuccess = await _handlersDispatcher.Dispatch(command);
 
-            if (!deleteSuccess) return BadRequest();
+            if (!deleteSuccess)
+            {
+                return BadRequest();
+            }
 
             return Ok();
         }
@@ -144,50 +132,6 @@ namespace ReenbitMessenger.API.Controllers
             var editSuccess = await _handlersDispatcher.Dispatch(command);
 
             if (!editSuccess) return BadRequest();
-
-            return Ok();
-        }
-
-        [HttpPut]
-        [Route("{chatId:guid}/addUsers")]
-        public async Task<IActionResult> AddUsersToGroupChat([FromRoute] Guid chatId,
-            [FromBody] AddUsersToGroupChatRequest addUsersRequest)
-        {
-            var command = new AddUsersToGroupChatCommand(chatId, addUsersRequest.UsersIds);
-
-            var result = await _validatorsHandler.ValidateAsync(command);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result);
-            }
-
-            var addResult = await _handlersDispatcher.Dispatch(command);
-
-            if (addResult is null) return BadRequest("Error during adding of members");
-
-            var addResultDTO = _mapper.Map<IEnumerable<GroupChatMember>>(addResult);
-
-            return Ok(addResultDTO);
-        }
-
-        [HttpDelete]
-        [Route("{chatId:guid}/removeUsers")]
-        public async Task<IActionResult> RemoveUsersFromGroupChat([FromRoute] Guid chatId,
-            [FromBody] RemoveUsersFromGroupChatRequest removeUsersRequest)
-        {
-            var command = new RemoveUsersFromGroupChatCommand(chatId, removeUsersRequest.UsersIds);
-
-            var result = await _validatorsHandler.ValidateAsync(command);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result);
-            }
-
-            var removedMembers = await _handlersDispatcher.Dispatch(command);
-
-            if (removedMembers is null) return BadRequest("Error during removing of members");
 
             return Ok();
         }
@@ -234,61 +178,6 @@ namespace ReenbitMessenger.API.Controllers
             if (removedMembers is null) return BadRequest("Error during leaving from chat");
 
             return Ok();
-        }
-
-        [HttpPost]
-        [Route("{chatId:guid}/send")]
-        public async Task<IActionResult> SendMessageToGroupChat([FromRoute] Guid chatId,
-            [FromBody] SendMessageToGroupChatRequest sendMessageRequest)
-        {
-            var currUserId = await ControllerHelper.GetUserId(HttpContext);
-            if (string.IsNullOrEmpty(currUserId))
-            {
-                return BadRequest("Cannot obtain user id from token");
-            }
-
-            var command = new SendMessageToGroupChatCommand(chatId, currUserId, sendMessageRequest.Text);
-
-            var result = await _validatorsHandler.ValidateAsync(command);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result);
-            }
-
-            var groupChatMessage = await _handlersDispatcher.Dispatch(command);
-
-            if (groupChatMessage is null) return BadRequest();
-
-            var groupChatMessageDTO = _mapper.Map<GroupChatMessage>(groupChatMessage);
-
-            return Ok(groupChatMessageDTO);
-        }
-
-        [HttpDelete]
-        [Route("{chatId:guid}/deleteMessage")]
-        public async Task<IActionResult> DeleteMessagesFromGroupChat([FromRoute] Guid chatId, [FromBody] DeleteMessageFromGroupChatRequest deleteMessageRequest)
-        {
-            var userId = await ControllerHelper.GetUserId(HttpContext);
-            var command = new DeleteMessageFromGroupChatCommand(chatId, userId, deleteMessageRequest.MessageId);
-
-            var result = await _validatorsHandler.ValidateAsync(command);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result);
-            }
-
-            var deletedMessage = await _handlersDispatcher.Dispatch(command);
-
-            if (deletedMessage is null)
-            {
-                return BadRequest("Error during deleting the message");
-            }
-
-            var deletedMessageDTO = _mapper.Map<GroupChatMessage>(deletedMessage);
-
-            return Ok(deletedMessageDTO);
         }
     }
 }

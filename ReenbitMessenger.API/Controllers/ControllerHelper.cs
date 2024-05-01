@@ -8,14 +8,19 @@ namespace ReenbitMessenger.API.Controllers
         public static async Task<string> GetUserId(HttpContext httpContext)
         {
             var identity = httpContext.User.Identity as ClaimsIdentity;
-            if (identity == null)
+            if (identity is null)
             {
                 return null;
             }
 
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userIdClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
 
-            return userId;
+            if (userIdClaim is null)
+            {
+                return null;
+            }
+
+            return userIdClaim.Value;
         }
     }
 }
