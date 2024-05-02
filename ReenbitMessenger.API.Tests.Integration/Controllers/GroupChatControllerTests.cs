@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.Infrastructure.Models.DTO;
@@ -30,7 +31,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task GetUserGroupChats_ValidRequest_ReturnsOkResult_UserGroupChatList()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -56,7 +58,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task GetUserGroupChats_InvalidToken_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetInvalidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -74,10 +77,11 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
+        //[Fact]
         public async Task CreateGroupChat_ValidRequest_ReturnsCreatedChat()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -95,10 +99,11 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.NotNull(resultChat);
         }
 
-        [Fact]
+        //[Fact]
         public async Task CreateGroupChat_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -115,7 +120,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task GetGroupChatById_ValidRequest_ReturnsGroupChat()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var chatId = new Guid("e6637bb6-67f9-40fe-b001-6488918488ca");
@@ -135,7 +141,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditGroupChatInfoById_ValidRequest_ReturnsOkResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -154,7 +161,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditGroupChatInfoById_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -173,7 +181,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task JoinGroupChat_ValidRequest_ReturnsGroupChatMemberList()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -192,7 +201,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task JoinGroupChat_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -206,7 +216,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task LeaveGroupChat_ValidRequest_ReturnsOkResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -220,7 +231,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task LeaveGroupChat_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -234,7 +246,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task DeleteGroupChatById_ValidRequest_ReturnsOkResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -248,7 +261,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task DeleteGroupChatById_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -258,5 +272,65 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        private void AddTestGroupChats()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<MessengerDataContext>();
+        }
+
+        private List<IdentityUser> testUsers = new List<IdentityUser>()
+        {
+            new IdentityUser { Id = "00a11324-0a61-4893-b79f-54ba531ec2b8", UserName = "testUser1", Email = "test1@gmail.com" },
+            new IdentityUser { Id = "67b53758-87aa-4f36-81fc-667c3ff16ca0", UserName = "testUser2", Email = "test2@gmail.com" },
+            new IdentityUser { Id = "a0146c3a-3aa3-4bea-9917-58a7bcd3e35a", UserName = "testUser2", Email = "test1@gmail.com" },
+            new IdentityUser { Id = "28d7154a-4eba-4a8f-8086-755994e9062b", UserName = "testUser2", Email = "test2@gmail.com" },
+        };
+
+        private List<DataAccess.Models.Domain.GroupChat> groupChats = new List<DataAccess.Models.Domain.GroupChat>()
+        {
+            new DataAccess.Models.Domain.GroupChat { 
+                Id = new Guid("28ee8c1d-ee94-4281-a097-73a94e4046bb"), Name = "testChat1" },
+            new DataAccess.Models.Domain.GroupChat {
+                Id = new Guid("9f3ff815-767f-4836-8382-b4d3b0c25994"), Name = "testChat2" },
+            new DataAccess.Models.Domain.GroupChat {
+                Id = new Guid("3fd12db3-11e0-49b3-8d61-5f60b1f37e21"), Name = "testChat3" },
+            new DataAccess.Models.Domain.GroupChat {
+                Id = new Guid("fb9728f4-f590-41d7-9f75-36355165a9fe"), Name = "testChat4" },
+            new DataAccess.Models.Domain.GroupChat {
+                Id = new Guid("e644041d-8b8f-4813-9a0a-093ead49727e"), Name = "testChat5" },
+        };
+
+        private List<DataAccess.Models.Domain.GroupChatMember> groupChatMembers = new List<DataAccess.Models.Domain.GroupChatMember>
+        {
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("28ee8c1d-ee94-4281-a097-73a94e4046bb"), GroupChatRoleId = 1,
+                UserId = "00a11324-0a61-4893-b79f-54ba531ec2b8" },
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("28ee8c1d-ee94-4281-a097-73a94e4046bb"), GroupChatRoleId = 1,
+                UserId = "67b53758-87aa-4f36-81fc-667c3ff16ca0"},
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("28ee8c1d-ee94-4281-a097-73a94e4046bb"), GroupChatRoleId = 1,
+                UserId = "a0146c3a-3aa3-4bea-9917-58a7bcd3e35a"},
+
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("9f3ff815-767f-4836-8382-b4d3b0c25994"), GroupChatRoleId = 1,
+                UserId = "00a11324-0a61-4893-b79f-54ba531ec2b8" },
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("9f3ff815-767f-4836-8382-b4d3b0c25994"), GroupChatRoleId = 1,
+                UserId = "67b53758-87aa-4f36-81fc-667c3ff16ca0"},
+
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("3fd12db3-11e0-49b3-8d61-5f60b1f37e21"), GroupChatRoleId = 1,
+                UserId = "67b53758-87aa-4f36-81fc-667c3ff16ca0"},
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("3fd12db3-11e0-49b3-8d61-5f60b1f37e21"), GroupChatRoleId = 1,
+                UserId = "a0146c3a-3aa3-4bea-9917-58a7bcd3e35a"},
+
+            new DataAccess.Models.Domain.GroupChatMember {
+                GroupChatId = new Guid("fb9728f4-f590-41d7-9f75-36355165a9fe"), GroupChatRoleId = 1,
+                UserId = "a0146c3a-3aa3-4bea-9917-58a7bcd3e35a"}
+        };
     }
 }

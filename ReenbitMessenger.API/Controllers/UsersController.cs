@@ -56,7 +56,7 @@ namespace ReenbitMessenger.API.Controllers
 
             if (user is null)
             {
-                return NotFound("There is no user with such id.");
+                return BadRequest("There is no user with such id.");
             }
 
             var userDTO = _mapper.Map<User>(user);

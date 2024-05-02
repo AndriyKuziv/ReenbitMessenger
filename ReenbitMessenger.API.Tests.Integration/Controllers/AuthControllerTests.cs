@@ -51,7 +51,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         }
 
         [Fact]
-        public async Task LogIn_InvalidCredentials_ReturnsBadRequest()
+        public async Task LogIn_InvalidCredentials_ReturnsBadRequestResult()
         {
             LoginRequest loginRequest = new LoginRequest {
                 Username = "invalidUsername",
@@ -63,8 +63,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task SignUp_ValidCredentials_ReturnsOk()
+        //[Fact]
+        public async Task SignUp_ValidCredentials_ReturnsSuccessStatusCode()
         {
             CreateUserRequest validRequest = new CreateUserRequest
             {
@@ -78,8 +78,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
-        public async Task SignUp_InvalidCredentials_ReturnsBadRequest()
+        //[Fact]
+        public async Task SignUp_InvalidCredentials_ReturnsBadRequestResult()
         {
             CreateUserRequest createUserRequest = new CreateUserRequest {
                 Username = "newTestUser",

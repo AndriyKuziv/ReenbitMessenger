@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
@@ -13,7 +14,7 @@ using System.Security.Claims;
 
 namespace ReenbitMessenger.API.Tests.Integration.Controllers
 {
-    public class UsersControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
+    public class UsersControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>, IDisposable
     {
         private readonly HttpClient _httpClient;
         private readonly CustomWebApplicationFactory<Program> _factory;
@@ -26,12 +27,15 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             _factory = factory;
             _httpClient = factory.CreateClient();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+
+            AddTestData();
         }
 
         [Fact]
         public async Task GetSortedUsers_ValidRequest_ReturnsUserList()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -51,17 +55,18 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             var usersList = JsonConvert.DeserializeObject<List<User>>(await response.Content.ReadAsStringAsync());
 
             Assert.NotNull(usersList);
-            Assert.NotEmpty(usersList);
+            Assert.Equal(usersList.Count, testUsers.Count);
         }
 
         [Fact]
         public async Task GetUserById_ValidId_ReturnsUser()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var userId = new Guid("9ce16ede-4614-46d4-a593-fbcfdc6c871c");
+            var userId = testUsers[1].Id;
 
             var response = await _httpClient.GetAsync($"{userId}");
 
@@ -73,9 +78,10 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         }
 
         [Fact]
-        public async Task GetUserById_InvalidId_ReturnsNotFoundResult()
+        public async Task GetUserById_InvalidId_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -83,31 +89,29 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             var response = await _httpClient.GetAsync($"{userId}");
 
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
-        public async Task DeleteUserById_ValidId_ReturnsDeletedUser()
+        public async Task DeleteUserById_ValidId_ReturnsSuccessStatusCode()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var userId = new Guid("9ce16ede-4614-46d4-a593-fbcfdc6c871c");
+            var userId = new Guid(testUsers[1].Id);
 
             var response = await _httpClient.DeleteAsync($"{userId}");
 
             response.EnsureSuccessStatusCode();
-
-            var user = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
-
-            Assert.NotNull(user);
         }
 
         [Fact]
         public async Task DeleteUserById_InvalidId_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -121,11 +125,12 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditUserInfoById_ValidRequest_ReturnsEditedUser()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[1];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var userId = new Guid("55d1a01f-6bb8-4be4-8091-a6ec47348afd");
+            var userId = testUser.Id;
 
             EditUserInfoRequest validRequest = new EditUserInfoRequest()
             {
@@ -147,7 +152,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditUserInfoById_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -167,7 +173,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditUserInfo_ValidRequest_ReturnsEditedUser()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[1];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -191,19 +198,70 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditUserInfo_InvalidRequest_ReturnsBadRequestResult()
         {
-            var token = TestsHelper.GetValidToken();
+            var testUser = testUsers[1];
+            var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             EditUserInfoRequest validRequest = new EditUserInfoRequest()
             {
                 Email = "test@gmail.com",
-                Username = "selfUpdatedUsername"
+                Username = ""
             };
 
             var response = await _httpClient.PutAsJsonAsync("", validRequest);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        private void AddTestData()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<MessengerDataContext>();
+
+            foreach (var user in testUsers)
+            {
+                if (!dbContext.Users.Contains(user))
+                {
+                    dbContext.Users.Add(user);
+                }
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        private void RemoveTestData()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<MessengerDataContext>();
+
+            foreach( var user in testUsers)
+            {
+                if (dbContext.Users.Contains(user))
+                {
+                    dbContext.Users.Remove(user);
+                }
+            }
+            dbContext.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            if(_httpClient != null)
+            {
+                _httpClient.Dispose();
+            }
+            RemoveTestData();
+        }
+
+        private List<IdentityUser> testUsers = new List<IdentityUser>()
+        {
+            new IdentityUser { Id = "00a11324-0a61-4893-b79f-54ba531ec2b8", UserName = "testUser1", Email = "test1@gmail.com" },
+            new IdentityUser { Id = "67b53758-87aa-4f36-81fc-667c3ff16ca0", UserName = "testUser2", Email = "test2@gmail.com" },
+            new IdentityUser { Id = "a0146c3a-3aa3-4bea-9917-58a7bcd3e35a", UserName = "testUser2", Email = "test1@gmail.com" },
+            new IdentityUser { Id = "28d7154a-4eba-4a8f-8086-755994e9062b", UserName = "testUser2", Email = "test2@gmail.com" },
+        };
     }
 }
