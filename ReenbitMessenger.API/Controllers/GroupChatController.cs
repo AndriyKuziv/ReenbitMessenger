@@ -37,7 +37,7 @@ namespace ReenbitMessenger.API.Controllers
             }
 
             var groupChats = await _handlersDispatcher
-                .Dispatch(new GetGroupChatsQuery(currUserId,
+                .Dispatch(new GetUserGroupChatsQuery(currUserId,
                                     getChatsRequest.NumberOfGroupChats,
                                     getChatsRequest.ValueContains,
                                     getChatsRequest.Page,
@@ -53,7 +53,7 @@ namespace ReenbitMessenger.API.Controllers
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetGroupChatById([FromRoute]Guid chatId)
         {
-            var query = new GetFullGroupChatQuery(chatId);
+            var query = new GetGroupChatInfoQuery(chatId);
 
             var groupChat = await _handlersDispatcher.Dispatch(query);
 
@@ -129,11 +129,16 @@ namespace ReenbitMessenger.API.Controllers
                 return BadRequest(result);
             }
 
-            var editSuccess = await _handlersDispatcher.Dispatch(command);
+            var editResult = await _handlersDispatcher.Dispatch(command);
 
-            if (!editSuccess) return BadRequest();
+            if (editResult is null)
+            {
+                return BadRequest("Error during chat editing.");
+            }
 
-            return Ok();
+            var editResultDTO = _mapper.Map<GroupChat>(editResult);
+
+            return Ok(editResultDTO);
         }
 
         [HttpGet]
@@ -152,7 +157,10 @@ namespace ReenbitMessenger.API.Controllers
 
             var addResult = await _handlersDispatcher.Dispatch(command);
 
-            if (addResult is null) return BadRequest("Error during adding of members");
+            if (addResult is null)
+            {
+                return BadRequest("Error during adding of members");
+            }
 
             var addResultDTO = _mapper.Map<IEnumerable<GroupChatMember>>(addResult);
 
@@ -175,7 +183,10 @@ namespace ReenbitMessenger.API.Controllers
 
             var removedMembers = await _handlersDispatcher.Dispatch(command);
 
-            if (removedMembers is null) return BadRequest("Error during leaving from chat");
+            if (removedMembers is null)
+            {
+                return BadRequest("Error during leaving from chat");
+            }
 
             return Ok();
         }

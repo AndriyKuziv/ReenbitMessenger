@@ -23,7 +23,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
                 .ReturnsAsync((string userId) => new IdentityUser { Id = userId });
 
-            _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(false);
+            _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).Returns(false);
 
             _validator = new AddUsersToGroupChatCommandValidator(_groupChatRepositoryMock.Object, _userRepositoryMock.Object);
 
@@ -46,7 +46,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
                 .ReturnsAsync((string userId) => new IdentityUser { Id = userId });
 
-            _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(false);
+            _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).Returns    (false);
 
             _validator = new AddUsersToGroupChatCommandValidator(_groupChatRepositoryMock.Object, _userRepositoryMock.Object);
 
@@ -71,7 +71,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands.Val
             _userRepositoryMock.Setup(repo => repo.GetAsync(It.IsAny<string>()))
                 .ReturnsAsync(nullUser);
 
-            _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(true);
+            _groupChatRepositoryMock.Setup(repo => repo.IsInGroupChat(It.IsAny<Guid>(), It.IsAny<string>())).Returns(true);
 
             _validator = new AddUsersToGroupChatCommandValidator(_groupChatRepositoryMock.Object, _userRepositoryMock.Object);
 

@@ -2,11 +2,11 @@
 
 namespace ReenbitMessenger.AppServices.GroupChatServices.Queries
 {
-    public class GetFullGroupChatQuery : IQuery<GroupChat>
+    public class GetGroupChatInfoQuery : IQuery<GroupChat>
     {
         public Guid ChatId { get; }
 
-        public GetFullGroupChatQuery(Guid chatId)
+        public GetGroupChatInfoQuery(Guid chatId)
         {
             ChatId = chatId;
         }

@@ -10,11 +10,10 @@ namespace ReenbitMessenger.DataAccess.Repositories
 {
     public class GroupChatRepository : GenericRepository<GroupChat, Guid>, IGroupChatRepository
     {
-
         public GroupChatRepository(MessengerDataContext dbContext) : base(dbContext){ }
 
         // Group chats methods
-        public async Task<GroupChat> GetFullAsync(Guid chatId)
+        public async Task<GroupChat> GetInfoAsync(Guid chatId)
         {
             return await _dbContext.GroupChat
                 .Include(chat => chat.GroupChatMembers)
@@ -26,8 +25,10 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
         public async Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId)
         {
-            return _dbContext.GroupChat
-                .Include(chat => chat.GroupChatMembers.Where(cmem => cmem.UserId == userId))
+            var included = await _dbContext.GroupChat
+                .Include(chat => chat.GroupChatMembers.Where(cmem => cmem.UserId == userId)).ToListAsync();
+
+            return included
                 .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId));
         }
 
@@ -66,7 +67,7 @@ namespace ReenbitMessenger.DataAccess.Repositories
             return _dbContext.GroupChatMember.Where(gcm => gcm.GroupChatId == chatId);
         }
 
-        public async Task<bool> IsInGroupChat(Guid chatId, string userId)
+        public bool IsInGroupChat(Guid chatId, string userId)
         {
             return _dbContext.GroupChatMember.Any(cmem => cmem.GroupChatId == chatId && cmem.UserId == userId);
         }

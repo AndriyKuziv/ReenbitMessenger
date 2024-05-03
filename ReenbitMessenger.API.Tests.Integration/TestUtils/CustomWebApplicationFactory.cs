@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,6 @@ namespace ReenbitMessenger.API.Tests.Integration.TestUtils
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where
         TStartup : class
     {
-        public string DefaultUserId { get; set; } = "0496b450-020f-4cf7-8c01-10b6b3cfc52e";
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(services =>
@@ -46,9 +45,6 @@ namespace ReenbitMessenger.API.Tests.Integration.TestUtils
                         options.TokenValidationParameters.ValidAudience = JwtTokenProvider.Issuer;
                         options.Configuration.SigningKeys.Add(JwtTokenProvider.SecurityKey);
                     });
-                services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
-                services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
-                    .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
             });
         }
     }

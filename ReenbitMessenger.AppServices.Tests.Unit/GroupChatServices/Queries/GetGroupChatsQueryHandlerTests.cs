@@ -19,7 +19,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Queries
 
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IGroupChatRepository>()).Returns(_groupChatRepositoryMock.Object);
 
-            var query = new GetGroupChatsQuery("userId");
+            var query = new GetGroupChatsQuery();
 
             var handler = new GetGroupChatsQueryHandler(_unitOfWorkMock.Object);
 

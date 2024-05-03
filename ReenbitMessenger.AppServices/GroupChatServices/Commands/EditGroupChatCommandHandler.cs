@@ -4,7 +4,7 @@ using ReenbitMessenger.DataAccess.Utils;
 
 namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
 {
-    public class EditGroupChatCommandHandler : ICommandHandler<EditGroupChatCommand>
+    public class EditGroupChatCommandHandler : ICommandHandler<EditGroupChatCommand, GroupChat>
     {
 
         private readonly IUnitOfWork _unitOfWork;
@@ -14,7 +14,7 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(EditGroupChatCommand command)
+        public async Task<GroupChat> Handle(EditGroupChatCommand command)
         {
             var groupChat = await _unitOfWork.GetRepository<IGroupChatRepository>()
                 .UpdateAsync(command.GroupChatId, new GroupChat()
@@ -24,12 +24,12 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands
 
             if (groupChat is null)
             {
-                return false;
+                return null;
             }
 
             await _unitOfWork.SaveAsync();
 
-            return true;
+            return groupChat;
         }
     }
 }

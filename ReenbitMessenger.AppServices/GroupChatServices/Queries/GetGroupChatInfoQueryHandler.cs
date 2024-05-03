@@ -4,19 +4,19 @@ using ReenbitMessenger.DataAccess.Utils;
 
 namespace ReenbitMessenger.AppServices.GroupChatServices.Queries
 {
-    public class GetFullGroupChatQueryHandler : IQueryHandler<GetFullGroupChatQuery, GroupChat>
+    public class GetGroupChatInfoQueryHandler : IQueryHandler<GetGroupChatInfoQuery, GroupChat>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public GetFullGroupChatQueryHandler(IUnitOfWork unitOfWork)
+        public GetGroupChatInfoQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GroupChat> Handle(GetFullGroupChatQuery query)
+        public async Task<GroupChat> Handle(GetGroupChatInfoQuery query)
         {
             return await _unitOfWork.GetRepository<IGroupChatRepository>()
-                .GetFullAsync(query.ChatId);
+                .GetInfoAsync(query.ChatId);
         }
     }
 }

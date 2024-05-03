@@ -89,7 +89,6 @@ namespace ReenbitMessenger.Maui.Services
             }
         }
 
-
         public async Task ConnectToGroupChatAsync(string chatId)
         {
             if (!_connectedChats.Contains(chatId))
@@ -110,7 +109,7 @@ namespace ReenbitMessenger.Maui.Services
 
         public async Task GetGroupChatInfoAsync(string chatId)
         {
-            await _hubConnection.SendAsync("GetFullGroupChat", chatId);
+            await _hubConnection.SendAsync("GetGroupChatInfo", chatId);
         }
 
         public async Task GetGroupChatMessages(string chatId,

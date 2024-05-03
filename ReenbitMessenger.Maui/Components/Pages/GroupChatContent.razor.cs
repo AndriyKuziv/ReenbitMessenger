@@ -41,7 +41,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
         {
             await chatHubService.SubscribeAsync<GroupChatMessage>("ReceiveMessage", OnMessageReceived);
             await chatHubService.SubscribeAsync<IEnumerable<GroupChatMember>>("ReceiveMembers", OnMembersReceived);
-            await chatHubService.SubscribeAsync<GroupChat>("ReceiveFullGroupChat", OnChatReceived);
+            await chatHubService.SubscribeAsync<GroupChat>("ReceiveGroupChatInfo", OnChatReceived);
             await chatHubService.SubscribeAsync<IEnumerable<string>>("RemoveMembers", OnMembersRemoved);
             await chatHubService.SubscribeAsync<IEnumerable<GroupChatMessage>>("ReceiveGroupChatMessages", OnMessageListReceived);
             await chatHubService.SubscribeAsync<GroupChatMessage>("DeleteMessage", OnMessageDeleted);

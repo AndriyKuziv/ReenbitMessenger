@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
+using ReenbitMessenger.DataAccess.Data;
+using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using System.Net;
 using System.Net.Http.Headers;
@@ -8,7 +11,7 @@ using System.Text;
 
 namespace ReenbitMessenger.API.Tests.Integration.Controllers
 {
-    public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
+    public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>, IDisposable
     {
         private readonly HttpClient _httpClient;
         private readonly CustomWebApplicationFactory<Program> _factory;
@@ -22,8 +25,10 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         }
 
         [Fact]
-        public async Task LogIn_ValidCredentials_ReturnsSuccessStatusCode()
+        public async Task LogIn_ValidCredentials_ReturnsToken()
         {
+            await AddTestData();
+
             LoginRequest validRequest = new LoginRequest
             {
                 Username = "testUser",
@@ -33,21 +38,11 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             var response = await _httpClient.PostAsJsonAsync("/auth/login", validRequest);
 
             response.EnsureSuccessStatusCode();
-        }
 
-        [Fact]
-        public async Task LogIn_ValidCredentials_ReturnsContent()
-        {
-            LoginRequest validRequest = new LoginRequest
-            {
-                Username = "testUser",
-                Password = "Test0="
-            };
+            var tokenObject = JsonConvert.DeserializeObject<AuthToken>(await response.Content.ReadAsStringAsync());
 
-            var response = await _httpClient.PostAsJsonAsync("/auth/login", validRequest);
-
-            Assert.NotNull(response.Content);
-            Assert.True(response.Content.Headers.ContentLength > 0);
+            Assert.NotNull(tokenObject);
+            Assert.NotNull(tokenObject.Token);
         }
 
         [Fact]
@@ -63,7 +58,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        //[Fact]
+        [Fact]
         public async Task SignUp_ValidCredentials_ReturnsSuccessStatusCode()
         {
             CreateUserRequest validRequest = new CreateUserRequest
@@ -78,7 +73,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             response.EnsureSuccessStatusCode();
         }
 
-        //[Fact]
+        [Fact]
         public async Task SignUp_InvalidCredentials_ReturnsBadRequestResult()
         {
             CreateUserRequest createUserRequest = new CreateUserRequest {
@@ -91,5 +86,49 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        private async Task AddTestData()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<MessengerDataContext>();
+
+            var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+            var result = await userManager.CreateAsync(testUser, "Test0=");
+            if (result.Succeeded)
+            {
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public void ClearTestData()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<MessengerDataContext>();
+
+            foreach (var user in dbContext.Users)
+            {
+                dbContext.Users.Remove(user);
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            if (_httpClient != null)
+            {
+                _httpClient.Dispose();
+            }
+
+            ClearTestData();
+        }
+
+        private IdentityUser testUser = new IdentityUser()
+        {
+            UserName = "testUser",
+            Email = "test@test.com",
+        };
     }
 }

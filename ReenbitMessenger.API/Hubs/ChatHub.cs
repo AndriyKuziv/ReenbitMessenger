@@ -29,7 +29,7 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task ConnectToGroupChat(string chatId)
         {
-            var resChat = await _handlersDispatcher.Dispatch(new GetFullGroupChatQuery(new Guid(chatId)));
+            var resChat = await _handlersDispatcher.Dispatch(new GetGroupChatInfoQuery(new Guid(chatId)));
 
             if (resChat is null)
             {
@@ -44,9 +44,9 @@ namespace ReenbitMessenger.API.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
         }
 
-        public async Task GetFullGroupChat(string chatId)
+        public async Task GetGroupChatInfo(string chatId)
         {
-            var resChat = await _handlersDispatcher.Dispatch(new GetFullGroupChatQuery(new Guid(chatId)));
+            var resChat = await _handlersDispatcher.Dispatch(new GetGroupChatInfoQuery(new Guid(chatId)));
 
             if (resChat is null)
             {
@@ -55,7 +55,7 @@ namespace ReenbitMessenger.API.Hubs
 
             var resChatDTO = _mapper.Map<GroupChat>(resChat);
 
-            await Clients.Caller.SendAsync("ReceiveFullGroupChat", resChatDTO);
+            await Clients.Caller.SendAsync("ReceiveGroupChatInfo", resChatDTO);
         }
 
         public async Task GetGroupChatMessages(string chatId,
@@ -76,7 +76,7 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task CreateGroupChat(CreateGroupChatRequest createRequest)
         {
-            var userId = await HubHelper.GetUserId(Context);
+            var userId = await HubHelper.GetUserIdAsync(Context);
             if (userId is null)
             {
                 return;
@@ -96,7 +96,7 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task SendGroupChatMessage(string chatId, SendMessageToGroupChatRequest sendMessageRequest)
         {
-            var userId = await HubHelper.GetUserId(Context);
+            var userId = await HubHelper.GetUserIdAsync(Context);
 
             if (userId is null)
             {
@@ -117,7 +117,7 @@ namespace ReenbitMessenger.API.Hubs
 
         public async Task DeleteGroupChatMessage(string chatId, DeleteMessageFromGroupChatRequest deleteMessageRequest)
         {
-            var userId = await HubHelper.GetUserId(Context);
+            var userId = await HubHelper.GetUserIdAsync(Context);
 
             if (userId is null)
             {

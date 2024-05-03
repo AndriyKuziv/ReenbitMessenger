@@ -5,7 +5,7 @@ namespace ReenbitMessenger.API.Hubs
 {
     public static class HubHelper
     {
-        public static async Task<string> GetUserId(HubCallerContext context)
+        public static async Task<string> GetUserIdAsync(HubCallerContext context)
         {
             if (context.User is null)
             {

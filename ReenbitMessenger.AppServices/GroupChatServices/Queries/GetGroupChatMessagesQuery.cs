@@ -10,8 +10,7 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Queries
         public string MessageContains { get; }
         public bool Ascending { get; }
 
-        public GetGroupChatMessagesQuery(Guid groupChatId, int numberOfMessages = 20, string messageContains = "", int page = 0,
-            bool ascending = true)
+        public GetGroupChatMessagesQuery(Guid groupChatId, int numberOfMessages = 20, string messageContains = "", int page = 0, bool ascending = true)
         {
             GroupChatId = groupChatId;
             NumberOfMessages = numberOfMessages;

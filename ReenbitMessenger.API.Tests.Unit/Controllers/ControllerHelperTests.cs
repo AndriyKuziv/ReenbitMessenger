@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Moq;
 using ReenbitMessenger.API.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReenbitMessenger.API.Tests.Unit.Controllers
 {
@@ -15,7 +10,7 @@ namespace ReenbitMessenger.API.Tests.Unit.Controllers
         private Mock<HttpContext> _httpContextMock = new Mock<HttpContext>();
 
         [Fact]
-        public async Task GetUserId_ReturnsUserId()
+        public async Task GetUserId_ValidIdentity_ReturnsUserId()
         {
             // Arrange
             string expectedId = "userId";
@@ -34,7 +29,7 @@ namespace ReenbitMessenger.API.Tests.Unit.Controllers
         }
 
         [Fact]
-        public async Task GetUserId_ReturnsNull_IfIdentityIsNull()
+        public async Task GetUserId_IdentityIsNull_ReturnsNull()
         {
             // Arrange
             var claimsPrincipal = new ClaimsPrincipal();

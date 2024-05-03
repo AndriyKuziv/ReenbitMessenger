@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
-using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace ReenbitMessenger.API.Tests.Integration.Controllers
 {
@@ -22,18 +18,17 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         public UsersControllerTests(CustomWebApplicationFactory<Program> factory)
         {
             factory.ClientOptions.BaseAddress = new Uri("https://localhost:7051/users/");
-            factory.Server.PreserveExecutionContext = true;
 
             _factory = factory;
             _httpClient = factory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
             AddTestData();
         }
 
         [Fact]
-        public async Task GetSortedUsers_ValidRequest_ReturnsUserList()
+        public async Task GetSortedUsers_ValidRequest_ReturnsUsersList()
         {
+            // Arrange
             var testUser = testUsers[0];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -48,38 +43,48 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Ascending = true,
             };
 
+            // Act
             var response = await _httpClient.PostAsJsonAsync("usersList", validRequest);
 
             response.EnsureSuccessStatusCode();
 
             var usersList = JsonConvert.DeserializeObject<List<User>>(await response.Content.ReadAsStringAsync());
 
+            // Assert
             Assert.NotNull(usersList);
-            Assert.Equal(usersList.Count, testUsers.Count);
+            Assert.Equal(testUsers.Count, usersList.Count);
         }
 
         [Fact]
         public async Task GetUserById_ValidId_ReturnsUser()
         {
+            // Arrange
             var testUser = testUsers[0];
             var token = TestsHelper.GetValidToken(testUser);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var userId = testUsers[1].Id;
+            var expectedUser = testUsers[1];
+            var userId = expectedUser.Id;
 
+            // Act
             var response = await _httpClient.GetAsync($"{userId}");
 
             response.EnsureSuccessStatusCode();
 
-            var user = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            var resultUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
 
-            Assert.NotNull(user);
+            // Assert
+            Assert.NotNull(resultUser);
+            Assert.Equal(expectedUser.Id, resultUser.Id);
+            Assert.Equal(expectedUser.UserName, resultUser.UserName);
+            Assert.Equal(expectedUser.Email, resultUser.Email);
         }
 
         [Fact]
         public async Task GetUserById_InvalidId_ReturnsBadRequestResult()
         {
+            // Arrange
             var testUser = testUsers[0];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -87,14 +92,17 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             var userId = new Guid("9ce26ede-4614-46d4-a593-fbcfdc6c871c");
 
+            // Act
             var response = await _httpClient.GetAsync($"{userId}");
 
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
         public async Task DeleteUserById_ValidId_ReturnsSuccessStatusCode()
         {
+            // Arrange
             var testUser = testUsers[0];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -102,14 +110,17 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             var userId = new Guid(testUsers[1].Id);
 
+            // Act
             var response = await _httpClient.DeleteAsync($"{userId}");
 
+            // Assert
             response.EnsureSuccessStatusCode();
         }
 
         [Fact]
         public async Task DeleteUserById_InvalidId_ReturnsBadRequestResult()
         {
+            // Arrange
             var testUser = testUsers[0];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -117,14 +128,17 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
 
             var userId = new Guid("9ce26ede-4614-46d4-a593-fbcfdc6c871c");
 
+            // Act
             var response = await _httpClient.DeleteAsync($"{userId}");
 
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
         public async Task EditUserInfoById_ValidRequest_ReturnsEditedUser()
         {
+            // Arrange
             var testUser = testUsers[1];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -138,12 +152,14 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Username = "updatedUsername"
             };
 
+            // Act
             var response = await _httpClient.PutAsJsonAsync($"{userId}", validRequest);
 
             response.EnsureSuccessStatusCode();
 
             var resultUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
 
+            // Assert
             Assert.NotNull(resultUser);
             Assert.Equal(resultUser.UserName, validRequest.Username);
             Assert.Equal(resultUser.Email, validRequest.Email);
@@ -152,6 +168,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditUserInfoById_InvalidRequest_ReturnsBadRequestResult()
         {
+            // Arrange
             var testUser = testUsers[0];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -165,14 +182,17 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Username = "updatedUsername"
             };
 
+            // Act
             var response = await _httpClient.PutAsJsonAsync($"{userId}", validRequest);
 
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
         public async Task EditUserInfo_ValidRequest_ReturnsEditedUser()
         {
+            // Arrange
             var testUser = testUsers[1];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -184,12 +204,14 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Username = "selfUpdatedUsername"
             };
 
+            // Act
             var response = await _httpClient.PutAsJsonAsync("", validRequest);
 
             response.EnsureSuccessStatusCode();
 
             var resultUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
 
+            // Assert
             Assert.NotNull(resultUser);
             Assert.Equal(resultUser.UserName, validRequest.Username);
             Assert.Equal(resultUser.Email, validRequest.Email);
@@ -198,6 +220,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task EditUserInfo_InvalidRequest_ReturnsBadRequestResult()
         {
+            // Arrange
             var testUser = testUsers[1];
             var token = TestsHelper.GetValidToken(testUser);
 
@@ -209,8 +232,10 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Username = ""
             };
 
+            // Act
             var response = await _httpClient.PutAsJsonAsync("", validRequest);
 
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -220,7 +245,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<MessengerDataContext>();
 
-            foreach (var user in testUsers)
+            foreach(var user in testUsers)
             {
                 if (!dbContext.Users.Contains(user))
                 {
@@ -231,19 +256,20 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             dbContext.SaveChanges();
         }
 
-        private void RemoveTestData()
+        private void ClearTestData()
         {
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<MessengerDataContext>();
 
-            foreach( var user in testUsers)
+            foreach(var user in testUsers)
             {
                 if (dbContext.Users.Contains(user))
                 {
                     dbContext.Users.Remove(user);
                 }
             }
+
             dbContext.SaveChanges();
         }
 
@@ -253,7 +279,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             {
                 _httpClient.Dispose();
             }
-            RemoveTestData();
+
+            ClearTestData();
         }
 
         private List<IdentityUser> testUsers = new List<IdentityUser>()

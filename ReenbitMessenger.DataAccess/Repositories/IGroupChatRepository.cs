@@ -10,14 +10,14 @@ namespace ReenbitMessenger.DataAccess.Repositories
     public interface IGroupChatRepository : IGenericRepository<GroupChat, Guid>
     {
         // Group chat
-        Task<GroupChat> GetFullAsync(Guid chatId);
+        Task<GroupChat> GetInfoAsync(Guid chatId);
         Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId);
 
         // Group chat members
         Task<GroupChatMember> GetMemberAsync(long memberId);
         Task<IEnumerable<GroupChatMember>> FilterMembersAsync(Func<GroupChatMember, bool> predicate);
         Task<IEnumerable<GroupChatMember>> GetGroupChatMembersAsync(Guid chatId);
-        Task<bool> IsInGroupChat(Guid chatId, string userId);
+        bool IsInGroupChat(Guid chatId, string userId);
         Task<GroupChatMember> AddUserToGroupChatAsync(GroupChatMember member);
         Task<GroupChatMember> RemoveUserFromGroupChatAsync(Guid chatId, string userId);
 

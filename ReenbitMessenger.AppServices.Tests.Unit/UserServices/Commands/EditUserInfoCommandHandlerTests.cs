@@ -37,7 +37,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.UserServices.Commands
             var result = await handler.Handle(query);
 
             // Assert
-            Assert.True(result);
+            Assert.NotNull(result);
         }
     }
 }

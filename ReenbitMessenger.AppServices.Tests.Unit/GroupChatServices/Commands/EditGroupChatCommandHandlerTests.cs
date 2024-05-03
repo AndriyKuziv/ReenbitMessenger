@@ -17,7 +17,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands
         private readonly Mock<IGroupChatRepository> _groupChatRepositoryMock = new Mock<IGroupChatRepository>();
 
         [Fact]
-        public async Task Handle_ValidCommand_ReturnsTrue()
+        public async Task Handle_ValidCommand_ReturnsGroupChat()
         {
             // Arrange
             _groupChatRepositoryMock.Setup(cr => cr.UpdateAsync(It.IsAny<Guid>(), It.IsAny<GroupChat>())).ReturnsAsync(new GroupChat() { Id = new Guid() });
@@ -31,11 +31,11 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands
             var result = await handler.Handle(command);
 
             // Assert
-            Assert.True(result);
+            Assert.NotNull(result);
         }
 
         [Fact]
-        public async Task Handle_InvalidCommand_ReturnsFalse()
+        public async Task Handle_InvalidCommand_ReturnsNull()
         {
             // Arrange
             GroupChat nullChat = null;
@@ -50,7 +50,7 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Commands
             var result = await handler.Handle(command);
 
             // Assert
-            Assert.False(result);
+            Assert.Null(result);
         }
     }
 }

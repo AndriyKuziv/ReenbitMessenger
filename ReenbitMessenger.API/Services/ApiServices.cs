@@ -24,7 +24,7 @@ namespace ReenbitMessenger.API.Services
 
             // Group chats queries
             services.AddScoped<IQueryHandler<GetGroupChatsQuery, IEnumerable<GroupChat>>, GetGroupChatsQueryHandler>();
-            services.AddScoped<IQueryHandler<GetFullGroupChatQuery, GroupChat>, GetFullGroupChatQueryHandler>();
+            services.AddScoped<IQueryHandler<GetGroupChatInfoQuery, GroupChat>, GetGroupChatInfoQueryHandler>();
             services.AddScoped<IQueryHandler<GetUserGroupChatsQuery, IEnumerable<GroupChat>>, GetUserGroupChatsQueryHandler>();
             services.AddScoped<IQueryHandler<GetUserMessagesHistoryQuery, IEnumerable<GroupChatMessage>>, GetUserMessagesHistoryQueryHandler>();
             services.AddScoped<IQueryHandler<GetGroupChatMessagesQuery, IEnumerable<GroupChatMessage>>,
@@ -42,7 +42,7 @@ namespace ReenbitMessenger.API.Services
             // Group chats commands
             services.AddScoped<ICommandHandler<CreateGroupChatCommand, GroupChat>, CreateGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteGroupChatCommand>, DeleteGroupChatCommandHandler>();
-            services.AddScoped<ICommandHandler<EditGroupChatCommand>, EditGroupChatCommandHandler>();
+            services.AddScoped<ICommandHandler<EditGroupChatCommand, GroupChat>, EditGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<AddUsersToGroupChatCommand, IEnumerable<GroupChatMember>>, AddUsersToGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<RemoveUsersFromGroupChatCommand, IEnumerable<string>>, RemoveUsersFromGroupChatCommandHandler>();
             services.AddScoped<ICommandHandler<SendMessageToGroupChatCommand, GroupChatMessage>, SendMessageToGroupChatCommandHandler>();

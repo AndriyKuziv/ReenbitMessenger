@@ -12,7 +12,7 @@ namespace ReenbitMessenger.DataAccess.Models.Domain
         public string Name { get; set; }
 
         // Navigation properties
-        public IEnumerable<GroupChatMember>? GroupChatMembers { get; set; }
+        public IEnumerable<GroupChatMember> GroupChatMembers { get; set; }
         public IEnumerable<GroupChatMessage>? GroupChatMessages { get; set; }
     }
 }

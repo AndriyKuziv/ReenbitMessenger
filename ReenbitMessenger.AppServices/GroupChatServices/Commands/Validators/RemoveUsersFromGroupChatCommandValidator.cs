@@ -33,8 +33,12 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Commands.Validators
                 {
                     foreach (var userId in cmd.UsersIds)
                     {
-                        if (!await groupChatRepository.IsInGroupChat(cmd.GroupChatId, userId)) return false;
+                        if (!groupChatRepository.IsInGroupChat(cmd.GroupChatId, userId))
+                        {
+                            return false;
+                        }
                     }
+
                     return true;
                 }).WithMessage("All of the given users must be members of this group chat.");
         }
