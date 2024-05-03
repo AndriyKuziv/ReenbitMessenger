@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace ReenbitMessenger.API.Tests.Integration.Controllers
 {
@@ -27,6 +24,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task LogIn_ValidCredentials_ReturnsToken()
         {
+            // Arrange
             await AddTestDataAsync();
 
             LoginRequest validRequest = new LoginRequest
@@ -35,8 +33,10 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Password = "Test0="
             };
 
+            // Act
             var response = await _httpClient.PostAsJsonAsync("/auth/login", validRequest);
 
+            // Assert
             response.EnsureSuccessStatusCode();
 
             var tokenObject = JsonConvert.DeserializeObject<AuthToken>(await response.Content.ReadAsStringAsync());
@@ -48,19 +48,23 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task LogIn_InvalidCredentials_ReturnsBadRequestResult()
         {
+            // Arrange
             LoginRequest loginRequest = new LoginRequest {
                 Username = "invalidUsername",
                 Password = "invalidPassword"
             };
 
+            // Act
             var response = await _httpClient.PostAsJsonAsync("/auth/login", loginRequest);
 
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
         public async Task SignUp_ValidCredentials_ReturnsSuccessStatusCode()
         {
+            // Arrange
             CreateUserRequest validRequest = new CreateUserRequest
             {
                 Username = signUpUser.UserName,
@@ -68,22 +72,27 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Password = "Test0="
             };
 
+            // Act
             var response = await _httpClient.PostAsJsonAsync("/auth/signup", validRequest);
 
+            // Assert
             response.EnsureSuccessStatusCode();
         }
 
         [Fact]
         public async Task SignUp_InvalidCredentials_ReturnsBadRequestResult()
         {
+            // Arrange
             CreateUserRequest createUserRequest = new CreateUserRequest {
                 Username = "newTestUser",
                 Email = "invalidemail",
                 Password = "Test0"
             };
 
+            // Act
             var response = await _httpClient.PostAsJsonAsync("/auth/signup", createUserRequest);
 
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
