@@ -12,6 +12,5 @@ namespace ReenbitMessenger.Infrastructure.Models.Requests
         public int Page { get; set; }
         public string ValueContains { get; set; } = "";
         public bool Ascending { get; set; } = true;
-        public string OrderBy { get; set; }
     }
 }

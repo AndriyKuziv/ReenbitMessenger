@@ -15,9 +15,16 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Queries
 
         public async Task<IEnumerable<GroupChat>> Handle(GetUserGroupChatsQuery query)
         {
-            return (await _unitOfWork.GetRepository<IGroupChatRepository>()
-                .GetUserChatsAsync(query.UserId)
-                ).ToList();
+            if (query.NumberOfChats < 0) query.NumberOfChats = 0;
+            if (query.Page < 0) query.Page = 0;
+
+            return (await _unitOfWork.GetRepository<IGroupChatRepository>().GetUserChatsAsync(
+                query.UserId,
+                valueContains: query.ValueContains,
+                startAt: query.Page * query.NumberOfChats,
+                take: query.NumberOfChats,
+                ascending: query.Ascending
+                )).ToList();
         }
     }
 }

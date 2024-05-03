@@ -27,7 +27,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         [Fact]
         public async Task LogIn_ValidCredentials_ReturnsToken()
         {
-            await AddTestData();
+            await AddTestDataAsync();
 
             LoginRequest validRequest = new LoginRequest
             {
@@ -63,8 +63,8 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         {
             CreateUserRequest validRequest = new CreateUserRequest
             {
-                Username = "newTestUser",
-                Email = "newTest@test.com",
+                Username = signUpUser.UserName,
+                Email = signUpUser.Email,
                 Password = "Test0="
             };
 
@@ -87,11 +87,16 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        private async Task AddTestData()
+        private async Task AddTestDataAsync()
         {
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<MessengerDataContext>();
+
+            if (dbContext.Users.Contains(testUser))
+            {
+                return;
+            }
 
             var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
             var result = await userManager.CreateAsync(testUser, "Test0=");
@@ -101,18 +106,25 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             }
         }
 
-        public void ClearTestData()
+        private async Task ClearTestDataAsync()
         {
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<MessengerDataContext>();
 
-            foreach (var user in dbContext.Users)
+            if (dbContext.Users.Contains(testUser))
             {
-                dbContext.Users.Remove(user);
+                dbContext.Users.Remove(testUser);
             }
 
-            dbContext.SaveChanges();
+            var signedUpUser = dbContext.Users
+                .FirstOrDefault(usr => usr.UserName == signUpUser.UserName && usr.Email == signUpUser.Email);
+            if (signedUpUser != null)
+            {
+                dbContext.Users.Remove(signedUpUser);
+            }
+
+            await dbContext.SaveChangesAsync();
         }
 
         public void Dispose()
@@ -122,13 +134,20 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 _httpClient.Dispose();
             }
 
-            ClearTestData();
+            ClearTestDataAsync().GetAwaiter().GetResult();
         }
 
+        // Test data
         private IdentityUser testUser = new IdentityUser()
         {
             UserName = "testUser",
             Email = "test@test.com",
+        };
+
+        private IdentityUser signUpUser = new IdentityUser()
+        {
+            UserName = "newTestUser",
+            Email = "newTest@test.com"
         };
     }
 }

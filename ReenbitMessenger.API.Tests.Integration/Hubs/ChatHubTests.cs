@@ -1,11 +1,9 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR.Client;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ReenbitMessenger.API.Tests.Integration.Hubs
 {
@@ -59,7 +57,6 @@ namespace ReenbitMessenger.API.Tests.Integration.Hubs
             });
 
             // Act
-            //await _hubConnection.SendAsync("GetGroupChatInfo", Convert.ToString(expectedChat.Id));
             await _hubConnection.InvokeAsync("GetGroupChatInfo", Convert.ToString(expectedChat.Id));
 
             await Task.Delay(500);
@@ -93,6 +90,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Hubs
 
             await Task.Delay(500);
 
+            // Assert
             Assert.NotNull(resultMessages);
             Assert.Equal(expectedMessages.Count(), resultMessages.Count());
         }
@@ -122,6 +120,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Hubs
 
             await Task.Delay(500);
 
+            // Assert
             Assert.NotNull(resultChat);
             Assert.Equal(validRequest.Name, resultChat.Name);
         }
@@ -155,6 +154,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Hubs
 
             await Task.Delay(500);
 
+            // Assert
             Assert.NotNull(resultMessage);
             Assert.Equal(validRequest.Text, resultMessage.Text);
             Assert.Equal(validRequest.MessageToReplyId, resultMessage.MessageToReplyId);

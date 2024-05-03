@@ -15,7 +15,9 @@ namespace ReenbitMessenger.AppServices.Tests.Unit.GroupChatServices.Queries
         public async Task Handle_ValidQuery_ReturnsUserGroupChats()
         {
             // Arrange
-            _groupChatRepositoryMock.Setup(cr => cr.GetUserChatsAsync(It.IsAny<string>())).ReturnsAsync(new List<GroupChat>() { new GroupChat(), new GroupChat() });
+            _groupChatRepositoryMock.Setup(cr => cr.GetUserChatsAsync(
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
+                .ReturnsAsync(new List<GroupChat>() { new GroupChat(), new GroupChat() });
 
             _unitOfWorkMock.Setup(uw => uw.GetRepository<IGroupChatRepository>()).Returns(_groupChatRepositoryMock.Object);
 

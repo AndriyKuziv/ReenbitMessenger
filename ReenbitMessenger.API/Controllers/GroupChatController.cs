@@ -41,8 +41,7 @@ namespace ReenbitMessenger.API.Controllers
                                     getChatsRequest.NumberOfGroupChats,
                                     getChatsRequest.ValueContains,
                                     getChatsRequest.Page,
-                                    getChatsRequest.Ascending,
-                                    getChatsRequest.OrderBy));
+                                    getChatsRequest.Ascending));
 
             var groupChatsDTO = _mapper.Map<IEnumerable<GroupChat>>(groupChats);
 

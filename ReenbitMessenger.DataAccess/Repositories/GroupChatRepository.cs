@@ -23,13 +23,24 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 .FirstOrDefaultAsync(chat => chat.Id == chatId);
         }
 
-        public async Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId)
+        public async Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId,
+            string valueContains = "", int startAt = 0, int take = 20,
+            bool ascending = true)
         {
-            var included = await _dbContext.GroupChat
-                .Include(chat => chat.GroupChatMembers.Where(cmem => cmem.UserId == userId)).ToListAsync();
+            var filteredList = _dbContext.GroupChat
+                .Include(chat => chat.GroupChatMembers.Where(cmem => cmem.UserId == userId))
+                .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId) &&
+                    chat.Name.Contains(valueContains));
 
-            return included
-                .Where(chat => chat.GroupChatMembers.Any(cmem => cmem.UserId == userId));
+            var orderedList = ascending ? filteredList.OrderBy(chat => chat.Name) :
+                filteredList.OrderByDescending(chat => chat.Name);
+
+            if (take <= 0)
+            {
+                return orderedList.Skip(startAt);
+            }
+
+            return orderedList.Skip(startAt).Take(take);
         }
 
         public async new Task<GroupChat> UpdateAsync(Guid chatId, GroupChat entity)

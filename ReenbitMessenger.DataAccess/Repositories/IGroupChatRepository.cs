@@ -11,7 +11,9 @@ namespace ReenbitMessenger.DataAccess.Repositories
     {
         // Group chat
         Task<GroupChat> GetInfoAsync(Guid chatId);
-        Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId);
+        Task<IEnumerable<GroupChat>> GetUserChatsAsync(string userId,
+            string valueContains = "", int startAt = 0, int take = 20,
+            bool ascending = true);
 
         // Group chat members
         Task<GroupChatMember> GetMemberAsync(long memberId);

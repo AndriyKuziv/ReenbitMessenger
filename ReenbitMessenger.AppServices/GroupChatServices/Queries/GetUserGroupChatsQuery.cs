@@ -9,13 +9,11 @@ namespace ReenbitMessenger.AppServices.GroupChatServices.Queries
         public int Page { get; set; }
         public string ValueContains { get; }
         public bool Ascending { get; }
-        public string OrderBy { get; }
 
         public GetUserGroupChatsQuery(string userId, int numberOfChats = 20, string valueContains = "", int page = 0,
-            bool ascending = true, string orderBy = "Name")
+            bool ascending = true)
         {
             UserId = userId;
-            OrderBy = orderBy;
             NumberOfChats = numberOfChats;
             ValueContains = valueContains;
             Page = page;

@@ -42,8 +42,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Page = 0,
                 ValueContains = "",
                 NumberOfGroupChats = 20,
-                Ascending = true,
-                OrderBy = "UserName"
+                Ascending = true
             };
 
             // Act
@@ -73,8 +72,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 Page = 0,
                 ValueContains = "",
                 NumberOfGroupChats = 20,
-                Ascending = true,
-                OrderBy = "UserName"
+                Ascending = true
             };
 
             // Act
@@ -132,7 +130,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
         }
 
         [Fact]
-        public async Task GetGroupChatById_ValidRequest_ReturnsGroupChat()
+        public async Task GetGroupChatById_ValidGroupChatId_ReturnsGroupChat()
         {
             // Arrange
             var testUser = testUsers[0];
@@ -159,6 +157,27 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             Assert.Equal(testChatMembers.Count(), resultChat.GroupChatMembers.Count());
 
             Assert.NotNull(resultChat.GroupChatMessages);
+        }
+
+        [Fact]
+        public async Task GetGroupChatById_InvalidGroupChatId_ReturnsNull()
+        {
+            // Arrange
+            var testUser = testUsers[0];
+            var token = TestsHelper.GetValidToken(testUser);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var chatId = new Guid("28ee9c1d-ee94-4281-a097-73a94e4046bb");
+
+            // Act
+            var response = await _httpClient.GetAsync($"{chatId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var resultChat = JsonConvert.DeserializeObject<GroupChat>(await response.Content.ReadAsStringAsync());
+
+            Assert.Null(resultChat);
         }
 
         [Fact]
@@ -386,9 +405,12 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
                 dbContext.GroupChat.Remove(gc);
             }
 
-            foreach (var user in dbContext.Users)
+            foreach (var user in testUsers)
             {
-                dbContext.Users.Remove(user);
+                if (dbContext.Users.Contains(user))
+                {
+                    dbContext.Users.Remove(user);
+                }
             }
 
             await dbContext.SaveChangesAsync();
@@ -404,6 +426,7 @@ namespace ReenbitMessenger.API.Tests.Integration.Controllers
             ClearTestData().GetAwaiter().GetResult();
         }
 
+        // Test data
         private List<IdentityUser> testUsers = new List<IdentityUser>()
         {
             new IdentityUser { Id = "33db7d2a-1cd0-4c30-a7a4-555d75b69a8d",

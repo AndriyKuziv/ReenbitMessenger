@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ReenbitMessenger.AppServices.Utils;
 using ReenbitMessenger.AppServices.PrivateMessageServices.Queries;
@@ -7,8 +6,6 @@ using ReenbitMessenger.AppServices.PrivateMessageServices.Commands;
 using ReenbitMessenger.Infrastructure.Models.DTO;
 using ReenbitMessenger.Infrastructure.Models.Requests;
 using AutoMapper;
-using Microsoft.CodeAnalysis.Emit;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ReenbitMessenger.API.Controllers
 {
@@ -40,13 +37,6 @@ namespace ReenbitMessenger.API.Controllers
 
             var command = new GetPrivateChatQuery(currUserId, getChatRequest.UserId);
 
-            var result = await _validatorsHandler.ValidateAsync(command);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result);
-            }
-
             var chat = await _handlersDispatcher.Dispatch(command);
 
             if(chat is null)
@@ -57,22 +47,6 @@ namespace ReenbitMessenger.API.Controllers
             var chatDTO = _mapper.Map<IEnumerable<PrivateMessage>>(chat);
 
             return Ok(chatDTO);
-        }
-
-        [HttpGet]
-        [Route("message/{msgId:long}")]
-        public async Task<IActionResult> GetPrivateMessage([FromRoute] long msgId)
-        {
-            var message = await _handlersDispatcher.Dispatch(new GetPrivateMessageQuery(msgId));
-
-            if (message is null)
-            {
-                return NotFound("Message is null.");
-            }
-
-            var messageDTO = _mapper.Map<PrivateMessage>(message);
-
-            return Ok(messageDTO);
         }
 
         [HttpPost]
