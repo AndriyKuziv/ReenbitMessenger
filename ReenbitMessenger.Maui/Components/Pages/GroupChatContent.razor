@@ -67,12 +67,10 @@ else
                             {
                                 @foreach (var message in groupChat.GroupChatMessages)
                                 {
-                                    <ContextMenuTrigger MenuId="cont-menu">
-                                        <MudListItem OnClick="() => AddToClipboard(Convert.ToString(message.Id))">
-                                            <MudText>@message.SenderUser.UserName: @message.Text</MudText>
-                                            <MudText>@message.SentTime.ToString("HH:mm")</MudText>
-                                        </MudListItem>
-                                    </ContextMenuTrigger>
+                                    <MudListItem OnClick="() => AddToClipboard(Convert.ToString(message.Id))">
+                                        <MudText>@message.SenderUser.UserName: @message.Text</MudText>
+                                        <MudText>@message.SentTime.ToString("HH:mm")</MudText>
+                                    </MudListItem>
                                     <MudDivider />
                                 }
                             }

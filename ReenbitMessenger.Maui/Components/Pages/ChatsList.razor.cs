@@ -32,12 +32,11 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         protected async Task UpdateChatsList()
         {
-            groupChats = await chatService.GetUserGroupChatsAsync(new GetGroupChatsRequest { 
+            groupChats = await chatService.GetUserGroupChatsAsync(new GetGroupChatsRequest {
                 NumberOfGroupChats = filterModel.NumberOfGroupChats,
                 Page = filterModel.Page,
                 ValueContains = filterModel.ValueContains,
-                Ascending = filterModel.Ascending,
-                OrderBy = filterModel.OrderBy
+                Ascending = filterModel.Ascending
             });
         }
 

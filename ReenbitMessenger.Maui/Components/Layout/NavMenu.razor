@@ -54,13 +54,6 @@
 </div>
 
 @code{
-    protected override async Task OnInitializedAsync()
-    {
-        await clientWrapper.SetToken();
-
-        await base.OnInitializedAsync();
-    }
-
     private async Task Logout(){
         await localStorage.RemoveItemAsync("jwt");
         await clientWrapper.DeleteToken();
