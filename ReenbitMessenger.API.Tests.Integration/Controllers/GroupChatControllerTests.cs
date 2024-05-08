@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
-using ReenbitMessenger.API.Tests.Integration.TestComparers;
 using ReenbitMessenger.API.Tests.Integration.TestUtils;
 using ReenbitMessenger.DataAccess.Data;
 using ReenbitMessenger.Infrastructure.Models.DTO;

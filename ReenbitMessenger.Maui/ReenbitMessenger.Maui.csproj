@@ -102,8 +102,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="NpmJs\" />
       <Folder Include="Properties\PublishProfiles\" />
     </ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="npm install" WorkingDirectory="NpmJS" />
+		<Exec Command="npm run build" WorkingDirectory="NpmJS" />
+	</Target>
 
 	<!--<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows' and '$(Configuration)' == 'Release'">
 		<AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>

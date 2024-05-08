@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.API.Tests.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.AppServices.Tests.Unit", "ReenbitMessenger.AppServices.Tests.Unit\ReenbitMessenger.AppServices.Tests.Unit.csproj", "{9A0A78B6-6C84-4A47-B205-2556D97ECE71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReenbitMessenger.API.Tests.Integration", "ReenbitMessenger.API.Tests.Integration\ReenbitMessenger.API.Tests.Integration.csproj", "{68BEDFB7-D42D-40E7-A709-2B39966216F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReenbitMessenger.API.Tests.Integration", "ReenbitMessenger.API.Tests.Integration\ReenbitMessenger.API.Tests.Integration.csproj", "{68BEDFB7-D42D-40E7-A709-2B39966216F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -88,6 +88,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<VideoCallHub>("/callhub");
 
 app.MapControllers();
 
