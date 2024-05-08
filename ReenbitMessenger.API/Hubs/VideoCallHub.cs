@@ -16,7 +16,6 @@ namespace ReenbitMessenger.API.Hubs
         public async Task JoinRoom(string roomId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-
             await Clients.Group(roomId).SendAsync("ReceiveJoinedUser", Context.ConnectionId);
         }
 

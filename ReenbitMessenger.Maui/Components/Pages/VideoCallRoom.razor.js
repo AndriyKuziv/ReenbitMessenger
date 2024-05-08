@@ -1,6 +1,6 @@
 ﻿
 const myPeer = new Peer(undefined, {
-    host: 'https://localhost',
+    host: '/',
     port: '3001'
 });
 

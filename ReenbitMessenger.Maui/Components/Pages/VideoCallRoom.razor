@@ -4,6 +4,20 @@
 @inject ILocalStorageService localStorage
 @inject IJSRuntime Js
 
+<style>
+    #video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 300px);
+        grid-auto-rows: 300px;
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+
 <h3>VideoCallRoom</h3>
 
 <div id="video-grid">
@@ -13,59 +27,4 @@
 @code {
     [Parameter]
     public string CallId { get; set; } = string.Empty;
-
-    private IJSObjectReference _module;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/VideoCallRoom.razor.js");
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await Setup();
-        await callService.JoinRoomAsync(CallId);
-    }
-
-    private async Task Setup()
-    {
-        await callService.InitializeAsync(await localStorage.GetItemAsStringAsync("jwt"));
-        await callService.SubscribeAsync<string>("ReceiveJoinedUser", OnUserJoined);
-        await callService.SubscribeAsync<string>("RemoveLeavingUser", OnUserLeaving);
-
-        await callService.StartAsync();
-    }
-
-    private void OnUserJoined(string userConnectionId)
-    {
-        InvokeAsync(async () =>
-        {
-            await _module.InvokeVoidAsync("AddJoinedUser", userConnectionId);
-
-            StateHasChanged();
-        });
-    }
-
-    private void OnUserLeaving(string userConnectionId)
-    {
-        InvokeAsync(async () =>
-        {
-            await _module.InvokeVoidAsync("RemoveLeavingUser", userConnectionId);
-
-            StateHasChanged();
-        });
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await callService.LeaveRoomAsync(CallId);
-        await callService.UnsubscribeAllAsync();
-
-        callService.Dispose();
-    }
 }

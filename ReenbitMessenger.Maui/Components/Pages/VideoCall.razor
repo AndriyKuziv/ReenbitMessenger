@@ -3,34 +3,12 @@
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navManager
 
-<style>
-    #video-grid{
-        display: grid;
-        grid-template-columns: repeat(auto-fill, 300px);
-        grid-auto-rows: 300px;
-    }
-    video{
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-</style>
-
 <h3>VideoCall</h3>
 
 <MudTextField @bind-Value="@_channel" Label="Call Id"
                           Variant="Variant.Filled" Class="limited"></MudTextField>
 <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="JoinRoom">Join</MudButton>
 <MudDivider />
-
-<MudButton id="startButton" Disabled="@_startDisabled" @onclick="StartCam">Start camera</MudButton>
-
-<div class="container">
-    <div class="row">
-        <video class="col col-lg-6 p-0" id="localVideo" autoplay playsinline></video>
-        <video class="col col-lg-6 p-0" id="remoteVideo" autoplay playsinline></video>
-    </div>
-</div>
 
 @code {
     private string _channel { get; set; } = "foo";
