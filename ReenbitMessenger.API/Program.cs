@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureDbConnection"));
 });
 
 builder.Services.AddAuthenticationServices(config);

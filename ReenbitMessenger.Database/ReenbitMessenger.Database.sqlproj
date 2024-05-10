@@ -79,5 +79,6 @@
   <ItemGroup>
     <None Include="LocalMessengerDB.publish.xml" />
     <None Include="ReenbitMessenger.Database.publish.xml" />
+    <None Include="ReenbitMessenger.AzureDatabase.publish.xml" />
   </ItemGroup>
 </Project>

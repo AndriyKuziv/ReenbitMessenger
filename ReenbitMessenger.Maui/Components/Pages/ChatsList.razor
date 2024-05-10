@@ -59,7 +59,7 @@ else
     <MudDataGrid T="GroupChat" Items="@groupChats" Hideable="true" 
         RowClick="async (e) => await OnGroupClicked(e.Item.Id)">
         <Columns>
-            <PropertyColumn Property="chatId => chatId.Name" Title="Username" />
+            <PropertyColumn Property="chatId => chatId.Name" Title="Name" />
             <PropertyColumn Property="chatId => chatId.Id" Title="Id" />
         </Columns>
     </MudDataGrid>

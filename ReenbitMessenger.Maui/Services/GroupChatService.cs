@@ -7,7 +7,7 @@ namespace ReenbitMessenger.Maui.Services
     public class GroupChatService
     {
         private readonly IHttpClientWrapper _httpClient;
-        private const string controllerPathBase = "https://localhost:7051/groupchat/";
+        private const string controllerPathBase = "https://rb-messenger.azurewebsites.net/groupchat/";
 
         public GroupChatService(IHttpClientWrapper httpClientWrapper)
         {

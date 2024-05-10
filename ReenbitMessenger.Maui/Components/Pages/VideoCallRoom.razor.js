@@ -4,6 +4,14 @@ const myPeer = new Peer(undefined, {
     port: '3001'
 });
 
+const myVideo = document.createElement('video');
+myVideo.muted = true;
+
+navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true
+})
+
 export function AddJoinedUser(userConnectionId){
     var videoGrid = document.getElementById("video-grid");
 
