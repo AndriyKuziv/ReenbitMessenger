@@ -7,7 +7,7 @@ namespace ReenbitMessenger.Maui.Services
     public class UserService
     {
         private readonly IHttpClientWrapper _httpClient;
-        private const string controllerPathBase = "https://rb-messenger.azurewebsites.net/users/";
+        private const string controllerPathBase = "https://localhost:7051/users/";
         public UserService(IHttpClientWrapper httpClientWrapper)
         {
             _httpClient = httpClientWrapper;

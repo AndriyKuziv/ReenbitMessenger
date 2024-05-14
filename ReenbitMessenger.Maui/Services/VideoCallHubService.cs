@@ -12,7 +12,7 @@ namespace ReenbitMessenger.Maui.Services
             if (_hubConnection is null)
             {
                 _hubConnection = new HubConnectionBuilder()
-                .WithUrl("https://rb-messenger.azurewebsites.net" + "/callhub", options => {
+                .WithUrl("https://localhost:7051" + "/callhub", options => {
                     options.AccessTokenProvider = () => Task.FromResult(accessToken);
                 })
                 .Build();

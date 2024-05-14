@@ -1,4 +1,4 @@
-using ReenbitMessenger.DataAccess.Data;
+    using ReenbitMessenger.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureDbConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
 });
 
 builder.Services.AddAuthenticationServices(config);
@@ -68,6 +68,19 @@ builder.Services
     .AddSignInManager()
     .AddRoleManager<RoleManager<IdentityRole>>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            //.WithOrigins("https://0.0.0.0")
+            .SetIsOriginAllowed((host) => true)
+            .AllowCredentials();
+    });
+});
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -87,16 +100,17 @@ app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
 
-app.MapHub<ChatHub>("/chathub");
-app.MapHub<VideoCallHub>("/callhub");
-
-app.MapControllers();
-
 app.UseCors(builder => builder
+                .WithOrigins("https://0.0.0.0")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .SetIsOriginAllowed( _ => true)
                 .AllowCredentials());
+
+app.MapHub<ChatHub>("/chathub");
+app.MapHub<VideoCallHub>("/callhub");
+
+app.MapControllers();
 
 app.Run();
 

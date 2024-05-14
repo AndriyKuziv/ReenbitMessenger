@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using ReenbitMessenger.AppServices.Utils;
 using ReenbitMessenger.AppServices.GroupChatServices.Commands;

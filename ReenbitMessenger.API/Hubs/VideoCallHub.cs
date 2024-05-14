@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ReenbitMessenger.API.Hubs
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     public class VideoCallHub : Hub
     {
         public async Task CreateRoom()
         {
-            var roomId = Convert.ToString(new Guid());
+            var roomId = Guid.NewGuid().ToString();
 
-            await Clients.Caller.SendAsync("ReceiveRoomId", roomId);
+            await Clients.Caller.SendAsync("ReceiveNewRoomId", roomId);
         }
 
         public async Task JoinRoom(string roomId)

@@ -14,7 +14,7 @@ namespace ReenbitMessenger.Maui.Services
             if(_hubConnection is null)
             {
                 _hubConnection = new HubConnectionBuilder()
-                .WithUrl("https://rb-messenger.azurewebsites.net" + "/chathub", options => {
+                .WithUrl("https://localhost:7051" + "/chathub", options => {
                     options.AccessTokenProvider = () => Task.FromResult(accessToken);
                 })
                 .Build();

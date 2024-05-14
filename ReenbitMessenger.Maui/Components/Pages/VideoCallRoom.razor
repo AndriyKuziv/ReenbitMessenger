@@ -1,4 +1,4 @@
-﻿@page "/videocall/{CallId}"
+﻿@page "/videocall/{RoomId}"
 
 @inject VideoCallHubService callService
 @inject ILocalStorageService localStorage
@@ -18,7 +18,7 @@
     }
 </style>
 
-<h3>VideoCallRoom</h3>
+<h3>Room #@RoomId</h3>
 
 <div id="video-grid">
 
@@ -26,5 +26,5 @@
 
 @code {
     [Parameter]
-    public string CallId { get; set; } = string.Empty;
+    public string RoomId { get; set; } = string.Empty;
 }

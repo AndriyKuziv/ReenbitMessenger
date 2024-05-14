@@ -11,6 +11,8 @@ namespace ReenbitMessenger.Maui.Components.Pages
             if (firstRender)
             {
                 _module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/VideoCallRoom.razor.js");
+                await Setup();
+                await callService.JoinRoomAsync(RoomId);
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -18,17 +20,19 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            await Setup();
-            await callService.JoinRoomAsync(CallId);
+
         }
 
         private async Task Setup()
         {
-            await callService.InitializeAsync(await localStorage.GetItemAsStringAsync("jwt"));
+            var token = await localStorage.GetItemAsStringAsync("jwt");
+            await callService.InitializeAsync(token);
             await callService.SubscribeAsync<string>("ReceiveJoinedUser", OnUserJoined);
             await callService.SubscribeAsync<string>("RemoveLeavingUser", OnUserLeaving);
 
             await callService.StartAsync();
+
+            await _module.InvokeVoidAsync("Start", token, RoomId);
         }
 
         private void OnUserJoined(string userConnectionId)
@@ -53,7 +57,9 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         public async ValueTask DisposeAsync()
         {
-            await callService.LeaveRoomAsync(CallId);
+            await _module.InvokeVoidAsync("End");
+
+            await callService.LeaveRoomAsync(RoomId);
             await callService.UnsubscribeAllAsync();
 
             callService.Dispose();
