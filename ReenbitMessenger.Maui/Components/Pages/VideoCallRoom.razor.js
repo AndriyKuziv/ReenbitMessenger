@@ -1,6 +1,9 @@
-﻿let userId = null;
+﻿const ROOM_ID = '@ViewBag.RoomId'
+let userId = null;
 let localStream = null;
 const videoGrid = document.getElementById('video-grid');
+const userIdField = document.getElementById('user-id');
+const callButton = document.getElementById('call-btn');
 
 const connection = new signalR.HubConnectionBuilder()
         .withUrl("https://localhost:7051/callhub").build();
@@ -8,74 +11,138 @@ const connection = new signalR.HubConnectionBuilder()
 const myPeer = new Peer();
 myPeer.on('open', id =>{
     userId = id;
+    userIdField.innerHTML = id;
     
     const startSignalR = async () =>{
         await connection.start();
         connection.on('ReceiveJoinedUser', id => {
-            console.log(`User connected: ${id}`)
+            console.log(`User joined: ${id}`);
+            AddJoinedUser(id);
+            connectNewUser(id, localStream);
         });
-        await connection.invoke('JoinRoom', 'roomId');
+        connection.on('RemoveLeavingUser', id => {
+            console.log(`User left: ${id}`);
+            RemoveLeavingUser(id);
+        })
     }
     startSignalR();
 })
 
+myPeer.on('call', call => {
+    call.answer(localStream);
+
+    const userVideo = document.createElement('video');
+    call.on('stream', userVideoStream => {
+        addVideoStream(userVideo, userVideoStream);
+    })
+})
+
 const myVideo = document.createElement('video');
-myVideo.id = "myVideo";
+myVideo.id = "my-video";
 myVideo.autoplay = true;
 myVideo.muted = true;
+myVideo.width = 320;
+myVideo.height = 240;
 
-navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true
-}).then(function (stream) {
-    addVideoStream(myVideo, stream)
-    localStream = stream;
-}).catch(function (error) {
-    console.error(error.name + ': ' + error.message);
+videoGrid.appendChild(myVideo);
+
+const localVideo = document.getElementById(myVideo.id);
+const remoteVideo = document.getElementById('remote-video');
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+        localVideo.srcObject = stream;
+
+        myPeer.on('call', call => {
+            call.answer(stream);
+            call.on('stream', remoteStream => {
+                remoteVideo.srcObject = remoteStream;
+            });
+        });
+
+        callButton.addEventListener('click', () => {
+            const call = myPeer.call(userIdField.innerHTML, stream);
+            call.on('stream', remoteStream => {
+                remoteVideo.srcObject = remoteStream;
+            });
+        });
+    })
+    .catch(error => {
+        console.error('Error accessing media devices.', error);
 });
 
-const addVideoStream = (video, stream) => {
-    video.scrObject = stream;
-    video.addEventListener('loadedmetadata', () => {
-        video.play()
-    });
-    videoGrid.appendChild(video);
+export function callUser(userId){
+    // const call = myPeer.call(userId, localStream);
+    // call.on('stream', remoteStream => {
+    //     remoteVideo.srcObject = remoteStream;
+    // });
+
+    // startCamera(myVideo.id);
+
+    // const call = myPeer.call(userId, localStream);
+
+    // const remoteVideo = document.createElement('video');
+    // remoteVideo.id = "other-user";
+    // remoteVideo.autoplay = true;
+    // remoteVideo.width = 320;
+    // remoteVideo.height = 240;
+
+    // videoGrid.appendChild(remoteVideo);
+
+    // const existingRemoteVideo = document.getElementById(remoteVideo.id);
+
+    // call.on('stream', remoteStream => {
+    //     existingRemoteVideo.srcObject = remoteStream;
+    // });
 }
 
-function playStream(element, stream) {
-    var handleLoaded = function() {
-        element.removeEventListener('loadedmetadata', handleLoaded);
-        element.play();
-    };
-    element.addEventListener('loadedmetadata', handleLoaded);
-    element.srcObject = stream;
-}
-
-function playCamera(element, preferedWidth, preferedHeight) {
-    var devices = navigator.mediaDevices;
-    if (devices && 'getUserMedia' in devices) {
-        var constraints = {
-            video: true,
-            audio: true
-        };
-        var promise = devices.getUserMedia(constraints);
-        promise
-            .then(function(stream) {
-                playStream(element, stream)
-            })
-            .catch(function(error) {
-                console.error(error.name + ': ' + error.message);
-            });
+export function startCamera(videoElementId) {
+    const videoElement = document.getElementById(videoElementId);
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            localStream = stream;
+            videoElement.srcObject = stream;
+            videoElement.play();
+        }).catch(function(error) {
+            console.error("Error accessing the camera: ", error);
+        });
     } else {
-        console.error('Camera API is not supported.');
+        console.error("getUserMedia not supported by this browser.");
     }
 }
 
-export function Start(token, roomId){
-    var element = document.querySelector('#my-video');
-    playCamera(element, 640, 480);
+export function stopCamera(videoElementId) {
+    const videoElement = document.getElementById(videoElementId);
+    const stream = videoElement.srcObject;
+    const tracks = stream.getTracks();
+
+    tracks.forEach(function(track) {
+        track.stop();
+    });
+
+    videoElement.srcObject = null;
+    localStream = null;
+}
+
+export async function joinRoom(roomId){
+    startCamera(myVideo.id);
+    await connection.invoke('JoinRoom', roomId);
+}
+
+export async function leaveRoom(roomId){
+    stopCamera(myVideo.id);
+    await connection.invoke('LeaveRoom', roomId);
+}
+
+export async function Start(token, roomId){
+    try{
 
     console.log("Finished start");
+    }
+    catch(err){
+        console.error(err);
+    }
 }
 
 export function End(){
@@ -96,4 +163,19 @@ export function RemoveLeavingUser(userConnectionId){
     var element = document.getElementById(userConnectionId);
 
     element.remove();
+}
+
+const addVideoStream = (video, stream) =>{
+    video.srcObject = stream;
+    video.autoplay = true;
+    videoGrid.appendChild(video);
+}
+
+const connectNewUser = (userId, localStream) =>{
+    const userVideo = document.createElement('video');
+    const call = myPeer.call(userId, localStream);
+
+    call.on('stream', userVideoStream =>{
+        addVideoStream(userVideo, userVideoStream);
+    })
 }

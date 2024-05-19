@@ -1,4 +1,4 @@
-    using ReenbitMessenger.DataAccess.Data;
+using ReenbitMessenger.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -76,7 +76,6 @@ builder.Services.AddCors(options =>
         builder
             .AllowAnyMethod()
             .AllowAnyHeader()
-            //.WithOrigins("https://0.0.0.0")
             .SetIsOriginAllowed((host) => true)
             .AllowCredentials();
     });

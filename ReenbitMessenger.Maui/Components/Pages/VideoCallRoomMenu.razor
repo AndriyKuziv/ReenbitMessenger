@@ -1,0 +1,21 @@
+﻿@page "/groupvideocall"
+
+@inject ILocalStorageService localStorage
+@inject NavigationManager navManager
+@inject VideoCallHubService callService
+@inject IJSRuntime Js
+
+<h3>Video call menu</h3>
+
+<p id="user-id"></p>
+<MudTextField id="call-id" @bind-Value="@_roomId" Label="Call Id"
+                          Variant="Variant.Filled" Class="limited"></MudTextField>
+<MudButton id="call-btn" Variant="Variant.Outlined" Color="Color.Primary">Call</MudButton>
+<MudDivider />
+
+<MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="CreateRoom">Create new room</MudButton>
+<MudDivider />
+
+@code {
+    private string _roomId { get; set; } = string.Empty;
+}

@@ -1,0 +1,28 @@
+﻿@page "/videocall"
+
+@inject ILocalStorageService localStorage
+@inject NavigationManager navManager
+@inject VideoCallHubService callService
+@inject IJSRuntime Js
+
+<h3>Video call</h3>
+
+<p id="user-id"></p>
+<MudTextField id="call-id" @bind-Value="@peerId" Label="Peer Id"
+              Variant="Variant.Filled" Class="limited"></MudTextField>
+<MudButton id="call-btn" Variant="Variant.Outlined" Color="Color.Primary">Call</MudButton>
+<MudDivider />
+
+<div id="video-grid">
+</div>
+
+@code {
+    private string peerId { get; set; } = string.Empty;
+
+    private IJSObjectReference? _module;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/VideoCall.razor.js");
+    }
+}
