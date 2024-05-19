@@ -12,8 +12,9 @@
               Variant="Variant.Filled" Class="limited"></MudTextField>
 <MudButton id="call-btn" Variant="Variant.Outlined" Color="Color.Primary">Call</MudButton>
 <MudDivider />
+<MudButton id="leave-btn" Variant="Variant.Outlined" Color="Color.Primary">End call</MudButton>
 
-<div id="video-grid">
+<div id="video-grid" style="display: flex; flex-wrap: wrap; gap: 10px">
 </div>
 
 @code {
@@ -24,5 +25,18 @@
     protected override async Task OnInitializedAsync()
     {
         _module = await Js.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/VideoCall.razor.js");
+        navManager.LocationChanged += OnLocationChanged;
+        await base.OnInitializedAsync();
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        _module.InvokeVoidAsync("leave");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _module.DisposeAsync();
+        navManager.LocationChanged -= OnLocationChanged;
     }
 }
