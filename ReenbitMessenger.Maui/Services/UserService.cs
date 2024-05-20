@@ -13,9 +13,9 @@ namespace ReenbitMessenger.Maui.Services
             _httpClient = httpClientWrapper;
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            _httpClient.Initialize();
+            await _httpClient.Initialize();
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync(GetUsersRequest getUsersRequest)
@@ -31,14 +31,14 @@ namespace ReenbitMessenger.Maui.Services
             return await _httpClient.GetAsync<User>(controllerPathBase + userId);
         }
 
-        public async Task<bool> EditUserInfoAsync(EditUserInfoRequest editUserInfoRequest)
+        public async Task<User> EditUserInfoByIdAsync(string userId, EditUserInfoRequest editUserInfoRequest)
         {
-            return await _httpClient.PutAsync<bool, EditUserInfoRequest>(controllerPathBase, editUserInfoRequest);
+            return await _httpClient.PutAsync<User, EditUserInfoRequest>(controllerPathBase + userId, editUserInfoRequest);
         }
 
-        public async Task<bool> DeleteUserAsync()
+        public async Task<bool> DeleteUserByIdAsync(string userId)
         {
-            return await _httpClient.DeleteAsync(controllerPathBase);
+            return await _httpClient.DeleteAsync(controllerPathBase + userId);
         }
     }
 }

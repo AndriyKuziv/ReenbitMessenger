@@ -32,6 +32,7 @@ namespace ReenbitMessenger.Maui
             builder.Services.AddScoped<IHttpClientWrapper, HttpClientWrapper>();
 
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<UserProfileService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<GroupChatService>();
             builder.Services.AddScoped<VideoCallHubService>();

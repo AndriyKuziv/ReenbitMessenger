@@ -20,8 +20,8 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            await userService.Initialize();
             await UpdateUsersList();
-            userService.Initialize();
         }
 
         private async Task UpdateUsersList()

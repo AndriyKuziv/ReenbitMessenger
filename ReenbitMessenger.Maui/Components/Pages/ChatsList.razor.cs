@@ -26,7 +26,7 @@ namespace ReenbitMessenger.Maui.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            chatService.Initialize();
+            await chatService.Initialize();
             await UpdateChatsList();
         }
 

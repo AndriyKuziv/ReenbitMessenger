@@ -14,9 +14,9 @@ namespace ReenbitMessenger.Maui.Services
             _httpClient = httpClientWrapper;
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            _httpClient.Initialize();
+            await _httpClient.Initialize();
         }
 
         public async Task<IEnumerable<GroupChatMessage>> GetMessagesHistory(GetMessagesHistoryRequest getMessagesRequest)

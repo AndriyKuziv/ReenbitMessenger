@@ -2,7 +2,7 @@
 {
     public interface IHttpClientWrapper
     {
-        void Initialize();
+        Task Initialize();
         Task<TResponse?> GetAsync<TResponse>(string url);
         Task<TResponse?> PostAsync<TResponse, TRequest>(string url, TRequest request);
         Task<bool> PostAsync<TRequest>(string url, TRequest request);

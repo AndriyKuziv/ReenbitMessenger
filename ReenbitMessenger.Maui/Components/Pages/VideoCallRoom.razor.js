@@ -71,31 +71,6 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         console.error('Error accessing media devices.', error);
 });
 
-export function callUser(userId){
-    // const call = myPeer.call(userId, localStream);
-    // call.on('stream', remoteStream => {
-    //     remoteVideo.srcObject = remoteStream;
-    // });
-
-    // startCamera(myVideo.id);
-
-    // const call = myPeer.call(userId, localStream);
-
-    // const remoteVideo = document.createElement('video');
-    // remoteVideo.id = "other-user";
-    // remoteVideo.autoplay = true;
-    // remoteVideo.width = 320;
-    // remoteVideo.height = 240;
-
-    // videoGrid.appendChild(remoteVideo);
-
-    // const existingRemoteVideo = document.getElementById(remoteVideo.id);
-
-    // call.on('stream', remoteStream => {
-    //     existingRemoteVideo.srcObject = remoteStream;
-    // });
-}
-
 export function startCamera(videoElementId) {
     const videoElement = document.getElementById(videoElementId);
     

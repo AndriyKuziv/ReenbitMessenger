@@ -13,9 +13,9 @@ namespace ReenbitMessenger.Maui.Clients
             _localStorage = localStorageService;
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            new Action(async () => await SetToken())();
+            await SetToken();
         }
 
         public async Task<TResponse?> GetAsync<TResponse>(string url)

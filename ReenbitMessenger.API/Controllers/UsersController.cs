@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Emit;
 using ReenbitMessenger.AppServices.UserServices.Commands;
 using ReenbitMessenger.AppServices.UserServices.Queries;
 using ReenbitMessenger.AppServices.Utils;
@@ -50,6 +48,25 @@ namespace ReenbitMessenger.API.Controllers
         [Route("{userId:guid}")]
         public async Task<IActionResult> GetUserById(Guid userId)
         {
+            var query = new GetUserByIdQuery(Convert.ToString(userId));
+
+            var user = await _handlersDispatcher.Dispatch(query);
+
+            if (user is null)
+            {
+                return BadRequest("There is no user with such id.");
+            }
+
+            var userDTO = _mapper.Map<User>(user);
+
+            return Ok(userDTO);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUser()
+        {
+            var userId = await ControllerHelper.GetUserId(HttpContext);
+
             var query = new GetUserByIdQuery(Convert.ToString(userId));
 
             var user = await _handlersDispatcher.Dispatch(query);
