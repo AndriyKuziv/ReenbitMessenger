@@ -7,8 +7,10 @@ using ReenbitMessenger.API.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using ReenbitMessenger.API.Hubs;
 using FluentValidation.AspNetCore;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = false);
 
 var config = builder.Configuration;
@@ -48,9 +50,15 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+string keyVaultUrl = config["AzureKeyVault:AzureKeyVaultURL"];
+
+config.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential());
+
+var dbConnectionString = config.GetSection("MessengerDbConnection").Value;
+
 builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FirstConnection"));
+    options.UseSqlServer(dbConnectionString);
 });
 
 builder.Services.AddAuthenticationServices(config);
