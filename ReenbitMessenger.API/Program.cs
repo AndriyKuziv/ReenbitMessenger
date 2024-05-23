@@ -51,10 +51,18 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 string keyVaultUrl = config["AzureKeyVault:AzureKeyVaultURL"];
-
 config.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential());
 
-var dbConnectionString = config.GetSection("MessengerDbConnection").Value;
+string dbConnectionString = string.Empty;
+
+if (builder.Environment.IsDevelopment())
+{
+    dbConnectionString = config.GetConnectionString("LocalDbConnection");
+}
+else
+{
+    dbConnectionString = config.GetSection("MessengerDbConnection").Value;
+}
 
 builder.Services.AddDbContext<MessengerDataContext>(options =>
 {
@@ -79,14 +87,12 @@ builder.Services
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .SetIsOriginAllowed((host) => true)
-            .AllowCredentials();
-    });
+    options.AddPolicy("AllowAll",
+    builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    );
 });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -107,12 +113,7 @@ app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
 
-app.UseCors(builder => builder
-                .WithOrigins("https://0.0.0.0")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .SetIsOriginAllowed( _ => true)
-                .AllowCredentials());
+app.UseCors("AllowAll");
 
 app.MapHub<ChatHub>("/chathub");
 app.MapHub<VideoCallHub>("/callhub");

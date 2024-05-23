@@ -177,5 +177,11 @@ namespace ReenbitMessenger.API.Controllers
 
             return Ok(editResultDTO);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UploadUserAvatar([FromBody] UploadUserAvatarRequest uploadAvatarRequest)
+        {
+
+        }
     }
 }
