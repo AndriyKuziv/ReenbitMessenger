@@ -38,6 +38,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<ICommandHandler<CreateUserCommand>, CreateUserCommandHandler>();
             services.AddScoped<ICommandHandler<EditUserInfoCommand, IdentityUser>, EditUserInfoCommandHandler>();
             services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserCommandHandler>();
+            services.AddScoped<ICommandHandler<UploadUserAvatarCommand, string>, UploadUserAvatarCommandHandler>();
 
             // Group chats commands
             services.AddScoped<ICommandHandler<CreateGroupChatCommand, GroupChat>, CreateGroupChatCommandHandler>();

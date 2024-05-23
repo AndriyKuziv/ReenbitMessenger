@@ -4,6 +4,6 @@ namespace ReenbitMessenger.Infrastructure.Models.Requests
 {
     public class UploadUserAvatarRequest
     {
-        public IFormFile AvatarIcon { get; set; }
+        public IFormFile Avatar { get; set; }
     }
 }

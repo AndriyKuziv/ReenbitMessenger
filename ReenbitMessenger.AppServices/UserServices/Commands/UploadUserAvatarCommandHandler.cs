@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ReenbitMessenger.DataAccess.Repositories;
 using ReenbitMessenger.DataAccess.Utils;
 
 namespace ReenbitMessenger.AppServices.UserServices.Commands
 {
-    public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCommand>
+    public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCommand, string>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public UploadUserAvatarCommandHandler(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager)
+        public UploadUserAvatarCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
         }
 
-        public Task<bool> Handle(UploadUserAvatarCommand command)
+        public async Task<string> Handle(UploadUserAvatarCommand command)
         {
-            throw new NotImplementedException();
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+
+            return await userRepository.UpdateUserAvatarAsync(command.UserId, command.Avatar);
         }
     }
 }

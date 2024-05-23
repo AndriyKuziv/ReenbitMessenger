@@ -1,15 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ReenbitMessenger.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
-using LinqKit;
-using System.Reflection;
-using System.Linq.Expressions;
+using Microsoft.AspNetCore.Http;
+using Azure.Storage.Blobs;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
     public class UserRepository : GenericRepository<IdentityUser, string>, IUserRepository
     {
-        public UserRepository(MessengerDataContext dbContext) : base(dbContext){ }
+        private const string containerName = "users-avatars";
+        private readonly BlobContainerClient _containerClient;
+
+        public UserRepository(MessengerDataContext dbContext,
+            BlobServiceClient blobServiceClient) : base(dbContext)
+        {
+            _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        }
 
         public async Task<IEnumerable<IdentityUser>> GetAllAsync()
         {
@@ -34,6 +40,37 @@ namespace ReenbitMessenger.DataAccess.Repositories
             user.Email = entity.Email;
 
             return user;
+        }
+
+        public async Task<string> GetUserAvatarAsync(string userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            return _containerClient.GetBlobClient(userId).Uri.AbsoluteUri;
+        }
+
+        public async Task<string> UpdateUserAvatarAsync(string userId, IFormFile image)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            BlobClient client = _containerClient.GetBlobClient(userId);
+
+            await using (Stream? data = image.OpenReadStream())
+            {
+                await client.UploadAsync(data, overwrite: true);
+            }
+
+            return client.Uri.AbsoluteUri;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
-using ReenbitMessenger.Infrastructure.Models.DTO;
 
 namespace ReenbitMessenger.API.Services
 {
@@ -16,13 +15,6 @@ namespace ReenbitMessenger.API.Services
             var blobUrl = $"https://{_storageAccount}.blob.core.windows.net";
             var blobServiceClient = new BlobServiceClient(new Uri(blobUrl), credential);
             _containerClient = blobServiceClient.GetBlobContainerClient("users-avatars");
-        }
-
-        public async Task<BlobResponse> GetUserAvatar()
-        {
-            
-
-            return null;
         }
 
         public async Task<string> UploadUserAvatar(IFormFile blob)

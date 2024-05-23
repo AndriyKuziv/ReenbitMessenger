@@ -1,14 +1,16 @@
-﻿namespace ReenbitMessenger.AppServices.UserServices.Commands
+﻿using Microsoft.AspNetCore.Http;
+
+namespace ReenbitMessenger.AppServices.UserServices.Commands
 {
-    public class UploadUserAvatarCommand : ICommand
+    public class UploadUserAvatarCommand : ICommand<string>
     {
         public string UserId { get; }
-        public Stream AvatarIcon { get; }
+        public IFormFile Avatar { get; }
 
-        public UploadUserAvatarCommand(string userId, Stream avatarIcon)
+        public UploadUserAvatarCommand(string userId, IFormFile avatar)
         {
             UserId = userId;
-            AvatarIcon = avatarIcon;
+            Avatar = avatar;
         }
     }
 }

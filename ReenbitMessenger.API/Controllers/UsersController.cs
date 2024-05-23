@@ -178,10 +178,17 @@ namespace ReenbitMessenger.API.Controllers
             return Ok(editResultDTO);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UploadUserAvatar([FromBody] UploadUserAvatarRequest uploadAvatarRequest)
+        [HttpPost]
+        [Route("updateAvatar")]
+        public async Task<IActionResult> UploadUserAvatar([FromForm] UploadUserAvatarRequest uploadAvatarRequest)
         {
+            var userId = await ControllerHelper.GetUserId(HttpContext);
 
+            var command = new UploadUserAvatarCommand(userId, uploadAvatarRequest.Avatar);
+
+            var avatarUrl = _handlersDispatcher.Dispatch(command);
+
+            return Ok(avatarUrl);
         }
     }
 }

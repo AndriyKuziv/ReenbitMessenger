@@ -8,12 +8,15 @@ using Microsoft.AspNetCore.ResponseCompression;
 using ReenbitMessenger.API.Hubs;
 using FluentValidation.AspNetCore;
 using Azure.Identity;
+using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseDefaultServiceProvider(options => options.ValidateScopes = false);
 
 var config = builder.Configuration;
+
+config.AddKeyVault();
 
 builder.Services.AddControllers().AddFluentValidation();
 
@@ -50,30 +53,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-string keyVaultUrl = config["AzureKeyVault:AzureKeyVaultURL"];
-config.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential());
-
-string dbConnectionString = string.Empty;
-
-if (builder.Environment.IsDevelopment())
-{
-    dbConnectionString = config.GetConnectionString("LocalDbConnection");
-}
-else
-{
-    dbConnectionString = config.GetSection("MessengerDbConnection").Value;
-}
-
-builder.Services.AddDbContext<MessengerDataContext>(options =>
-{
-    options.UseSqlServer(dbConnectionString);
-});
+builder.Services.AddDatabaseContext(config, builder.Environment);
 
 builder.Services.AddAuthenticationServices(config);
 
 builder.Services.AddRepositories();
 
 builder.Services.AddApiServices();
+
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(config, true);
+});
 
 builder.Services.AddValidators();
 
