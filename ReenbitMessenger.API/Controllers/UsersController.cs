@@ -183,7 +183,7 @@ namespace ReenbitMessenger.API.Controllers
         }
 
         [HttpPost]
-        [Route("updateAvatar")]
+        [Route("avatar")]
         public async Task<IActionResult> UploadUserAvatar([FromForm] UploadUserAvatarRequest uploadAvatarRequest)
         {
             var userId = await ControllerHelper.GetUserId(HttpContext);
@@ -193,6 +193,22 @@ namespace ReenbitMessenger.API.Controllers
             var avatarUrl = await _handlersDispatcher.Dispatch(command);
 
             return Ok(avatarUrl);
+        }
+
+        [HttpDelete]
+        [Route("avatar")]
+        public async Task<IActionResult> DeleteUserAvatar()
+        {
+            var userId = await ControllerHelper.GetUserId(HttpContext);
+
+            var commandSuccess = await _handlersDispatcher.Dispatch(new DeleteUserAvatarCommand(userId));
+
+            if (!commandSuccess)
+            {
+                return BadRequest("Error during deletion. Likely cause is trying to access non existent user or avatar");
+            }
+
+            return Ok();
         }
     }
 }

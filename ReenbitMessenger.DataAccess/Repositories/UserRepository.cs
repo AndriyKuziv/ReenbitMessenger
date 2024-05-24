@@ -97,5 +97,30 @@ namespace ReenbitMessenger.DataAccess.Repositories
 
             return client.Uri.AbsoluteUri;
         }
+
+        public async Task<bool> DeleteUserAvatarAsync(string userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user is null)
+            {
+                return false;
+            }
+
+            UserAvatar userAvatar = await _dbContext.UserAvatar.FirstOrDefaultAsync(ua => ua.UserId == userId);
+
+            if (userAvatar is null)
+            {
+                return false;
+            }
+
+            BlobClient client = new BlobClient(new Uri(userAvatar.AvatarUrl));
+
+            await client.DeleteIfExistsAsync();
+
+            _dbContext.Remove(userAvatar);
+
+            return true;
+        }
     }
 }

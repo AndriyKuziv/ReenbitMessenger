@@ -1,69 +1,70 @@
 ﻿@page "/userprofile"
 
 @inject UserProfileService userProfileService
+@inject NavigationManager navManager
 @using System.Linq.Expressions
 
-<style>
+<style>    
     .limited {
         max-width: 200px
+    }
+
+    .centered-parent {
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .centered-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 15px;
     }
 </style>
 
 <h3>Your profile</h3>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateUserProfile">Update user info</MudButton>
-
+@* <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateUserProfile">Update user info</MudButton>
+ *@
 @if (userInfoModel is null)
 {
     <p>Loading...</p>
 }
 else
 {
-    <MudTextField @bind-Value="userInfoModel.Username" Label="Username"
-                  Variant="Variant.Filled" Class="limited"></MudTextField>
+    <div class="centered-parent">
+        <MudAvatar Style="height:20vh; width:20vh; min-height:100px; min-width:100px">
+            <MudImage Src="@(string.IsNullOrEmpty(avatarUrl) ? "images/default-icon.png" : avatarUrl)"></MudImage>
+        </MudAvatar>
 
-    <MudTextField @bind-Value="userInfoModel.Email" Label="Email"
-                  Variant="Variant.Filled" Class="limited"></MudTextField>
+        <div class="centered-content">
+            <MudTextField @bind-Value="userInfoModel.Username" Label="Username"
+                          Variant="Variant.Filled" Class="limited"></MudTextField>
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EditUserProfile">Edit user info</MudButton>
-}
+            <MudTextField @bind-Value="userInfoModel.Email" Label="Email"
+                          Variant="Variant.Filled" Class="limited"></MudTextField>
+        </div>
 
-@code {
-    private class UserInfo {
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-    }
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EditUserProfile">
+            Edit user credentials</MudButton>
 
-    private UserInfo userInfoModel = new UserInfo();
+        <MudDivider/>
 
-    protected override async Task OnInitializedAsync()
-    {
-        await userProfileService.Initialize();
+        <MudFileUpload T="IBrowserFile" FilesChanged="OnFileChanged">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           for="@context.Id">
+                    Choose new avatar icon
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
 
-        await UpdateUserProfile();
-    }
+        <MudDivider/>
 
-    private async Task UpdateUserProfile()
-    {
-        var user = await userProfileService.GetUserProfileAsync();
-
-        if (user is null)
-        {
-            return;
-        }
-
-        userInfoModel.Username = user.UserName;
-        userInfoModel.Email = user.Email;
-    }
-
-    private async Task EditUserProfile()
-    {
-        var user = await userProfileService.EditUserInfoAsync(new EditUserInfoRequest() {
-            Username = userInfoModel.Username,
-            Email = userInfoModel.Email 
-        });
-
-        userInfoModel.Username = user.UserName;
-        userInfoModel.Email = user.Email;
-    }
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="DeleteUserAvatar">Clear existing avatar icon</MudButton>
+    </div>
 }

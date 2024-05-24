@@ -9,5 +9,6 @@ namespace ReenbitMessenger.DataAccess.Repositories
         Task<bool> IsEmailUniqueAsync(string email);
         Task<string> UpdateUserAvatarAsync(string userId, IFormFile imageFile);
         Task<string> GetUserAvatarAsync(string userId);
+        Task<bool> DeleteUserAvatarAsync(string userId);
     }
 }
