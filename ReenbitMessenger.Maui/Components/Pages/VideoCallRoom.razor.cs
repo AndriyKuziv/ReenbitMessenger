@@ -31,7 +31,14 @@ namespace ReenbitMessenger.Maui.Components.Pages
             await callService.LeaveRoomAsync(RoomId);
             await callService.UnsubscribeAllAsync();
 
-            callService.Dispose();
+            if(callService != null)
+            {
+                callService.Dispose();
+            }
+            if(_module != null)
+            {
+                await _module.DisposeAsync();
+            }
         }
     }
 }

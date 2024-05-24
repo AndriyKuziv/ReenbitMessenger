@@ -261,7 +261,10 @@ namespace ReenbitMessenger.Maui.Components.Pages
         {
             await chatHubService.UnsubscribeAllAsync();
 
-            chatHubService.Dispose();
+            if (chatHubService != null)
+            {
+                chatHubService.Dispose();
+            }
         }
     }
 }
