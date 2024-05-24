@@ -2,7 +2,7 @@
 {
     public class UserAvatar
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string UserId { get; set; }
         public string AvatarUrl { get; set; }
     }

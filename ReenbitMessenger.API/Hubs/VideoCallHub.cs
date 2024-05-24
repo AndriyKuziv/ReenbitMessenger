@@ -5,6 +5,8 @@ namespace ReenbitMessenger.API.Hubs
 {
     public class VideoCallHub : Hub
     {
+        private Dictionary<string, string> _connectedUsers = new Dictionary<string, string>();
+
         public async Task CreateRoom()
         {
             var roomId = Guid.NewGuid().ToString();
@@ -16,6 +18,25 @@ namespace ReenbitMessenger.API.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
             await Clients.Group(roomId).SendAsync("ReceiveJoinedUser", Context.ConnectionId);
+        }
+
+        public async Task JoinHub(string userId)
+        {
+            _connectedUsers[Context.ConnectionId] = userId;
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            // This method is called when a user connects to the hub
+            await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
+            await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            // This method is called when a user disconnects from the hub
+            await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task LeaveRoom(string roomId)
