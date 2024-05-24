@@ -15,5 +15,7 @@ namespace ReenbitMessenger.DataAccess.Data
         public virtual DbSet<GroupChatRole> GroupChatRole { get; set; }
 
         public virtual DbSet<PrivateMessage> PrivateMessage { get; set; }
+
+        public virtual DbSet<UserAvatar> UserAvatar { get; set; }
     }
 }

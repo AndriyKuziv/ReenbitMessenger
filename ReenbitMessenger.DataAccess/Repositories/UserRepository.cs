@@ -3,6 +3,7 @@ using ReenbitMessenger.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Azure.Storage.Blobs;
+using ReenbitMessenger.DataAccess.Models.Domain;
 
 namespace ReenbitMessenger.DataAccess.Repositories
 {
@@ -51,10 +52,17 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 return null;
             }
 
-            return _containerClient.GetBlobClient(userId).Uri.AbsoluteUri;
+            var usrAvatar = await _dbContext.UserAvatar.FirstOrDefaultAsync(ua => ua.UserId == userId);
+
+            if (usrAvatar is null)
+            {
+                return null;
+            }
+
+            return usrAvatar.AvatarUrl;
         }
 
-        public async Task<string> UpdateUserAvatarAsync(string userId, IFormFile image)
+        public async Task<string> UpdateUserAvatarAsync(string userId, IFormFile imageFile)
         {
             var user = await _dbContext.Users.FindAsync(userId);
 
@@ -63,11 +71,28 @@ namespace ReenbitMessenger.DataAccess.Repositories
                 return null;
             }
 
-            BlobClient client = _containerClient.GetBlobClient(userId);
+            BlobClient client = _containerClient.GetBlobClient(userId + Path.GetExtension(imageFile.FileName));
 
-            await using (Stream? data = image.OpenReadStream())
+            await using (Stream data = imageFile.OpenReadStream())
             {
                 await client.UploadAsync(data, overwrite: true);
+            }
+
+            UserAvatar userAvatar = await _dbContext.UserAvatar.FirstOrDefaultAsync(ua => ua.UserId == userId);
+
+            if (userAvatar is null)
+            {
+                userAvatar = new UserAvatar()
+                {
+                    AvatarUrl = client.Uri.AbsoluteUri,
+                    UserId = userId
+                };
+
+                await _dbContext.UserAvatar.AddAsync(userAvatar);
+            }
+            else
+            {
+                userAvatar.AvatarUrl = client.Uri.AbsoluteUri;
             }
 
             return client.Uri.AbsoluteUri;

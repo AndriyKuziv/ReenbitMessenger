@@ -21,6 +21,7 @@ namespace ReenbitMessenger.API.Services
             services.AddScoped<IQueryHandler<GetUserByIdQuery, IdentityUser>, GetUserByIdQueryHandler>();
             services.AddScoped<IQueryHandler<LogInQuery, IdentityUser>, LogInQueryHandler>();
             services.AddScoped<IQueryHandler<GetUsersQuery, IEnumerable<IdentityUser>>, GetUsersQueryHandler>();
+            services.AddScoped<IQueryHandler<GetUserAvatarByIdQuery, string>, GetUserAvatarByIdQueryHandler>();
 
             // Group chats queries
             services.AddScoped<IQueryHandler<GetGroupChatsQuery, IEnumerable<GroupChat>>, GetGroupChatsQueryHandler>();

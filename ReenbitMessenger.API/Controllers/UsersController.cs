@@ -58,6 +58,8 @@ namespace ReenbitMessenger.API.Controllers
             }
 
             var userDTO = _mapper.Map<User>(user);
+            userDTO.AvatarUrl = await _handlersDispatcher.Dispatch(
+                new GetUserAvatarByIdQuery(Convert.ToString(userId)));
 
             return Ok(userDTO);
         }
@@ -67,7 +69,7 @@ namespace ReenbitMessenger.API.Controllers
         {
             var userId = await ControllerHelper.GetUserId(HttpContext);
 
-            var query = new GetUserByIdQuery(Convert.ToString(userId));
+            var query = new GetUserByIdQuery(userId);
 
             var user = await _handlersDispatcher.Dispatch(query);
 
@@ -77,6 +79,8 @@ namespace ReenbitMessenger.API.Controllers
             }
 
             var userDTO = _mapper.Map<User>(user);
+            userDTO.AvatarUrl = await _handlersDispatcher.Dispatch(
+                new GetUserAvatarByIdQuery(userId));
 
             return Ok(userDTO);
         }
@@ -186,7 +190,7 @@ namespace ReenbitMessenger.API.Controllers
 
             var command = new UploadUserAvatarCommand(userId, uploadAvatarRequest.Avatar);
 
-            var avatarUrl = _handlersDispatcher.Dispatch(command);
+            var avatarUrl = await _handlersDispatcher.Dispatch(command);
 
             return Ok(avatarUrl);
         }

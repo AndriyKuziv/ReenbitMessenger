@@ -22,7 +22,7 @@ namespace ReenbitMessenger.API.Tests.Integration.TestUtils
 
                 services.AddSingleton<DbConnection>(container =>
                 {
-                    var connection = new SqlConnection("server=DESKTOP-573JB6J\\SQLEXPRESS;database=TestMessengerDB;Trusted_Connection=true;TrustServerCertificate=True");
+                    var connection = new SqlConnection("server=DESKTOP-D015PFU\\SQLEXPRESS;database=TestMessengerDB;Trusted_Connection=true;TrustServerCertificate=True");
                     connection.Open();
 
                     return connection;
