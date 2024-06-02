@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /ReenbitMessenger.API/Controllers/TestController.cs
 /ReenbitMessenger.API/Controllers/HealthCheck.cs
 /ReenbitMessenger.API.Tests.Integration/Controllers/HealthCheckTests.cs
+/AzureResourceGroupDeploy/previous_set
